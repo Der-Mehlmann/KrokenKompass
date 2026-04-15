@@ -1,0 +1,8 @@
+{
+    "livePreview.defaultPreviewPath": "/index.html",
+    "editor.inlineSuggest.edits.showCollapsed": true,
+    "editor.inlineSuggest.experimental.showOnSuggestConflict": "always",
+    "cSpell.language": "en, de",
+    "cSpell.enabled": false,
+    "files.autoSaveWhenNoErrors": true
+}

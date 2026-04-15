@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Vampirio.io</title>
+    <link href="./Code/cssFiles/style.css" rel="stylesheet">
+</head>
+
+<body>
+<section class="screen" id="gameScreen">
+    <div class="hud-top-panel-flex">
+
+        <div class="hud-section section-left">
+            <div class="hud-item hud-time">
+                TIME: <span id="hudTime">23:01</span>
+            </div>
+        </div>
+
+        <div class="hud-section section-left">
+            <progress id="hudHealthProgress" max="" value=""></progress>
+        </div>
+
+        <div class="hud-section section-center">
+            <div class="hud-item hud-title">
+                VAMPIRIO.IO
+            </div>
+        </div>
+
+        <div class="hud-section section-right">
+            <progress id="hudXpProgress" max="" value=""></progress>
+        </div>
+
+        <div class="hud-section section-right">
+            <div class="hud-item hud-xp">
+                XP: <span id="hudXP">2301</span>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="game"></canvas> <!-- brauch keine Breite und Höhe mehr, da es über game gesteuert wird -->
+</section>
+
+<section class="screen" id="startScreen">
+    <h1 class="gameTitle">Vampirio.io</h1>
+
+    <div class="menu">
+        <button class="btn" id="startButton" onclick="Game.chooseMap()" onmousedown="Game.playButtonSound()">Start
+            Game
+        </button>
+        <button class="btn" id="settingsButton" onclick="Game.settings()" onmousedown="Game.playButtonSound()">
+            Settings
+        </button>
+        <button class="btn" id="playerSelectButton" onclick="Game.selectPlayerScreen()"
+                onmousedown="Game.playButtonSound()">Select Player
+        </button>
+    </div>
+
+    <div class="creditsTopLeft">
+        <button class="btn" onclick="Game.statsShow()" onmousedown="Game.playButtonSound()">
+            <img alt="Stats" src="./Graphics/stats.svg">
+        </button>
+    </div>
+
+    <div class="credits" id="linksCredits">
+        <button class="btn" onclick="window.open('https://github.com/Der-Mehlmann/Projektseminar_E-Business', '_blank')"
+                onmousedown="Game.playButtonSound()">
+            <img alt="GitHub" src="./Graphics/GitHub_Invertocat_White.svg">
+        </button>
+        <button class="btn"
+                onclick="window.open('https://github.com/Der-Mehlmann/Projektseminar_E-Business/wiki/Game-Wiki-Home', '_blank')"
+                onmousedown="Game.playButtonSound()">
+            <img alt="Wiki" src="./Graphics/book.svg">
+        </button>
+    </div>
+</section>
+
+<section class="screen" id="mapScreen">
+    <div class="menu">
+        <button class="btn" onclick="Game.mapSelect(0)"
+                onmousedown="Game.playButtonSound(); Game.BackgroundMusicPlay()">
+            Jungle
+        </button>
+        <button class="btn" onmousedown="Game.damageSound.play()">
+            Coming Soon
+        </button>
+        <button class="btn" id="startMenuButtonMap" onclick="Game.home()" onmousedown="Game.playButtonSound()"
+                style="margin-top: 50px">
+            Back
+        </button>
+    </div>
+</section>
+
+<section class="screen" id="settingsScreen">
+    <h2 class="screenTitle">Settings</h2>
+
+    <form id="settingsForm" style="color: yellow; display: flex">
+        <div class="panel" style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+            <div style="display: flex; flex-direction: row; gap: 10px;">
+                <div class="settings" id="soundSettings">
+                    <input id="soundEffectsVol" max="1.0" min="0.0" name="soundEffectsVol" step="0.1" type="range"
+                           value="1.0">
+                    <label for="soundEffectsVol">Sound Effects Volume</label>
+
+                    <input id="musicVol" max="1.0" min="0.0" name="musicVol" step="0.1" type="range" value="1.0">
+                    <label for="musicVol">Music Volume</label>
+                </div>
+
+                <div class="settings" id="testCaseSettings1" style="display: none">
+                    <input id="testHealth" max="9999" min="1" name="testHealth" type="number" value="100">
+                    <label for="testHealth">Set your Health</label>
+
+                    <input id="testMaxHealth" max="9999" min="1" name="testMaxHealth" type="number" value="100">
+                    <label for="testMaxHealth">Set your max. Health</label>
+
+                    <input id="testXP" max="9999" min="0" name="testXP" type="number" value="0">
+                    <label for="testXP">Set your XP</label>
+                </div>
+
+                <div class="settings" id="testCaseSettings2" style="display: none">
+                    <input checked id="testShoot" name="testShoot" type="checkbox" value="true">
+                    <label for="testShoot">Enable Shooting</label>
+
+                    <input id="testDie" name="testDie" type="checkbox" value="false">
+                    <label for="testDie">Player can die?</label>
+
+                    <input id="activateDash" name="activateDash" type="checkbox" value="false">
+                    <label for="activateDash">Player can Dash?</label>
+                </div>
+            </div>
+
+            <div class="menu" style="display: flex; flex-direction: row; gap: 10px;">
+                <div class="menu">
+                    <button class="btn" id="startMenuButton" onclick="Game.home()" onmousedown="Game.playButtonSound()">
+                        Back
+                    </button>
+                </div>
+
+                <input class="btn" onmousedown="Game.playButtonSound()" type="submit" value="Save"/>
+            </div>
+
+
+        </div>
+    </form>
+</section>
+
+<section class="screen overlay-dark" id="inGameSettingsScreen">
+    <h2 class="screenTitle">Ingame Settings</h2>
+
+    <form id="inGameSettingsForm" style="color: yellow; display: flex">
+        <div class="panel" style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+            <div style="display: flex; flex-direction: row; gap: 10px;">
+                <div class="settings" id="inGameSoundSettings">
+                    <input id="soundEffectsVolInGame" max="1.0" min="0.0" name="soundEffectsVol" step="0.1" type="range"
+                           value="1.0">
+                    <label for="soundEffectsVolInGame">Sound Effects Volume</label>
+
+                    <input id="musicVolInGame" max="1.0" min="0.0" name="musicVol" step="0.1" type="range" value="1.0">
+                    <label for="musicVolInGame">Music Volume</label>
+                </div>
+            </div>
+
+            <div class="menu" style="display: flex; flex-direction: row; gap: 10px;">
+                <div class="menu">
+                    <button class="btn" id="startMenuButtonInGameSettings"
+                            onclick="document.getElementById('inGameSettingsScreen').style.display = 'none'"
+                            onmousedown="Game.playButtonSound()">Back
+                    </button>
+                </div>
+
+                <input class="btn" onmousedown="Game.playButtonSound()" type="submit" value="Save"/>
+            </div>
+        </div>
+    </form>
+</section>
+
+<section class="screen" id="playerSelectScreen">
+    <h2 class="screenTitle">Choose a Player</h2>
+    <div class="slideSelect">
+        <button class="btn" onclick="Game.prevPlayer()" onmousedown="Game.playButtonSound()" style="width: auto;">&lt;
+        </button>
+        <div class="slideSelect-item fade" id="player1">
+            <img alt="Player 1" class="slideImage" src="players/P/8.png">
+            <h3 class="playerName">Player 1</h3>
+            <button class="btn" onclick="Game.selectPlayer('./players/P/1.png')"
+                    onmousedown="Game.playButtonSound()">Select
+            </button>
+        </div>
+
+        <div class="slideSelect-item fade" id="player2">
+            <img alt="Player 2" class="slideImage" src="players/R1/8.png">
+            <h3 class="playerName">Player 2</h3>
+            <button class="btn" onclick="Game.selectPlayer('./players/R1/1.png')"
+                    onmousedown="Game.playButtonSound()">Select
+            </button>
+        </div>
+
+        <div class="slideSelect-item fade" id="player3">
+            <img alt="Player 3" class="slideImage" src="players/L/8.png">
+            <h3 class="playerName">Player 3</h3>
+            <button class="btn" onclick="Game.selectPlayer('./players/L/1.png')"
+                    onmousedown="Game.playButtonSound()">Select
+            </button>
+        </div>
+
+        <div class="slideSelect-item fade" id="player4">
+            <img alt="Player 4" class="slideImage" src="players/R2/8.png">
+            <h3 class="playerName">Player 4</h3>
+            <button class="btn" onclick="Game.selectPlayer('./players/R2/1.png')"
+                    onmousedown="Game.playButtonSound()">Select
+            </button>
+        </div>
+
+        <div class="slideSelect-item fade" id="player5">
+            <img alt="Player 5" class="slideImage" src="players/D/6.png">
+            <h3 class="playerName">Player 5</h3>
+            <button class="btn" onclick="Game.selectPlayer('./players/D/1.png')"
+                    onmousedown="Game.playButtonSound()">Select
+            </button>
+        </div>
+
+        <div class="slideSelect-item fade" id="player6">
+
+            <img alt="Player 6" class="slideImage" src="./players/GP/8.png">
+            <h3 class="playerName">Player 6</h3>
+            <button class="btn" onclick="Game.selectPlayer('./players/GP/1.png')"
+                    onmousedown="Game.playButtonSound()">Select
+            </button>
+
+            <div class="overlay-dark-small" id="hide">
+                <img alt="lock" height="auto" src="./players/GP/schlosspng.png" width="50%">
+                <p style="color: yellow; font-weight: bold; margin-bottom: 50px; font-size: 28px;">You need one Game
+                    Win</p>
+            </div>
+
+        </div>
+
+
+        <button class="btn" onclick="Game.nextPlayer()" onmousedown="Game.playButtonSound()" style="width: auto;">&gt;
+        </button>
+    </div>
+</section>
+
+<section class="screen overlay-dark" id="pauseScreen">
+    <h1 class="screenTitle">PAUSED</h1>
+
+    <div class="menu">
+        <button class="btn" onclick="Game.resumeGame()" onmousedown="Game.playButtonSound()">RESUME</button>
+        <button class="btn" onclick="Game.inGameSettings()" onmousedown="Game.playButtonSound()">SETTINGS</button>
+        <button class="btn" onclick="Game.home()" onmousedown="Game.playButtonSound(); Game.BackgroundMusicStop()">MAIN
+            MENU
+        </button>
+    </div>
+</section>
+
+<section class="screen overlay-dark" id="lvlScreen">
+    <h1 class="screenTitle">
+        Level Up!
+    </h1>
+
+    <div class="panel">
+        <div class="level">
+            <div class="lvlUpImg">
+                <svg height="320" width="320" xmlns="http://www.w3.org/2000/svg">
+                    <rect fill="yellow" height="320" rx="20" ry="20" width="320" x="0" y="0"/>
+                    //x & y == offset; rx & ry == border radius
+                </svg>
+                <img alt="lvl1" id="lvl1Img" src="./Graphics/lvl1.png">
+            </div>
+            <button class="btn" id="lvl1Button" onclick="Game.lvlUPhide()" onmousedown="Game.equipSoundPlay()">Option
+                1
+            </button>
+        </div>
+        <div class="level">
+            <div class="lvlUpImg">
+                <svg height="320" width="320" xmlns="http://www.w3.org/2000/svg">
+                    <rect fill="yellow" height="320" rx="20" ry="20" width="320" x="0" y="0"/>
+                    //x & y == offset; rx & ry == border radius
+                </svg>
+                <img alt="lvl2" id="lvl2Img" src="./Graphics/lvl1.png">
+            </div>
+            <button class="btn" id="lvl2Button" onclick="Game.lvlUPhide()" onmousedown="Game.equipSoundPlay()">Option
+                2
+            </button>
+        </div>
+        <div class="level">
+            <div class="lvlUpImg">
+                <svg height="320" width="320" xmlns="http://www.w3.org/2000/svg">
+                    <rect fill="yellow" height="320" rx="20" ry="20" width="320" x="0" y="0"/>
+                    //x & y == offset; rx & ry == border radius
+                </svg>
+                <img alt="lvl3" id="lvl3Img" src="./Graphics/lvl1.png">
+            </div>
+            <button class="btn" id="lvl3Button" onclick="Game.lvlUPhide()" onmousedown="Game.equipSoundPlay()">Option
+                3
+            </button>
+        </div>
+
+    </div>
+    <div class="menu" style="margin-top: 20px;">
+        <button class="btn" onclick="Game.playerStats()" onmousedown="Game.playButtonSound()">Show applied</button>
+    </div>
+</section>
+
+<section class="screen overlay-dark" id="playerStatsScreen">
+    <div style="display: flex; gap: 20px; flex-direction: row; align-items: flex-start; justify-content: center; margin-bottom: 20px; align-content: center;">
+        <button class="btn" onclick="Game.statsScreenHide()" onmousedown="Game.playButtonSound()"
+                style="width: auto; padding-top: 5px; padding-bottom: 5px">
+            &lt;
+        </button>
+        <h1 class="screenTitle" style="margin: 0px">
+            Currently Applied
+        </h1>
+    </div>
+
+
+    <div class="playerStats">
+        <div class="playerEquipments">
+            <div class="playerStatsEqui">
+                <div class="playerStatsEquiLeft">
+                    <p><span id="appliedEquipment1">Nothing equipped</span> <span id="applied1"></span></p>
+                    <div>
+                        <img alt="statsLeft" src="./Graphics/statsleft.svg" width="300">
+                    </div>
+                </div>
+                <div>
+                    <p><span id="appliedEquipment2">Nothing equipped</span> <span id="applied2"></span></p>
+                    <div>
+                        <img alt="statsLeft" height="auto" src="./Graphics/statsleft.svg" width="300">
+                    </div>
+                </div>
+            </div>
+            <img alt="Player" class="playerStatsImg" id="playerStatsImg" src="">
+            <div class="playerStatsEqui">
+                <div class="playerStatsEquiRight">
+                    <p><span id="appliedEquipment3">Nothing equipped</span> <span id="applied3"></span></p>
+                    <div>
+                        <img alt="statsLeft" src="./Graphics/statsright.svg" width="300">
+                    </div>
+                </div>
+                <div class="playerStatsEquiRight">
+                    <p><span id="appliedEquipment4">Nothing equipped</span> <span id="applied4"></span></p>
+                    <div>
+                        <img alt="statsLeft" src="./Graphics/statsright.svg" width="300">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="playerWeapons">
+            <div class="weaponsSection">
+                <div class="lvlUpImg">
+                    <svg height="260" width="260" xmlns="http://www.w3.org/2000/svg">
+                        <rect fill="yellow" height="260" rx="20" ry="20" width="260" x="0" y="0"/>
+                        //x & y == offset; rx & ry == border radius
+                    </svg>
+                    <img alt="PsWeapon1" id="PsWeapon1" src="./Graphics/equipmentIcons/PNG/21.png">
+                </div>
+                <p id="PsWeapon1N">Nothing equipped</p>
+                <p id="PsWeapon1L">Has no Level</p>
+            </div>
+            <div class="weaponsSection">
+                <div class="lvlUpImg">
+                    <svg height="260" width="260" xmlns="http://www.w3.org/2000/svg">
+                        <rect fill="yellow" height="260" rx="20" ry="20" width="260" x="0" y="0"/>
+                        //x & y == offset; rx & ry == border radius
+                    </svg>
+                    <img alt="PsWeapon2" id="PsWeapon2" src="./Graphics/equipmentIcons/PNG/21.png">
+                </div>
+                <p id="PsWeapon2N">Nothing equipped</p>
+                <p id="PsWeapon2L">Has no Level</p>
+            </div>
+            <div class="weaponsSection">
+                <div class="lvlUpImg">
+                    <svg height="260" width="260" xmlns="http://www.w3.org/2000/svg">
+                        <rect fill="yellow" height="260" rx="20" ry="20" width="260" x="0" y="0"/>
+                        //x & y == offset; rx & ry == border radius
+                    </svg>
+                    <img alt="PsWeapon3" id="PsWeapon3" src="./Graphics/equipmentIcons/PNG/21.png">
+                </div>
+                <p id="PsWeapon3N">Nothing equipped</p>
+                <p id="PsWeapon3L">Has no Level</p>
+            </div>
+            <div class="weaponsSection">
+                <div class="lvlUpImg">
+                    <svg height="260" width="260" xmlns="http://www.w3.org/2000/svg">
+                        <rect fill="yellow" height="260" rx="20" ry="20" width="260" x="0" y="0"/>
+                        //x & y == offset; rx & ry == border radius
+                    </svg>
+                    <img alt="PsWeapon4" id="PsWeapon4" src="./Graphics/equipmentIcons/PNG/21.png">
+                </div>
+                <p id="PsWeapon4N">Nothing equipped</p>
+                <p id="PsWeapon4L">Has no Level</p>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+<section class="screen" id="defeatScreen">
+    <h1 class="screenTitle">
+        You have been defeated!
+    </h1>
+
+    <div class="statsPanel">
+        <p>Time: <span class="stat-val" id="defeatTime">02:13</span></p>
+        <p>Total XP: <span class="stat-val" id="defeatXP">2300</span></p>
+        <p>Kills: <span class="stat-val" id="defeatKills">0</span></p>
+    </div>
+
+    <div class="flex-row-gap" style="margin-top: 20px;">
+        <button class="btn" id="retryButtonDefeat" onclick="Game.restart()"
+                onmousedown="Game.playButtonSound(); BackgroundMusicPlay(); Game.winLoseSoundStop()">Retry
+        </button>
+        <button class="btn" id="startMenuButtonDefeat" onclick="Game.home()"
+                onmousedown="Game.playButtonSound(); Game.winLoseSoundStop()">Start
+            Menu
+        </button>
+    </div>
+</section>
+
+<section class="screen" id="winScreen">
+    <h1 class="screenTitle">
+        You survived!
+    </h1>
+
+    <div class="statsPanel">
+        <p>Time: <span class="stat-val" id="winTime">10:00</span></p>
+        <p>Total XP: <span class="stat-val" id="winXP">2300</span></p>
+        <p>Kills: <span class="stat-val" id="winKills">0</span></p>
+    </div>
+
+    <div class="flex-row-gap" style="margin-top: 20px;">
+        <button class="btn" id="retryButtonWin" onclick="Game.restart()"
+                onmousedown="Game.playButtonSound(); BackgroundMusicPlay(); Game.winLoseSoundStop()">Retry
+        </button>
+        <button class="btn" id="startMenuButtonWin" onclick="Game.home()"
+                onmousedown="Game.playButtonSound(); Game.winLoseSoundStop()">Start
+            Menu
+        </button>
+    </div>
+</section>
+
+<section class="screen" id="statsScreen">
+    <h1 class="screenTitle">Global Statistics</h1>
+
+    <div class="panel stats-grid">
+        <div class="stats-card">
+            <div class="stats-icon-container">
+                <img alt="Time Icon" src="./Graphics/timer.svg">
+            </div>
+            <div class="stats-info">
+                <span class="stats-label">Total Time</span>
+                <span class="stat-val" id="gameTime">00:00</span>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon-container">
+                <img alt="XP Icon" src="./Graphics/singleUsePng/xp.png">
+            </div>
+            <div class="stats-info">
+                <span class="stats-label">Total XP</span>
+                <span class="stat-val" id="gameXP">0</span>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon-container">
+                <img alt="Kills Icon" src="./Graphics/skull.svg">
+            </div>
+            <div class="stats-info">
+                <span class="stats-label">Total Kills</span>
+                <span class="stat-val" id="gameKills">0</span>
+            </div>
+        </div>
+
+        <div class="stats-card win-border">
+            <div class="stats-info">
+                <span class="stats-label">Wins</span>
+                <span class="stat-val highlight-yellow" id="gameWins">0</span>
+            </div>
+        </div>
+
+        <div class="stats-card loss-border">
+            <div class="stats-info">
+                <span class="stats-label">Defeats</span>
+                <span class="stat-val highlight-yellow" id="gameDefeats">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-row-gap" style="margin-top: 30px;">
+        <button class="btn" id="clearLocalStorage" onclick="Game.statsReset()" onmousedown="Game.playButtonSound()">
+            Reset Stats
+        </button>
+        <button class="btn" id="startMenuButtonStats" onclick="Game.home()" onmousedown="Game.playButtonSound()">
+            Back
+        </button>
+    </div>
+</section>
+
+<script defer src="./Code/javaScriptFiles/game.js" type="module"></script>
+</body>
+</html>

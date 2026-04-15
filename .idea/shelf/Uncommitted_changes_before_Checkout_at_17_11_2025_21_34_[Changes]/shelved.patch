@@ -1,0 +1,95 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"6db50c12-f734-4db6-9134-5b4974641645\" name=\"Changes\" comment=\"Refactor index.js and index.html for improved code clarity and formatting\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/index.js\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/index.js\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"CSS File\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"21-bug-out-of-bound-bei-der-map-sorgt-für-grafik-fehler\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;history&quot;: [\n    {\n      &quot;state&quot;: &quot;OPEN&quot;\n    }\n  ],\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;\n  }\n}</component>\n  <component name=\"GitHubPullRequestState\"><![CDATA[{\n  \"prStates\": [\n    {\n      \"id\": {\n        \"id\": \"PR_kwDOQC9bt86yHsLE\",\n        \"number\": 33\n      },\n      \"lastSeen\": 1762782396334\n    }\n  ]\n}]]></component>\n  <component name=\"GithubProjectSettings\">\n    <option name=\"branchProtectionPatterns\">\n      <list>\n        <option value=\"main\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\n  \"selectedUrlAndAccountId\": {\n    \"url\": \"https://github.com/Der-Mehlmann/Projektseminar_E-Business.git\",\n    \"accountId\": \"73160b2e-3526-49ca-a5ee-f72a3a49666d\"\n  },\n  \"recentNewPullRequestHead\": {\n    \"server\": {\n      \"useHttp\": false,\n      \"host\": \"github.com\",\n      \"port\": null,\n      \"suffix\": null\n    },\n    \"owner\": \"Der-Mehlmann\",\n    \"repository\": \"Projektseminar_E-Business\"\n  },\n  \"editorReviewEnabled\": false\n}]]></component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 3\n}</component>\n  <component name=\"ProjectId\" id=\"346XaHo9OSS35zyoyME9MeL2bVr\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"JavaScript Debug.index.html.executor\": \"Run\",\n    \"Node.js.index.js.executor\": \"Debug\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"RunOnceActivity.git.unshallow\": \"true\",\n    \"git-widget-placeholder\": \"#32 on 31-feat-refactor-indexjs\",\n    \"ignore.virus.scanning.warn.message\": \"true\",\n    \"list.type.of.created.stylesheet\": \"CSS\",\n    \"node.js.detected.package.eslint\": \"true\",\n    \"node.js.detected.package.tslint\": \"true\",\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\n    \"nodejs_package_manager_path\": \"npm\",\n    \"settings.editor.selected.configurable\": \"reference.settings.ide.settings.uml\",\n    \"spentTimePerTaskStorage.store\": \"{}\",\n    \"timeTracker.activityTracker\": \"null\",\n    \"timeTracker.comment\": \"\",\n    \"timeTracker.inactivityPeriodInMills\": \"600000\",\n    \"timeTracker.isAutoTrackingEnable\": \"true\",\n    \"timeTracker.isAutoTrackingTemporaryDisabled\": \"false\",\n    \"timeTracker.isManualTrackingEnable\": \"false\",\n    \"timeTracker.isPaused\": \"true\",\n    \"timeTracker.isPostAfterCommitEnabled\": \"true\",\n    \"timeTracker.isPostedScheduled\": \"true\",\n    \"timeTracker.isRunning\": \"false\",\n    \"timeTracker.isScheduledEnabled\": \"false\",\n    \"timeTracker.isWhenProjectClosedEnabled\": \"true\",\n    \"timeTracker.issueId\": \"Default\",\n    \"timeTracker.issueIdReadable\": \"Default\",\n    \"timeTracker.pausedTime\": \"0\",\n    \"timeTracker.query\": \"\",\n    \"timeTracker.recordedTime\": \"0\",\n    \"timeTracker.scheduledPeriod\": \"19:00:0\",\n    \"timeTracker.startTime\": \"0\",\n    \"timeTracker.timeInMills\": \"0\",\n    \"timeTracker.type\": \"Entwicklung\",\n    \"vue.rearranger.settings.migration\": \"true\"\n  }\n}]]></component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.27397.92\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"6db50c12-f734-4db6-9134-5b4974641645\" name=\"Changes\" comment=\"\" />\n      <created>1760535057169</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1760535057169</updated>\n      <workItem from=\"1760535058504\" duration=\"139000\" />\n      <workItem from=\"1760535210685\" duration=\"303000\" />\n      <workItem from=\"1761254146663\" duration=\"825000\" />\n      <workItem from=\"1762290512368\" duration=\"41000\" />\n      <workItem from=\"1762290576125\" duration=\"1044000\" />\n      <workItem from=\"1762510404311\" duration=\"963000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Add style.css for styling the application\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1761254197084</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1761254197084</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"Add style.css for styling the application\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1761254793089</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1761254793089</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"Add style.css for styling the application\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1761254795296</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1761254795296</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"Refactor index.js for improved variable scoping and code clarity\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1762291276631</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1762291276631</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"5\" />\n    <servers>\n      <YouTrack url=\"https://hkm.youtrack.cloud\">\n        <username>random</username>\n      </YouTrack>\n    </servers>\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"Add style.css for styling the application\" />\n    <MESSAGE value=\"Merge branch 'main' into 21-bug-out-of-bound-bei-der-map-sorgt-für-grafik-fehler\" />\n    <MESSAGE value=\"Refactor index.js for improved variable scoping and code clarity\" />\n    <MESSAGE value=\"Refactor index.js and index.html for improved code clarity and formatting\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Refactor index.js and index.html for improved code clarity and formatting\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision d2ac7d7c0b0ff180f463a31801bca5ad9a068178)
++++ b/.idea/workspace.xml	(date 1763411619647)
+@@ -4,10 +4,7 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="6db50c12-f734-4db6-9134-5b4974641645" name="Changes" comment="Refactor index.js and index.html for improved code clarity and formatting">
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+-    </list>
++    <list default="true" id="6db50c12-f734-4db6-9134-5b4974641645" name="Changes" comment="Refactor index.js and index.html for improved code clarity and formatting" />
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -38,28 +35,21 @@
+     &quot;state&quot;: &quot;OPEN&quot;
+   }
+ }</component>
+-  <component name="GitHubPullRequestState"><![CDATA[{
+-  "prStates": [
++  <component name="GitHubPullRequestState">{
++  &quot;prStates&quot;: [
+     {
+-      "id": {
+-        "id": "PR_kwDOQC9bt86yHsLE",
+-        "number": 33
++      &quot;id&quot;: {
++        &quot;id&quot;: &quot;PR_kwDOQC9bt86yHsLE&quot;,
++        &quot;number&quot;: 33
+       },
+-      "lastSeen": 1762782396334
++      &quot;lastSeen&quot;: 1762782396334
+     }
+   ]
+-}]]></component>
+-  <component name="GithubProjectSettings">
+-    <option name="branchProtectionPatterns">
+-      <list>
+-        <option value="main" />
+-      </list>
+-    </option>
+-  </component>
++}</component>
+   <component name="GithubPullRequestsUISettings"><![CDATA[{
+   "selectedUrlAndAccountId": {
+     "url": "https://github.com/Der-Mehlmann/Projektseminar_E-Business.git",
+-    "accountId": "73160b2e-3526-49ca-a5ee-f72a3a49666d"
++    "accountId": "520cde63-54a3-4d1c-951f-1f2c1767ef3e"
+   },
+   "recentNewPullRequestHead": {
+     "server": {
+@@ -87,15 +77,17 @@
+     "Node.js.index.js.executor": "Debug",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+     "RunOnceActivity.git.unshallow": "true",
+-    "git-widget-placeholder": "#32 on 31-feat-refactor-indexjs",
++    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
++    "git-widget-placeholder": "main",
+     "ignore.virus.scanning.warn.message": "true",
++    "junie.onboarding.icon.badge.shown": "true",
+     "list.type.of.created.stylesheet": "CSS",
+     "node.js.detected.package.eslint": "true",
+     "node.js.detected.package.tslint": "true",
+     "node.js.selected.package.eslint": "(autodetect)",
+     "node.js.selected.package.tslint": "(autodetect)",
+     "nodejs_package_manager_path": "npm",
+-    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
++    "settings.editor.selected.configurable": "preferences.pluginManager",
+     "spentTimePerTaskStorage.store": "{}",
+     "timeTracker.activityTracker": "null",
+     "timeTracker.comment": "",
+@@ -118,6 +110,7 @@
+     "timeTracker.startTime": "0",
+     "timeTracker.timeInMills": "0",
+     "timeTracker.type": "Entwicklung",
++    "to.speed.mode.migration.done": "true",
+     "vue.rearranger.settings.migration": "true"
+   }
+ }]]></component>
+@@ -141,6 +134,7 @@
+       <workItem from="1762290512368" duration="41000" />
+       <workItem from="1762290576125" duration="1044000" />
+       <workItem from="1762510404311" duration="963000" />
++      <workItem from="1763411369382" duration="249000" />
+     </task>
+     <task id="LOCAL-00001" summary="Add style.css for styling the application">
+       <option name="closed" value="true" />

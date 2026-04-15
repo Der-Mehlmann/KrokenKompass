@@ -1,0 +1,96 @@
+classDiagram
+    %% Basisklasse
+    class Entity {
+        +globalEntityX
+        +globalEntityY
+        +hitbox
+        +png
+        +static FOVwidthMiddle
+        +static FOVheightMiddle
+        +constructor(globalEntityX, globalEntityY, hitbox, png)
+        +draw(ctx, player, color)
+    }
+
+    %% Bewegliche Entitäten
+    class MovingEntity {
+        +hp
+        +maxHp
+        +speed
+        +checkCollision(other, proposedMoveX, proposedMoveY)
+        +checkCollisionHorizontal(other, proposedMoveX)
+        +checkCollisionVertical(other, proposedMoveY)
+        +attemptMoveAxis(self, axis, move, enemyArray, map, visited)
+        +takeDmg(amount, enemies, positionWithin)
+        +die()
+        +updateGridPlace(tilelength, objectArray, positionWithin, gridWidth)
+    }
+
+    %% Statische Entitäten
+    class StaticEntity {
+        +constructor(globalEntityX, globalEntityY, hitbox, png)
+    }
+
+    %% Spieler
+    class Player {
+        +xp
+        +level
+        +baseSpeed
+        +ausrüstung
+        +weapons
+        +regeneration
+        +xpForNextLevel
+        +weapon : Weapon
+        +handleInput(map, inputState)
+        +lvlUp()
+        +collectPickup(item)
+        +collectXp(xpAmount)
+        +render(map, inputState, performanceNow, enemies, gridWidth)
+    }
+
+    %% Gegner
+    class Enemy {
+        +level
+        +xpDrop
+        +elite
+        +ranged : Boolean
+        +blockedX
+        +blockedY
+        +weapon : Weapon
+        +static spawnEnemyOutsideView(enemiesArray, player, canvas, tilewidth, gridWidth)
+        +chasePlayer(map, player, enemyArray)
+        +shouldShoot(player)
+        +render(ctx, MapOne, PlayerOne, enemies, projectiles, time, pos, gridWidth)
+    }
+
+    %% Projektil
+    class Projectile {
+        +piercing
+        +size
+        +direction
+        +dmg
+        +isEnemy : Boolean
+        +handleProjectiles(ctx, projectiles, index, enemies, player, map, gridWidth)
+        +move(map, projectiles, projectileIndex, gridWidth)
+    }
+
+    %% Referenzierte Klassen (implizit)
+    class Weapon {
+        +create(type, owner, ...)
+        +render(...)
+    }
+
+    class DropSingleUse {
+        +enemyItemDrop
+        +enemyXpDrop
+    }
+
+    %% Beziehungen
+    Entity <|-- MovingEntity
+    Entity <|-- StaticEntity
+    MovingEntity <|-- Player
+    MovingEntity <|-- Enemy
+    MovingEntity <|-- Projectile
+
+    Player --> Weapon : nutzt
+    Enemy --> Weapon : nutzt (optional)
+    Enemy ..> DropSingleUse : erzeugt Drops

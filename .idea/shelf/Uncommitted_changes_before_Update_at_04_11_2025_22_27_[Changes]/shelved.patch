@@ -1,0 +1,91 @@
+Index: index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>const canvas = document.getElementById('game')\nconst ctx = canvas.getContext('2d')\ndocument.addEventListener(\"keydown\", keyDownHandler)\ndocument.addEventListener(\"keyup\", keyUpHandler)\n\n// Tastatur inputs:\nlet upPressed = false\nlet leftPressed = false\nlet rightPressed = false\nlet downPressed = false\n\n// Map Variablen\nmapWidthTile=81 //in Kacheln (Muss ungerade sein)vll\nmapHeightTile=50 //in Kacheln\nTilelength=32\nplayerGlobalMapX=mapWidthTile*Tilelength/2\nplayerGlobalMapY=mapHeightTile*Tilelength/2\nFOV=canvas.height //Field of View in px\n\nfunction playerMovement(){\n  if(upPressed) playerGlobalMapY++\n  if(downPressed) playerGlobalMapY--\n  if(rightPressed) playerGlobalMapX++\n  if(leftPressed) playerGlobalMapX--\n}\nfunction render(){ // Hauptfunktion für alle Funktionen die für die Frames des Spielen sind wie drawMap oder drawPlayer etc.\n    playerMovement()\n    drawMapinRange(playerGlobalMapX, playerGlobalMapY)\n}\nfunction keyDownHandler(e) { // liest Input der Tastatur aus\n    if ((e.key == \"ArrowUp\") || (e.key =='w')) {\n        upPressed = true;\n    }\n    if ((e.key == \"ArrowLeft\") || (e.key =='a')) {\n        leftPressed = true;\n    }\n    if ((e.key == \"ArrowRight\") || (e.key =='d')) {\n        rightPressed = true;\n    }\n    if ((e.key == \"ArrowDown\") || (e.key =='s')) {\n        downPressed = true;\n    }\n}\nfunction keyUpHandler(e) { // liest Output der Tastatur aus\n    if ((e.key == \"ArrowUp\") || (e.key =='w')) {\n        upPressed = false;\n    }\n    if ((e.key == \"ArrowLeft\") || (e.key =='a')) {\n        leftPressed = false;\n    }\n    if ((e.key == \"ArrowRight\") || (e.key =='d')) {\n        rightPressed = false;\n    }\n    if ((e.key == \"ArrowDown\") || (e.key =='s')) {\n        downPressed = false;\n    }\n}\nfunction drawSquare(x, y,width,height, color) {\n    ctx.beginPath()\n    ctx.rect(x, y, width, height)\n    ctx.fillStyle = color\n    ctx.fill()\n    ctx.strokeStyle = color;\n    ctx.stroke();\n}\nfunction drawMapinRange(playerGlobalMapX, playerGlobalMapY){\n        tileNr=0\n        const leftBorder=playerGlobalMapX-FOV/2\n        const topBorder=playerGlobalMapY-FOV/2\n        const rightBorder=playerGlobalMapX+FOV/2\n        const bottomBorder=playerGlobalMapY+FOV/2\n\n        tileNr=Math.floor(topBorder/Tilelength)*mapWidthTile+Math.floor(leftBorder/Tilelength)\n        //alert(tileNr) //12\n        drawSquare(0,0,Tilelength-(leftBorder%Tilelength),Tilelength-(topBorder%Tilelength),'Yellow')\n\n       // alert(Tilelength-(leftBorder%Tilelength)) //16\n       // alert(Tilelength-(topBorder%Tilelength))  //32\n        for (i=Tilelength-(leftBorder%Tilelength);i<FOV;i+=Tilelength){\n            tileNr++\n            if (tileNr%2==0)\n                drawSquare(i,0,Tilelength,Tilelength-(topBorder%Tilelength),'black')\n            else drawSquare(i,0,Tilelength,Tilelength-(topBorder%Tilelength),'green')\n\n        }\n\n        for (i=Tilelength-(topBorder%Tilelength);i<FOV;i+=Tilelength){\n            tileNr+=mapWidthTile\n            if (tileNr%2==0)\n                drawSquare(0,i,Tilelength-(leftBorder%Tilelength),Tilelength,'black')\n            else drawSquare(0,i,Tilelength-(leftBorder%Tilelength),Tilelength,'green')\n            for (j=Tilelength-(leftBorder%Tilelength);j<FOV;j+=Tilelength){\n                tileNr++\n                if (tileNr%2==0)\n                    drawSquare(j,i,Tilelength,Tilelength,'black')\n                else drawSquare(j,i,Tilelength,Tilelength,'green')\n            }\n        }\n    }\nclass Player {\n    //Koordinaten liegen bisher in Map.playerGlobalX / Y\n    level=0\n    constructor(hp, baseDamage, hitbox, firstWeapon,speed,range){\n        this.hp=hp\n        this.baseDamage=baseDamage\n        this.hitbox=hitbox\n        this.firstWeapon=firstWeapon\n        this.speed=speed\n        this.range=range\n    }\n\n    playerMovement(){\n        if (upPressed){\n            playerGlobalMapY-=this.speed\n        }\n        if (downPressed){\n            playerGlobalMapY+=this.speed\n        }\n        if (rightPressed){\n            playerGlobalMapX+=this.speed\n        }\n        if (leftPressed){\n            playerGlobalMapX-=this.speed\n        }\n\n\n    }\n    takeDamage(){\n\n    }\n    levelUp(){\n\n    }\n    draw(){\n\n    }\n}\n\nclass Map {\n\n\n}\ndrawSquare(0,0,canvas.width,canvas.height,'gray')\nsetInterval(render, 5)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/index.js b/index.js
+--- a/index.js	(revision 822e0d8cc7d8d919edca2404833d578c5bb1f7d0)
++++ b/index.js	(date 1762291590210)
+@@ -17,16 +17,22 @@
+ playerGlobalMapY=mapHeightTile*Tilelength/2
+ FOV=canvas.height //Field of View in px
+ 
++function render(){ // Haubtfunktion für alle Funktionen die für die Frames des Spielen sind wie drawMap oder drawPlayer etc.
++    playerMovement()
++    drawMapinRange(playerGlobalMapX, playerGlobalMapY)
++}
++
++function getTileNr(){
++    return tileRow*mapWidthTile+tileColumnWalker
++}
++
+ function playerMovement(){
+-  if(upPressed) playerGlobalMapY++
+-  if(downPressed) playerGlobalMapY--
+-  if(rightPressed) playerGlobalMapX++
+-  if(leftPressed) playerGlobalMapX--
++    if(upPressed) playerGlobalMapY--
++    if(downPressed) playerGlobalMapY++
++    if(rightPressed) playerGlobalMapX++
++    if(leftPressed) playerGlobalMapX--
+ }
+-function render(){ // Hauptfunktion für alle Funktionen die für die Frames des Spielen sind wie drawMap oder drawPlayer etc.
+-    playerMovement()
+-    drawMapinRange(playerGlobalMapX, playerGlobalMapY)
+-}
++
+ function keyDownHandler(e) { // liest Input der Tastatur aus
+     if ((e.key == "ArrowUp") || (e.key =='w')) {
+         upPressed = true;
+@@ -69,6 +75,11 @@
+         const topBorder=playerGlobalMapY-FOV/2
+         const rightBorder=playerGlobalMapX+FOV/2
+         const bottomBorder=playerGlobalMapY+FOV/2
++        tileRow=Math.floor(topBorder/Tilelength)
++        tileColumn=Math.floor(leftBorder/Tilelength)
++        tileColumnWalker=tileColumn
++        //alert(tileNr)
++
+ 
+         tileNr=Math.floor(topBorder/Tilelength)*mapWidthTile+Math.floor(leftBorder/Tilelength)
+         //alert(tileNr) //12
+@@ -77,24 +88,26 @@
+        // alert(Tilelength-(leftBorder%Tilelength)) //16
+        // alert(Tilelength-(topBorder%Tilelength))  //32
+         for (i=Tilelength-(leftBorder%Tilelength);i<FOV;i+=Tilelength){
+-            tileNr++
+-            if (tileNr%2==0)
++            tileColumnWalker++
++            if (getTileNr()%2==0)
+                 drawSquare(i,0,Tilelength,Tilelength-(topBorder%Tilelength),'black')
+             else drawSquare(i,0,Tilelength,Tilelength-(topBorder%Tilelength),'green')
+ 
+         }
+ 
+         for (i=Tilelength-(topBorder%Tilelength);i<FOV;i+=Tilelength){
+-            tileNr+=mapWidthTile
+-            if (tileNr%2==0)
++            tileRow++
++            tileColumnWalker=tileColumn
++            if (getTileNr()%2==0)
+                 drawSquare(0,i,Tilelength-(leftBorder%Tilelength),Tilelength,'black')
+             else drawSquare(0,i,Tilelength-(leftBorder%Tilelength),Tilelength,'green')
+             for (j=Tilelength-(leftBorder%Tilelength);j<FOV;j+=Tilelength){
+-                tileNr++
+-                if (tileNr%2==0)
++                tileColumnWalker++
++                if (getTileNr()%2==0)
+                     drawSquare(j,i,Tilelength,Tilelength,'black')
+                 else drawSquare(j,i,Tilelength,Tilelength,'green')
+             }
++            tileColumnWalker++
+         }
+     }
+ class Player {
+@@ -142,3 +155,4 @@
+ }
+ drawSquare(0,0,canvas.width,canvas.height,'gray')
+ setInterval(render, 5)
++
