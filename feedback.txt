@@ -1,0 +1,27 @@
+===========================================
+runCorrection.sh: init completed, analyzing submission...
+
+- contents of series test folder:
+serie_01
+- contents of task test folder:
+aufgabe_1
+- task files (should be empty):
+
+
+
+Output of STDOUT:
+
+Processing file //data/submission.zip...
+
+-> Zipfile found!
+
+Entry: aufgabe_1/MiToBoReduceSpatialResolution.java
+
+... assuming pure java files on top level!
+
+No Java files found that could be tested... Check your archive, maybe the structure is wrong! Exiting!
+
+--------------------------------------------------------------------------------
+
+Output of STDERR:
+
