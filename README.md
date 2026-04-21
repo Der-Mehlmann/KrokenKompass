@@ -10,9 +10,9 @@ This repository contains a browser project based on the current game structure, 
 
 ## Project Structure
 
-- `/home/runner/work/KrokenKompass/KrokenKompass/index.html` loads the app
-- `/home/runner/work/KrokenKompass/KrokenKompass/Code/cssFiles/style.css` contains styling
-- `/home/runner/work/KrokenKompass/KrokenKompass/Code/javaScriptFiles/index.js` contains JavaScript logic
+- `index.html` loads the app
+- `Code/cssFiles/style.css` contains styling
+- `Code/javaScriptFiles/index.js` contains JavaScript logic
 
 ## Getting Started
 
@@ -20,7 +20,7 @@ This repository contains a browser project based on the current game structure, 
    ```sh
    git clone https://github.com/Der-Mehlmann/KrokenKompass.git
    ```
-2. Open `/home/runner/work/KrokenKompass/KrokenKompass/index.html` in your browser.
+2. Open `index.html` in your browser.
 
 ## Notes
 
