@@ -1,27 +1,27 @@
-# Projektseminar E-Business: Browser Game
+# KrokenKompass
 
-This repository contains a browser-based game developed for a university project seminar in E-Business.
+This repository contains a browser project based on the current game structure, but intended as a different/new project direction.
 
-## About The Project
+## Technologies
 
-This project is a simple browser game created using fundamental web technologies. 
+- HTML
+- CSS
+- JavaScript
 
-## Built With
+## Project Structure
 
-*   HTML
-*   CSS
-*   JavaScript
+- `/home/runner/work/KrokenKompass/KrokenKompass/index.html` loads the app
+- `/home/runner/work/KrokenKompass/KrokenKompass/Code/cssFiles/style.css` contains styling
+- `/home/runner/work/KrokenKompass/KrokenKompass/Code/javaScriptFiles/index.js` contains JavaScript logic
 
 ## Getting Started
 
-To run the game, simply open the main HTML file in your web browser.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/Der-Mehlmann/KrokenKompass.git
+   ```
+2. Open `/home/runner/work/KrokenKompass/KrokenKompass/index.html` in your browser.
 
-1.  Clone the repository:
-    ```sh
-    git clone https://github.com/Der-Mehlmann/Projektseminar_E-Business.git
-    ```
-2.  Navigate to the project directory and open the primary HTML file (e.g., `index.html`) in your browser.
+## Notes
 
-## Contributing
-
-As this is a university project, contributions are not expected. However, feel free to fork the repository and adapt it for your own purposes.
+The implementation should continue to use plain HTML, CSS, and JavaScript.
