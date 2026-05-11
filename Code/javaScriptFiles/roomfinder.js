@@ -86,17 +86,21 @@ function getStockwerk(text) {
     return null;
 }
 
-document.getElementById("submitBtn").addEventListener("click", () => {
-    const input = document.getElementById("kuerzel");
-    const error = document.getElementById("errorMsg");
+const kuerzelInput = document.getElementById("kuerzel");
+const errorMsg = document.getElementById("errorMsg");
 
-    const value = input.value;
+document.getElementById("submitBtn").addEventListener("click", () => {
+    const value = kuerzelInput.value.trim();
 
     if (value === "") {
-        error.style.display = "block";
+        errorMsg.style.display = "block";
         return;
     }
 
-    error.style.display = "none";
+    errorMsg.style.display = "none";
     findRoomByKuerzel(value);
+});
+
+kuerzelInput.addEventListener("input", () => {
+    errorMsg.style.display = "none";
 });
