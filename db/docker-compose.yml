@@ -1,2 +1,0 @@
-volumes:
-  - ./db:/docker-entrypoint-initdb.d
