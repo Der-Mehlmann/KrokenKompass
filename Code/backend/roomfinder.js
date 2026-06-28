@@ -15,53 +15,36 @@ btn.addEventListener("click", async () => {
 
   try {
     const res = await fetch(
-    `http://localhost:3000/room?input=${encodeURIComponent(value)}`
+      `http://localhost:3000/room?input=${encodeURIComponent(value)}`
     );
-    const data = await res.json();
+
+    console.log(res.status);
+
+    const data = await res.json(); // WICHTIG
 
     console.log(data);
 
-    if (data.message) {
-      result.innerHTML = "❌ Raum nicht gefunden";
+    if (!data || data.length === 0) {
+      result.innerHTML = " Raum nicht gefunden";
       return;
     }
 
+    // falls mehrere Räume zurückkommen
+    const room = data[0];
+
     result.innerHTML = `
       <div style="padding:10px; border:1px solid #ccc; border-radius:8px;">
-        <h2>🏫 Raum gefunden</h2>
-        <p><b>Name:</b> ${data.name}</p>
-        <p><b>Raum-ID:</b> ${data.unit_id}</p>
-        <p><b>Etage:</b> ${data.level_id}</p>
-        <p><b>Typ:</b> ${data.use_type}</p>
-        <p><b>Fläche:</b> ${data.shape_area}</p>
+        <h2> Raum gefunden</h2>
+        <p><b>Name:</b> ${room.name}</p>
+        <p><b>Raum-ID:</b> ${room.unit_id}</p>
+        <p><b>Etage:</b> ${room.name.split("_")[1]}</p>
+        <p><b>Typ:</b> ${room.use_type}</p>
+        <p><b>Fläche:</b> ${room.shape_area}</p>
       </div>
     `;
 
   } catch (err) {
-    result.innerHTML = "❌ Server nicht erreichbar";
+    console.error("SERVERFEHLER:", err);
+    result.innerHTML = " Serverfehler";
   }
 });
-
-function parseRoom(input) {
-  // Beispiel: "3.02 VSP1"
-
-  const match = input.match(/(\d)\.(\d{2})\s*VSP\s*(\d)/i);
-
-  if (!match) return null;
-
-  const floor = Number(match[1]);   // 3
-  const room = match[2];            // 02
-  const vsp = Number(match[3]);     // 1
-
-  return { floor, room, vsp };
-}
-function getBuilding(vsp) {
-  const map = {
-    1: "7721",
-    2: "7722",
-    3: "7723",
-    4: "7724"
-  };
-
-  return map[vsp] || null;
-}
