@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  db:
+    # Hier Version 17 festlegen:
+    image: postgres:17-alpine
+    container_name: krokenkompass-db
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: krokenkompass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./vsp_units.sql:/docker-entrypoint-initdb.d/vsp_units.sql
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
