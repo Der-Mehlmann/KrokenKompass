@@ -14,8 +14,210 @@ var etagenListe = ["-1", "00", "01", "02", "03", "04", "05"];
 var geladeneEtagen = {};
 var routingPfad = null;
 var globaleCentroids = {};
+var globaleKnotenMeta = {};
+var globaleKnotenIdsByName = {};
+var globaleZielTyp = null;
 var aktuelleRoutenLinie = null;
 var aktuelleZielEtage = "00";
+
+const VERBINDUNGS_TYPEN = new Set(["tuer", "flur", "treppenhaus", "vertikal"]);
+const GEBAEUDE_UEBERGANG_MAX_DISTANZ_METERS = 22;
+
+function normalisiereTyp(type) {
+    return String(type || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+}
+
+function klassifiziereTyp(feature) {
+    const typ = normalisiereTyp(feature?.properties?.use_type);
+
+    if (!typ) {
+        return "";
+    }
+
+    if (
+        typ.includes("eingang") ||
+        typ.includes("ausgang") ||
+        typ.includes("tuer") ||
+        typ.includes("durchgang") ||
+        typ.includes("windfang") ||
+        typ.includes("uebergang")
+    ) {
+        return "tuer";
+    }
+
+    if (typ.includes("treppenhaus") || typ.includes("treppe") || typ.includes("aufzug")) {
+        return "vertikal";
+    }
+
+    if (typ.includes("flur")) {
+        return "flur";
+    }
+
+    return typ;
+}
+
+function getRaumBuilding(raumName) {
+    return String(raumName || "").split("_")[0] || "";
+}
+
+function getRaumEtage(raumName) {
+    return String(raumName || "").split("_")[1] || "00";
+}
+
+function getFeatureTyp(feature) {
+    return klassifiziereTyp(feature);
+}
+
+function istVerbindungsTyp(feature) {
+    return VERBINDUNGS_TYPEN.has(getFeatureTyp(feature));
+}
+
+function istVertikalTyp(feature) {
+    return getFeatureTyp(feature) === "vertikal";
+}
+
+function istGebaeudeUebergangTyp(feature) {
+    return getFeatureTyp(feature) === "tuer";
+}
+
+function istExpliziterGebaeudeUebergang(feature) {
+    const typ = normalisiereTyp(feature?.properties?.use_type);
+    if (!typ) {
+        return false;
+    }
+    // Nur explizit als Eingang, Ausgang oder Übergang markierte Elemente erlauben
+    return typ.includes("eingang") || typ.includes("ausgang") || typ.includes("uebergang");
+}
+
+function istSameFloorVerbindungZulaessig(typ1, typ2) {
+    if (!typ1 || !typ2) {
+        return false;
+    }
+
+    if (typ1 === "tuer" && typ2 === "vertikal") {
+        return false;
+    }
+
+    if (typ2 === "tuer" && typ1 === "vertikal") {
+        return false;
+    }
+
+    if (typ1 === "vertikal" && typ2 === "vertikal") {
+        return true;
+    }
+
+    if (typ1 === "flur" && (typ2 === "raum" || typ2 === "flur" || typ2 === "vertikal" || typ2 === "tuer")) {
+        return true;
+    }
+
+    if (typ2 === "flur" && (typ1 === "raum" || typ1 === "flur" || typ1 === "vertikal" || typ1 === "tuer")) {
+        return true;
+    }
+
+    if (typ1 === "tuer" && (typ2 === "raum" || typ2 === "flur" || typ2 === "tuer")) {
+        return true;
+    }
+
+    if (typ2 === "tuer" && (typ1 === "raum" || typ1 === "flur" || typ1 === "tuer")) {
+        return true;
+    }
+
+    return false;
+}
+
+function erstelleKnotenId(feature, index) {
+    const props = feature.properties || {};
+    const name = String(props.name || `knoten_${index}`);
+    const gid = props.gid != null ? String(props.gid) : String(index);
+
+    return `${name}__${gid}`;
+}
+
+function priorisiereTyp(typ, zielTyp) {
+    const typNorm = normalisiereTyp(typ);
+
+    if (zielTyp && typNorm === zielTyp) {
+        return 0;
+    }
+
+    if (typNorm === "tuer") {
+        return 1;
+    }
+
+    if (typNorm === "flur") {
+        return 2;
+    }
+
+    if (typNorm === "vertikal") {
+        return 3;
+    }
+
+    return 4;
+}
+
+function waehleKnotenIdFuerName(name, zielTyp = null) {
+    const ids = globaleKnotenIdsByName[name] || [];
+
+    if (!ids.length) {
+        return null;
+    }
+
+    let besteId = ids[0];
+    let bestePrioritaet = Infinity;
+
+    ids.forEach((id) => {
+        const meta = globaleKnotenMeta[id] || {};
+        const prioritaet = priorisiereTyp(meta.typ, zielTyp);
+
+        if (prioritaet < bestePrioritaet) {
+            bestePrioritaet = prioritaet;
+            besteId = id;
+        }
+    });
+
+    return besteId;
+}
+
+function addEdge(graph, from, to, cost) {
+    graph[from][to] = cost;
+    graph[to][from] = cost;
+}
+
+function habenKontakt(f1, f2) {
+    try {
+        if (turf.booleanIntersects(f1, f2)) {
+            return true;
+        }
+    } catch (e) {
+    }
+
+    if (!istVerbindungsTyp(f1) && !istVerbindungsTyp(f2)) {
+        return false;
+    }
+
+    try {
+        const gepuffert1 = turf.buffer(f1, 0.1, {units: "meters"});
+
+        if (turf.booleanIntersects(gepuffert1, f2)) {
+            return true;
+        }
+    } catch (e) {
+    }
+
+    try {
+        const gepuffert2 = turf.buffer(f2, 0.1, {units: "meters"});
+
+        return turf.booleanIntersects(f1, gepuffert2);
+    } catch (e) {
+        return false;
+    }
+}
 
 function gibRaumEtage(raumName) {
     if (!raumName) {
@@ -23,10 +225,6 @@ function gibRaumEtage(raumName) {
     }
 
     return raumName.split("_")[1] || "00";
-}
-
-function gibRaumText(feature, feldName) {
-    return String((feature.properties || {})[feldName] || "").toLowerCase();
 }
 
 function findeRaum(features, suchwert) {
@@ -50,7 +248,7 @@ function findeRaum(features, suchwert) {
 }
 
 function gibFeatureStyle(f) {
-    let type = f.properties.use_type;
+    let type = getFeatureTyp(f);
 
     if (f.properties.name === START_RAUM) {
         return {
@@ -64,19 +262,19 @@ function gibFeatureStyle(f) {
         };
     }
 
-    if (type === "Tuer") {
+    if (type === "tuer") {
         return {
             color: "#f59e0b", weight: 2, fillOpacity: 0.8
         };
     }
 
-    if (type === "Flur") {
+    if (type === "flur") {
         return {
             color: "#a8a29e", weight: 1, fillOpacity: 0.2
         };
     }
 
-    if (type === "Treppenhaus" || type === "Aufzug") {
+    if (type === "vertikal") {
         return {
             color: "#8b5cf6", fillColor: "#a78bfa", fillOpacity: 0.5
         };
@@ -129,6 +327,7 @@ Promise.all(ladeProzesse)
         }
 
         ZIEL_RAUM = zielFeature.properties.name;
+        globaleZielTyp = getFeatureTyp(zielFeature);
         aktuelleZielEtage = gibRaumEtage(ZIEL_RAUM);
 
         Object.keys(geladeneEtagen).forEach((etage) => {
@@ -141,7 +340,10 @@ Promise.all(ladeProzesse)
             let {graph, centroids} = baueGlobalesNetzwerk(alleFeatures);
 
             globaleCentroids = centroids;
-            routingPfad = berechneDijkstra(START_RAUM, ZIEL_RAUM, graph);
+            const startKnotenId = waehleKnotenIdFuerName(START_RAUM, "tuer");
+            const zielKnotenId = waehleKnotenIdFuerName(ZIEL_RAUM, globaleZielTyp);
+
+            routingPfad = berechneDijkstra(startKnotenId, zielKnotenId, graph);
 
             if (routingPfad) {
                 document.getElementById("info-box").innerHTML = `<strong>Route gefunden!</strong> Ziel: ${ZIEL_RAUM} (${routingPfad.length} Wegpunkte)`;
@@ -158,71 +360,93 @@ Promise.all(ladeProzesse)
     });
 
 function baueGlobalesNetzwerk(features) {
+    globaleKnotenMeta = {};
+    globaleKnotenIdsByName = {};
+
     let graph = {};
     let centroids = {};
+    let nodeIdsByName = {};
+    let valideFeatures = features.filter((f) => f?.properties?.name);
 
-    features.forEach((f) => {
-        let name = f.properties.name;
+    valideFeatures.forEach((f, index) => {
+        const props = f.properties || {};
+        const name = String(props.name || "");
+        const nodeId = erstelleKnotenId(f, index);
 
-        if (!name) {
-            return;
+        graph[nodeId] = {};
+        centroids[nodeId] = turf.centroid(f).geometry.coordinates;
+        globaleKnotenMeta[nodeId] = {
+            name: name,
+            typ: getFeatureTyp(f),
+            rawTyp: normalisiereTyp(props.use_type),
+            gebaeude: getRaumBuilding(name),
+            etage: getRaumEtage(name),
+            feature: f
+        };
+
+        if (!nodeIdsByName[name]) {
+            nodeIdsByName[name] = [];
         }
 
-        graph[name] = {};
-        centroids[name] = turf.centroid(f).geometry.coordinates;
+        nodeIdsByName[name].push(nodeId);
     });
 
-    for (let i = 0; i < features.length; i++) {
-        for (let j = i + 1; j < features.length; j++) {
-            let f1 = features[i];
-            let f2 = features[j];
+    globaleKnotenIdsByName = nodeIdsByName;
 
-            let n1 = f1.properties.name;
-            let n2 = f2.properties.name;
+    for (let i = 0; i < valideFeatures.length; i++) {
+        for (let j = i + 1; j < valideFeatures.length; j++) {
+            let f1 = valideFeatures[i];
+            let f2 = valideFeatures[j];
+            let n1 = erstelleKnotenId(f1, i);
+            let n2 = erstelleKnotenId(f2, j);
 
             if (!n1 || !n2) {
                 continue;
             }
 
-            let t1 = f1.properties.use_type;
-            let t2 = f2.properties.use_type;
+            let meta1 = globaleKnotenMeta[n1] || {};
+            let meta2 = globaleKnotenMeta[n2] || {};
 
-            let etage1 = n1.split("_")[1];
-            let etage2 = n2.split("_")[1];
+            let gebaeude1 = meta1.gebaeude || getRaumBuilding(meta1.name);
+            let gebaeude2 = meta2.gebaeude || getRaumBuilding(meta2.name);
+            let etage1 = meta1.etage || getRaumEtage(meta1.name);
+            let etage2 = meta2.etage || getRaumEtage(meta2.name);
+
+            if (gebaeude1 !== gebaeude2) {
+                if (etage1 === etage2) {
+                    let typ1 = meta1.typ;
+                    let typ2 = meta2.typ;
+
+                    if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2)) {
+                        // Nur erlauben, wenn mindestens eines der Elemente eine Tür/Eingang ist,
+                        // oder wenn zwei Außenwege (Flur) aneinandergrenzen.
+                        if (typ1 === "tuer" || typ2 === "tuer" || (typ1 === "flur" && typ2 === "flur")) {
+                            let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
+                            addEdge(graph, n1, n2, distanz);
+                        }
+                    }
+                }
+                continue;
+            }
 
             if (etage1 === etage2) {
-                let isValidConnection = t1 === "Tuer" || t2 === "Tuer" || (t1 === "Flur" && t2 === "Flur") || t1 === "Treppenhaus" || t2 === "Treppenhaus";
+                let typ1 = meta1.typ;
+                let typ2 = meta2.typ;
 
-                if (isValidConnection) {
-                    try {
-                        let f1Puffer = turf.buffer(f1, 0.5, {units: "meters"});
+                if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2)) {
+                    let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
 
-                        if (turf.booleanIntersects(f1Puffer, f2)) {
-                            let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
-
-                            graph[n1][n2] = distanz;
-                            graph[n2][n1] = distanz;
-                        }
-                    } catch (e) {
-                    }
+                    addEdge(graph, n1, n2, distanz);
                 }
-            } else {
-                let isVerticalElement = (t1 === "Treppenhaus" || t1 === "Aufzug") && (t2 === "Treppenhaus" || t2 === "Aufzug");
 
-                if (isVerticalElement) {
-                    let stockwerk1 = parseInt(etage1, 10);
-                    let stockwerk2 = parseInt(etage2, 10);
+                continue;
+            }
 
-                    if (Math.abs(stockwerk1 - stockwerk2) === 1) {
-                        try {
-                            if (turf.booleanIntersects(f1, f2)) {
-                                graph[n1][n2] = 5;
-                                graph[n2][n1] = 5;
-                            }
-                        } catch (e) {
-                        }
-                    }
-                }
+            let stockwerk1 = parseInt(etage1, 10);
+            let stockwerk2 = parseInt(etage2, 10);
+
+            if (Math.abs(stockwerk1 - stockwerk2) === 1 && istVertikalTyp(f1) && istVertikalTyp(f2) && habenKontakt(f1, f2)) {
+                addEdge(graph, n1, n2, 5);
             }
         }
     }
@@ -304,11 +528,11 @@ window.wechsleEtage = function (zielEtage) {
     if (routingPfad) {
         let koordinatenFuerDieseEtage = [];
 
-        routingPfad.forEach((raumName) => {
-            let raumEtage = raumName.split("_")[1];
+        routingPfad.forEach((knotenId) => {
+            let raumEtage = (globaleKnotenMeta[knotenId] || {}).etage || "00";
 
-            if (raumEtage === zielEtage && globaleCentroids[raumName]) {
-                let koord = globaleCentroids[raumName];
+            if (raumEtage === zielEtage && globaleCentroids[knotenId]) {
+                let koord = globaleCentroids[knotenId];
                 koordinatenFuerDieseEtage.push([koord[1], koord[0]]);
             }
         });
