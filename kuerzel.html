@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Kürzel eingeben</title>
     <style>
         body {
@@ -15,21 +15,24 @@
             margin: 0;
             background-color: #f5f5f5;
         }
+
         .form-container {
             background: white;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
+
         input {
             padding: 10px 15px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin: 20px 0;
-            width: 200px;
+            width: 260px;
         }
+
         button {
             padding: 10px 25px;
             font-size: 16px;
@@ -40,35 +43,66 @@
             color: white;
             margin: 5px;
         }
+
         button:hover {
             background-color: #1e7e34;
         }
+
         .back-btn {
             background-color: #6c757d;
         }
+
         .back-btn:hover {
             background-color: #545b62;
         }
     </style>
 </head>
 <body>
-    <script defer src="./Code/backend/roomfinder.js" type="module"></script>
-    <div class="form-container">
-        <h1>Kürzel eingeben</h1>
+<div class="form-container">
+    <h1>Kürzel eingeben</h1>
 
-        <input type="text" id="kuerzel" placeholder="z.B.GPU-Pool (3.02) [VSP 1]" maxlength="100">
-        <div id="errorMsg" style="color:red; font-size:12px; display:none; margin-top:5px;">
-            bitte Raum eintragen
-        </div>
-        <br>
+    <input
+            id="kuerzel"
+            maxlength="100"
+            placeholder="z.B. GPU-Pool (3.02) [VSP 1]"
+            type="text"
+    >
 
-        <button id="submitBtn">Absenden</button>
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            Zurück
-        </button>
+    <div id="errorMsg" style="color:red; font-size:12px; display:none; margin-top:5px;">
+        Bitte Raum eintragen
     </div>
-    <div id="result"></div>
 
-    
+    <br>
+
+    <button id="submitBtn">Absenden</button>
+
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        Zurück
+    </button>
+</div>
+
+<script>
+    const input = document.getElementById("kuerzel");
+    const btn = document.getElementById("submitBtn");
+    const errorMsg = document.getElementById("errorMsg");
+
+    btn.addEventListener("click", () => {
+        const value = input.value.trim();
+
+        if (!value) {
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        errorMsg.style.display = "none";
+        window.location.href = `map-routing.html?ziel=${encodeURIComponent(value)}`;
+    });
+
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            btn.click();
+        }
+    });
+</script>
 </body>
 </html>

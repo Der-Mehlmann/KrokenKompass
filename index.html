@@ -16,13 +16,16 @@
             margin: 0;
             background-color: #f5f5f5;
         }
+
         h1 {
             margin-bottom: 40px;
         }
+
         .button-container {
             display: flex;
             gap: 20px;
         }
+
         button {
             padding: 15px 30px;
             font-size: 18px;
@@ -33,17 +36,21 @@
             color: white;
             transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Willkommen</h1>
-    <div class="button-container">
-        <button onclick="window.location.href='kuerzel.html'">Kürzel eingeben</button>
-        <button onclick="window.location.href='name.html'">Namen eingeben</button>
-    </div>
+<h1>Willkommen</h1>
+<div class="button-container">
+    <button onclick="window.location.href='kuerzel.html'">Kürzel eingeben</button>
+    <button onclick="window.location.href='name.html'">Namen eingeben</button>
+    <a href="map-routing.html">
+        <button>Karte</button>
+    </a>
+</div>
 <script defer src="./Code/javaScriptFiles/index.js" type="module"></script>
 </body>
 </html>
