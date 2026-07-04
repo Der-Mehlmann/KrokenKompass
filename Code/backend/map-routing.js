@@ -6,7 +6,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 22
 }).addTo(map);
 
-const START_RAUM = "7723_00_010";
+const START_RAUM = "7721_00_011";
 const zielSuchwert = new URLSearchParams(window.location.search).get("ziel");
 
 var ZIEL_RAUM = null;
