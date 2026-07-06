@@ -2,83 +2,281 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>3D Indoor-Routing: Campus-Plan</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Karte - KrokenKompass</title>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
 
+    <link href="./Code/frontend/cssFiles/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"/>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+    </script>
+
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
+        /* Spezifische Layout-Anpassungen für die Karte im Rahmen */
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            /* Zieht die Höhe auf den maximal verfügbaren Platz abzüglich Header/Footer */
+            min-height: calc(100vh - 200px);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
         }
 
         #map {
-            width: 100vw;
-            height: 100vh;
-        }
-
-        #info-box {
+            width: 100%;
+            height: 100%;
             position: absolute;
-            top: 10px;
-            left: 70px;
-            z-index: 1000;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
+        /* --- Neues Etagen-Menü (Figma Design) --- */
         #etagen-menue {
             position: absolute;
-            top: 60px;
-            left: 10px;
+            top: 24px;
+            left: 24px;
             z-index: 1000;
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            background: var(--bulma-scheme-main, #ffffff);
+            padding: 8px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
+            min-width: 80px;
+        }
+
+        /* Der kleine graue Hintergrund für das Label "Etage" */
+        .etagen-label {
+            font-size: 0.75rem;
+            color: var(--bulma-text-light, #8e8e93);
+            font-weight: 500;
+            background-color: var(--button-light-bg, #f2f2f7);
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
         }
 
         .etagen-btn {
-            padding: 8px 12px;
+            padding: 6px 12px;
             cursor: pointer;
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            border-radius: 3px;
-            font-weight: bold;
+            background: transparent;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--bulma-text, #1c1c1e);
+            text-align: left;
+            transition: all 0.2s ease;
         }
 
         .etagen-btn:hover {
-            background: #e5e7eb;
+            background-color: var(--button-light-bg, #f2f2f7);
         }
 
         .etagen-btn.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #2563eb;
+            background-color: var(--bulma-info, #007AFF);
+            color: var(--bulma-info-invert, #ffffff);
+            font-weight: 600;
+        }
+
+        /* Info-Box Styling (schwebt oben mittig) */
+        #info-box {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--bulma-scheme-main, #ffffff);
+            color: var(--bulma-text, #1c1c1e);
+            padding: 10px 20px;
+            border-radius: 999px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none; /* Klicks gehen durch die Box hindurch */
+        }
+
+        /* Versteckt die Standard-Leaflet-Zoom-Controls auf mobilen Geräten oder passt sie an */
+        .leaflet-control-zoom {
+            margin-top: 100px !important; /* Platz für das Etagenmenü schaffen */
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .leaflet-control-zoom a {
+            color: var(--bulma-text) !important;
+            background-color: var(--bulma-scheme-main) !important;
+        }
+
+        /* Dark Mode Spezifika */
+        @media (prefers-color-scheme: dark) {
+            html:not([data-theme="light"]) .map-wrapper {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        html[data-theme="dark"] .map-wrapper {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
-<body>
+<body class="is-flex is-flex-direction-column" style="min-height: 100vh;">
 
-<div id="etagen-menue">
-    <div style="font-size: 12px; color: #666; margin-bottom: 5px; text-align: center;">Etage</div>
-    <button class="etagen-btn" data-etage="05" onclick="wechsleEtage('05')">05</button>
-    <button class="etagen-btn" data-etage="04" onclick="wechsleEtage('04')">04</button>
-    <button class="etagen-btn" data-etage="03" onclick="wechsleEtage('03')">03</button>
-    <button class="etagen-btn" data-etage="02" onclick="wechsleEtage('02')">02</button>
-    <button class="etagen-btn" data-etage="01" onclick="wechsleEtage('01')">01</button>
-    <button class="etagen-btn active" data-etage="00" onclick="wechsleEtage('00')">00</button>
-    <button class="etagen-btn" data-etage="-1" onclick="wechsleEtage('-1')">-1</button>
-</div>
+<header class="header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6">
 
-<div id="info-box">Lade Gebäudedaten und baue 3D-Netzwerk...</div>
-<div id="map"></div>
+    <div class="is-flex is-align-items-center cursor-pointer" onclick="window.location.href='index.html'">
+        <svg class="mr-2" fill="currentColor" height="20" viewBox="0 0 24 24" width="20"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z"/>
+        </svg>
+        <span class="has-text-weight-medium is-size-5-desktop is-size-6-mobile">KrokenKompass</span>
+    </div>
+
+    <div class="is-flex is-align-items-center">
+        <button aria-label="Dark Mode wechseln" class="theme-toggle mr-4" id="theme-toggle">
+            <svg fill="none" height="20" id="moon-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" viewBox="0 0 24 24" width="20">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg fill="none" height="20" id="sun-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" style="display: none;" viewBox="0 0 24 24" width="20">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" x2="12" y1="1" y2="3"></line>
+                <line x1="12" x2="12" y1="21" y2="23"></line>
+                <line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line>
+                <line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line>
+                <line x1="1" x2="3" y1="12" y2="12"></line>
+                <line x1="21" x2="23" y1="12" y2="12"></line>
+                <line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line>
+                <line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line>
+            </svg>
+        </button>
+
+        <button class="button is-info is-rounded has-text-weight-medium px-4"
+                onclick="window.location.href='kuerzel.html'">
+            Raum finden
+        </button>
+    </div>
+</header>
+
+<main class="section py-4 is-flex-grow-1 is-flex is-flex-direction-column">
+    <div class="container is-max-widescreen is-flex-grow-1 is-flex is-flex-direction-column w-100">
+
+        <div class="map-wrapper is-flex-grow-1">
+
+            <div id="info-box">Lade Gebäudedaten...</div>
+
+            <div id="etagen-menue">
+                <div class="etagen-label">Etage</div>
+                <button class="etagen-btn" data-etage="05" onclick="wechsleEtage('05')">5</button>
+                <button class="etagen-btn" data-etage="04" onclick="wechsleEtage('04')">4</button>
+                <button class="etagen-btn" data-etage="03" onclick="wechsleEtage('03')">3</button>
+                <button class="etagen-btn" data-etage="02" onclick="wechsleEtage('02')">2</button>
+                <button class="etagen-btn" data-etage="01" onclick="wechsleEtage('01')">1</button>
+                <button class="etagen-btn active" data-etage="00" onclick="wechsleEtage('00')">EG / 0</button>
+                <button class="etagen-btn" data-etage="-1" onclick="wechsleEtage('-1')">-1</button>
+            </div>
+
+            <div id="map"></div>
+        </div>
+
+    </div>
+</main>
+
+<footer class="footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center"
+        style="border-top: 1px solid var(--bulma-border-weak);">
+    <div class="is-flex is-align-items-center footer-links-custom">
+        <svg class="mr-2" fill="currentColor" height="18" viewBox="0 0 24 24" width="18"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z"/>
+        </svg>
+        <span class="has-text-weight-medium mr-5">KrokenKompass</span>
+
+        <a class="has-text-grey mr-4 is-size-7" href="#">Features</a>
+        <a class="has-text-grey mr-4 is-size-7" href="#">Learn more</a>
+        <a class="has-text-grey is-size-7" href="#">Support</a>
+    </div>
+
+    <div class="is-flex is-align-items-center is-justify-content-center gap-4" style="gap: 1.5rem;">
+        <a class="social-icon" href="#">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 viewBox="0 0 24 24">
+                <rect height="20" rx="5" ry="5" width="20" x="2" y="2"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+            </svg>
+        </a>
+        <a class="social-icon" href="#">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 viewBox="0 0 24 24">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect height="12" width="4" x="2" y="9"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+        </a>
+        <a class="social-icon" href="#">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 viewBox="0 0 24 24">
+                <line x1="4" x2="20" y1="4" y2="20"></line>
+                <line x1="20" x2="4" y1="4" y2="20"></line>
+            </svg>
+        </a>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const htmlEl = document.documentElement;
+
+        function updateIcon() {
+            const isDark = htmlEl.getAttribute('data-theme') === 'dark' ||
+                (!htmlEl.hasAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        updateIcon();
+
+        toggleBtn.addEventListener('click', () => {
+            let currentTheme = htmlEl.getAttribute('data-theme');
+            if (!currentTheme) {
+                currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon();
+        });
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (!localStorage.getItem('theme')) {
+                updateIcon();
+            }
+        });
+    });
+</script>
 
 <script src="./Code/backend/map-routing.js"></script>
 
