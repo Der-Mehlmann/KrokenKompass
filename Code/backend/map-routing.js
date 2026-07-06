@@ -1,4 +1,4 @@
-var map = L.map("map", {zoomControl: false}).setView([51.4816, 11.9691], 19);
+var map = L.map("map", {zoomControl: false}).setView([51.496796, 11.935968], 18);
 
 L.control.zoom({position: "bottomright"}).addTo(map);
 
