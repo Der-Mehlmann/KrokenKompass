@@ -124,6 +124,17 @@ body {
 }
 
 /* =========================================
+   DESKTOP OPTIMIERUNG (Perfekte Symmetrie)
+   ========================================= */
+@media (min-width: 769px) {
+    /* Macht beide Buttons exakt gleich breit, damit die Lücke in der absoluten Mitte liegt */
+    .hero-buttons-custom .button {
+        min-width: 180px;
+        justify-content: center;
+    }
+}
+
+/* =========================================
    MOBILE OPTIMIERUNG (Smartphones bis 768px)
    ========================================= */
 @media (max-width: 768px) {
