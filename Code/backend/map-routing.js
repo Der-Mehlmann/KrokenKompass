@@ -6,8 +6,9 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 22
 }).addTo(map);
 
-const START_RAUM = "7721_00_059b";
+let START_RAUM = "7721_00_059b"; // Fallback
 const zielSuchwert = new URLSearchParams(window.location.search).get("ziel");
+const startSuchwert = new URLSearchParams(window.location.search).get("start");
 
 var ZIEL_RAUM = null;
 var etagenListe = ["-1", "00", "01", "02", "03", "04", "05"];
@@ -329,6 +330,15 @@ Promise.all(ladeProzesse)
         ZIEL_RAUM = zielFeature.properties.name;
         globaleZielTyp = getFeatureTyp(zielFeature);
         aktuelleZielEtage = gibRaumEtage(ZIEL_RAUM);
+
+        if (startSuchwert) {
+            const startFeature = findeRaum(alleFeatures, startSuchwert);
+            if (startFeature) {
+                START_RAUM = startFeature.properties.name;
+            } else {
+                console.warn("Startraum nicht gefunden, verwende Fallback:", startSuchwert);
+            }
+        }
 
         Object.keys(geladeneEtagen).forEach((etage) => {
             geladeneEtagen[etage].setStyle(gibFeatureStyle);
