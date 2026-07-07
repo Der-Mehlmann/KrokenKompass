@@ -366,6 +366,14 @@ Promise.all(ladeProzesse)
                 window.isInitialized = true;
             }
             wechsleEtage(startEtage);
+
+            const overlay = document.getElementById("loading-overlay");
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+            }
         }, 100);
     })
     .catch((err) => {
