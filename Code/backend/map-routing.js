@@ -189,7 +189,7 @@ function addEdge(graph, from, to, cost) {
     graph[to][from] = cost;
 }
 
-function habenKontakt(f1, f2) {
+function habenKontakt(f1, f2, bufferDistance = 0.1) {
     try {
         if (turf.booleanIntersects(f1, f2)) {
             return true;
@@ -202,7 +202,7 @@ function habenKontakt(f1, f2) {
     }
 
     try {
-        const gepuffert1 = turf.buffer(f1, 0.1, {units: "meters"});
+        const gepuffert1 = turf.buffer(f1, bufferDistance, {units: "meters"});
 
         if (turf.booleanIntersects(gepuffert1, f2)) {
             return true;
@@ -211,7 +211,7 @@ function habenKontakt(f1, f2) {
     }
 
     try {
-        const gepuffert2 = turf.buffer(f2, 0.1, {units: "meters"});
+        const gepuffert2 = turf.buffer(f2, bufferDistance, {units: "meters"});
 
         return turf.booleanIntersects(f1, gepuffert2);
     } catch (e) {
@@ -351,7 +351,11 @@ Promise.all(ladeProzesse)
                 document.getElementById("info-box").innerText = "Keine Route gefunden. Fehlen Treppenverbindungen oder ist der Raum nicht erreichbar?";
             }
 
-            wechsleEtage("00");
+            let startEtage = getRaumEtage(START_RAUM) || "00";
+            if (!window.isInitialized) {
+                window.isInitialized = true;
+            }
+            wechsleEtage(startEtage);
         }, 100);
     })
     .catch((err) => {
@@ -374,7 +378,15 @@ function baueGlobalesNetzwerk(features) {
         const nodeId = erstelleKnotenId(f, index);
 
         graph[nodeId] = {};
-        centroids[nodeId] = turf.centroid(f).geometry.coordinates;
+
+        // Nutze pointOnFeature statt centroid, um sicherzustellen, dass der Punkt 
+        // innerhalb des Polygons liegt (verhindert Probleme bei L-förmigen Fluren)
+        try {
+            centroids[nodeId] = turf.pointOnFeature(f).geometry.coordinates;
+        } catch (e) {
+            centroids[nodeId] = turf.centroid(f).geometry.coordinates;
+        }
+
         globaleKnotenMeta[nodeId] = {
             name: name,
             typ: getFeatureTyp(f),
@@ -417,11 +429,23 @@ function baueGlobalesNetzwerk(features) {
                     let typ1 = meta1.typ;
                     let typ2 = meta2.typ;
 
-                    if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2)) {
+                    // Für externe Verbindungen (Gebäudeübergänge) erlauben wir eine höhere Toleranz (3.0 Meter), 
+                    // da die Polygone draußen oft Lücken aufweisen.
+                    if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2, 3.0)) {
                         // Nur erlauben, wenn mindestens eines der Elemente eine Tür/Eingang ist,
                         // oder wenn zwei Außenwege (Flur) aneinandergrenzen.
                         if (typ1 === "tuer" || typ2 === "tuer" || (typ1 === "flur" && typ2 === "flur")) {
                             let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
+
+                            let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal");
+                            let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal");
+                            if (isRaum1 || isRaum2) {
+                                distanz += 5000;
+                            }
+                            if (typ1 === "tuer" && typ2 === "tuer") {
+                                distanz += 500;
+                            }
+                            
                             addEdge(graph, n1, n2, distanz);
                         }
                     }
@@ -433,8 +457,29 @@ function baueGlobalesNetzwerk(features) {
                 let typ1 = meta1.typ;
                 let typ2 = meta2.typ;
 
-                if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2)) {
+                // Erlaube 3.0 Meter Lücken-Toleranz für Flur-Flur und Flur-Tür (auch im selben Gebäude!), 
+                // um ungenaue Geodaten draußen auszugleichen. Für Räume bleiben wir strikt bei 0.1m.
+                let puffer = 0.1;
+                if ((typ1 === "tuer" && typ2 === "flur") || (typ1 === "flur" && typ2 === "tuer") || (typ1 === "flur" && typ2 === "flur")) {
+                    puffer = 3.0;
+                }
+
+                if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2, puffer)) {
                     let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
+
+                    let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal");
+                    let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal");
+
+                    // Verhindere, dass der Algorithmus durch fremde Räume abkürzt!
+                    // Eine massive Distanz-Strafe sorgt dafür, dass Flure bevorzugt werden.
+                    if (isRaum1 || isRaum2) {
+                        distanz += 5000;
+                    }
+
+                    // Bestrafe auch direkte Tür-zu-Tür Sprünge leicht, es sei denn es gibt keinen anderen Weg
+                    if (typ1 === "tuer" && typ2 === "tuer") {
+                        distanz += 500;
+                    }
 
                     addEdge(graph, n1, n2, distanz);
                 }
@@ -509,6 +554,51 @@ function berechneDijkstra(start, ziel, graph) {
     return pfad[0] === start ? pfad : null;
 }
 
+function berechneUebergang(f1, f2) {
+    if (!f1 || !f2) return null;
+
+    // 1. Echter Schnittpunkt
+    try {
+        let intersection = turf.intersect(f1, f2);
+        if (intersection) {
+            return turf.centroid(intersection).geometry.coordinates;
+        }
+    } catch (e) {
+    }
+
+    // 2. Fallbacks mit größer werdenden Puffern (um Lücken zu schließen)
+    let buffers = [0.2, 1.0, 3.0];
+    for (let b of buffers) {
+        try {
+            let buf1 = turf.buffer(f1, b, {units: "meters"});
+            let intersection = turf.intersect(buf1, f2);
+            if (intersection) {
+                return turf.centroid(intersection).geometry.coordinates;
+            }
+        } catch (e) {
+        }
+
+        try {
+            let buf2 = turf.buffer(f2, b, {units: "meters"});
+            let intersection = turf.intersect(f1, buf2);
+            if (intersection) {
+                return turf.centroid(intersection).geometry.coordinates;
+            }
+        } catch (e) {
+        }
+    }
+
+    // 3. Fallback: Wenn alle Intersections fehlschlagen, nimm den exakten Mittelpunkt zwischen den beiden Features!
+    // Das verhindert, dass Knoten übersprungen werden und die Linie durch Wände "schwebt".
+    try {
+        let c1 = turf.centroid(f1).geometry.coordinates;
+        let c2 = turf.centroid(f2).geometry.coordinates;
+        return [(c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2];
+    } catch (e) {
+        return null;
+    }
+}
+
 window.wechsleEtage = function (zielEtage) {
     Object.values(geladeneEtagen).forEach((layer) => map.removeLayer(layer));
 
@@ -528,12 +618,35 @@ window.wechsleEtage = function (zielEtage) {
     if (routingPfad) {
         let koordinatenFuerDieseEtage = [];
 
-        routingPfad.forEach((knotenId) => {
-            let raumEtage = (globaleKnotenMeta[knotenId] || {}).etage || "00";
+        routingPfad.forEach((knotenId, index) => {
+            let meta = globaleKnotenMeta[knotenId] || {};
+            let raumEtage = meta.etage || "00";
+            let typ = meta.typ;
+            let currentFeature = meta.feature;
 
-            if (raumEtage === zielEtage && globaleCentroids[knotenId]) {
-                let koord = globaleCentroids[knotenId];
-                koordinatenFuerDieseEtage.push([koord[1], koord[0]]);
+            if (raumEtage === zielEtage) {
+                // 1. Zeichne den Mittelpunkt des Features (NUR für Start/Ende, und Räume überspringen)
+                let isStartOrEnd = (index === 0 || index === routingPfad.length - 1);
+                let isRaum = (typ !== "tuer" && typ !== "flur" && typ !== "vertikal");
+
+                // WICHTIG: Für Zwischenknoten (wie Flure) lassen wir den Mittelpunkt komplett weg!
+                // Dadurch entsteht kein "V" mehr, die Linie verläuft direkt vom einen Übergang zum nächsten.
+                if (isStartOrEnd && !isRaum && globaleCentroids[knotenId]) {
+                    let koord = globaleCentroids[knotenId];
+                    koordinatenFuerDieseEtage.push([koord[1], koord[0]]);
+                }
+
+                // 2. Zeichne den perfekten Übergangspunkt (Schnittmenge) zum nächsten Feature
+                if (index < routingPfad.length - 1) {
+                    let nextId = routingPfad[index + 1];
+                    let nextMeta = globaleKnotenMeta[nextId] || {};
+                    if (nextMeta.etage === zielEtage && currentFeature && nextMeta.feature) {
+                        let uebergang = berechneUebergang(currentFeature, nextMeta.feature);
+                        if (uebergang) {
+                            koordinatenFuerDieseEtage.push([uebergang[1], uebergang[0]]);
+                        }
+                    }
+                }
             }
         });
 
