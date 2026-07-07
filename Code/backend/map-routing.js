@@ -346,6 +346,12 @@ Promise.all(ladeProzesse)
 
         document.getElementById("info-box").innerText = `Ziel gefunden: ${ZIEL_RAUM}. Berechne globales 3D-Routing-Netzwerk...`;
 
+        const overlay = document.getElementById("loading-overlay");
+        if (overlay) {
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '1';
+        }
+
         setTimeout(() => {
             let {graph, centroids} = baueGlobalesNetzwerk(alleFeatures);
 
