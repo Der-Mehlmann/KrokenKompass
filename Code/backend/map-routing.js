@@ -633,6 +633,11 @@ window.wechsleEtage = function (zielEtage) {
         aktuelleRoutenLinie = null;
     }
 
+    if (window.aktuelleRoutenMarker) {
+        window.aktuelleRoutenMarker.forEach(m => map.removeLayer(m));
+    }
+    window.aktuelleRoutenMarker = [];
+
     if (geladeneEtagen[zielEtage]) {
         geladeneEtagen[zielEtage].addTo(map);
     }
@@ -672,6 +677,36 @@ window.wechsleEtage = function (zielEtage) {
                             koordinatenFuerDieseEtage.push([uebergang[1], uebergang[0]]);
                         }
                     }
+                }
+
+                // 3. Markierung für Etagenwechsel (Treppen/Aufzüge)
+                if (typ === "vertikal" && globaleCentroids[knotenId]) {
+                    let koord = globaleCentroids[knotenId];
+                    let nextId = routingPfad[index + 1];
+                    let prevId = routingPfad[index - 1];
+                    let nextMeta = nextId ? globaleKnotenMeta[nextId] : null;
+                    let prevMeta = prevId ? globaleKnotenMeta[prevId] : null;
+
+                    let msg = "Treppe / Aufzug";
+                    if (nextMeta && nextMeta.etage !== zielEtage) {
+                        msg = `Hier Etage wechseln (nach ${nextMeta.etage})`;
+                    } else if (prevMeta && prevMeta.etage !== zielEtage) {
+                        msg = `Von Etage ${prevMeta.etage} kommend`;
+                    }
+
+                    let m = L.circleMarker([koord[1], koord[0]], {
+                        radius: 7,
+                        fillColor: "#ec4899",
+                        color: "#fff",
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 1
+                    }).bindTooltip(msg, {
+                        permanent: true,
+                        direction: "right",
+                        className: "floor-change-tooltip"
+                    }).addTo(map);
+                    window.aktuelleRoutenMarker.push(m);
                 }
             }
         });

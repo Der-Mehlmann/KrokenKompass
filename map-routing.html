@@ -42,6 +42,21 @@
             z-index: 1;
         }
 
+        .floor-change-tooltip {
+            background-color: #ec4899;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            padding: 4px 10px;
+        }
+
+        .floor-change-tooltip::before {
+            border-right-color: #ec4899 !important;
+            border-left-color: #ec4899 !important;
+        }
+
         #loading-overlay {
             position: absolute;
             top: 0;
