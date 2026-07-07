@@ -481,10 +481,12 @@ function baueGlobalesNetzwerk(features) {
                 let typ1 = meta1.typ;
                 let typ2 = meta2.typ;
 
-                // Erlaube 3.0 Meter Lücken-Toleranz für Flur-Flur und Flur-Tür (auch im selben Gebäude!), 
-                // um ungenaue Geodaten draußen auszugleichen. Für Räume bleiben wir strikt bei 0.1m.
+                // Erlaube 3.0 Meter Lücken-Toleranz NUR für externe Wege (Outdoor Flur-Flur),
+                // wo gebaeude1 und gebaeude2 undefined sind. 
+                // Für Gebäude-interne Wege (Räume, Türen, interne Flure) MÜSSEN wir strikt bei 0.1m bleiben,
+                // da der Algorithmus sonst durch Wände und Zwischenräume springt!
                 let puffer = 0.1;
-                if ((typ1 === "tuer" && typ2 === "flur") || (typ1 === "flur" && typ2 === "tuer") || (typ1 === "flur" && typ2 === "flur")) {
+                if (!gebaeude1 && !gebaeude2 && typ1 === "flur" && typ2 === "flur") {
                     puffer = 3.0;
                 }
 
