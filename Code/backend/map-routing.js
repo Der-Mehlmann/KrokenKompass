@@ -42,14 +42,31 @@ function klassifiziereTyp(feature) {
     }
 
     if (
+        typ.includes("eingangstür") ||
+        typ.includes("eingangstuer") ||
+        typ.includes("ausgangstür") ||
+        typ.includes("ausgangstuer")
+    ) {
+        return "eingang";
+    }
+
+    if (
         typ.includes("eingang") ||
         typ.includes("ausgang") ||
-        typ.includes("tuer") ||
-        typ.includes("durchgang") ||
         typ.includes("windfang") ||
         typ.includes("uebergang")
     ) {
+        return "lobby";
+    }
+
+    if (
+        typ.includes("tuer")
+    ) {
         return "tuer";
+    }
+
+    if (typ.includes("durchgang")) {
+        return "durchgang";
     }
 
     if (typ.includes("treppenhaus") || typ.includes("treppe") || typ.includes("aufzug")) {
@@ -109,23 +126,32 @@ function istSameFloorVerbindungZulaessig(typ1, typ2) {
         return false;
     }
 
+    if (typ1 === "eingang" && typ2 === "vertikal") {
+        return false;
+    }
+
+    if (typ2 === "eingang" && typ1 === "vertikal") {
+        return false;
+    }
+
     if (typ1 === "vertikal" && typ2 === "vertikal") {
         return true;
     }
 
-    if (typ1 === "flur" && (typ2 === "raum" || typ2 === "flur" || typ2 === "vertikal" || typ2 === "tuer")) {
+    if (typ1 === "flur" || typ1 === "durchgang") {
+        if (typ2 === "raum" || typ2 === "flur" || typ2 === "durchgang" || typ2 === "vertikal" || typ2 === "tuer" || typ2 === "eingang" || typ2 === "lobby") return true;
+    }
+
+    if (typ2 === "flur" || typ2 === "durchgang") {
+        if (typ1 === "raum" || typ1 === "flur" || typ1 === "durchgang" || typ1 === "vertikal" || typ1 === "tuer" || typ1 === "eingang" || typ1 === "lobby") return true;
+    }
+
+    // Erlaube tuer-raum, tuer-flur, eingang-raum, eingang-flur, eingang-tuer
+    if (typ1 === "tuer" || typ1 === "eingang" || typ1 === "lobby") {
         return true;
     }
 
-    if (typ2 === "flur" && (typ1 === "raum" || typ1 === "flur" || typ1 === "vertikal" || typ1 === "tuer")) {
-        return true;
-    }
-
-    if (typ1 === "tuer" && (typ2 === "raum" || typ2 === "flur" || typ2 === "tuer")) {
-        return true;
-    }
-
-    if (typ2 === "tuer" && (typ1 === "raum" || typ1 === "flur" || typ1 === "tuer")) {
+    if (typ2 === "tuer" || typ2 === "eingang" || typ2 === "lobby") {
         return true;
     }
 
@@ -263,7 +289,7 @@ function gibFeatureStyle(f) {
         };
     }
 
-    if (type === "tuer") {
+    if (type === "tuer" || type === "eingang" || type === "durchgang" || type === "lobby") {
         return {
             color: "#f59e0b", weight: 2, fillOpacity: 0.8
         };
@@ -461,8 +487,8 @@ function baueGlobalesNetzwerk(features) {
                         if (typ1 === "tuer" || typ2 === "tuer" || (typ1 === "flur" && typ2 === "flur")) {
                             let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
 
-                            let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal");
-                            let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal");
+                            let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal" && typ1 !== "eingang" && typ1 !== "durchgang" && typ1 !== "lobby");
+                            let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal" && typ2 !== "eingang" && typ2 !== "durchgang" && typ2 !== "lobby");
                             if (isRaum1 || isRaum2) {
                                 distanz += 5000;
                             }
@@ -480,21 +506,36 @@ function baueGlobalesNetzwerk(features) {
             if (etage1 === etage2) {
                 let typ1 = meta1.typ;
                 let typ2 = meta2.typ;
+                let gebaeude1 = meta1.gebaeude;
+                let gebaeude2 = meta2.gebaeude;
 
-                // Erlaube 3.0 Meter Lücken-Toleranz für Flur-Flur Verbindungen.
-                // Dadurch werden ungenau gezeichnete Wege (insbesondere draußen) verbunden.
-                // Für Gebäude-interne Wege mit Türen (tuer-flur) MÜSSEN wir strikt bei 0.1m bleiben,
-                // da der Algorithmus sonst durch Wände und Zwischenräume in Räume springt!
+                // Verhindere, dass normale Innentüren ("tuer") sich mit Wegen anderer Gebäude verbinden.
+                // Dadurch wird erzwungen, dass man Gebäude nur durch offizielle Eingänge ("eingang", "lobby", etc.) betritt.
+                if ((typ1 === "tuer" || typ2 === "tuer") && gebaeude1 !== gebaeude2) {
+                    continue;
+                }
+
+                // Erlaube 3.0 Meter Lücken-Toleranz für bestimmte Kombinationen draußen.
+                // Dadurch werden ungenau gezeichnete Wege (durchgang, flur), Außentreppen und Gebäude-Eingänge verbunden.
+                // Für reine Gebäude-interne Wege mit normalen Türen (tuer-flur, tuer-tuer) MÜSSEN wir strikt bei 0.1m bleiben!
                 let puffer = 0.1;
-                if (typ1 === "flur" && typ2 === "flur") {
-                    puffer = 3.0;
+
+                const isOutdoorType = (t) => t === "flur" || t === "durchgang" || t === "eingang" || t === "vertikal";
+
+                if (isOutdoorType(typ1) && isOutdoorType(typ2)) {
+                    // Ausnahmen: eingang-eingang und vertikal-eingang bleiben bei 0.1m, um internes Springen zu verhindern
+                    if (!(typ1 === "eingang" && typ2 === "eingang") &&
+                        !(typ1 === "vertikal" && typ2 === "eingang") &&
+                        !(typ1 === "eingang" && typ2 === "vertikal")) {
+                        puffer = 3.0;
+                    }
                 }
 
                 if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2, puffer)) {
                     let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
 
-                    let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal");
-                    let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal");
+                    let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal" && typ1 !== "eingang" && typ1 !== "durchgang" && typ1 !== "lobby");
+                    let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal" && typ2 !== "eingang" && typ2 !== "durchgang" && typ2 !== "lobby");
 
                     // Verhindere, dass der Algorithmus durch fremde Räume abkürzt!
                     // Eine massive Distanz-Strafe sorgt dafür, dass Flure bevorzugt werden.
@@ -658,7 +699,7 @@ window.wechsleEtage = function (zielEtage) {
             if (raumEtage === zielEtage) {
                 // 1. Zeichne den Mittelpunkt des Features (NUR für Start/Ende, und Räume überspringen)
                 let isStartOrEnd = (index === 0 || index === routingPfad.length - 1);
-                let isRaum = (typ !== "tuer" && typ !== "flur" && typ !== "vertikal");
+                let isRaum = (typ !== "tuer" && typ !== "flur" && typ !== "vertikal" && typ !== "eingang" && typ !== "durchgang" && typ !== "lobby");
 
                 // WICHTIG: Für Zwischenknoten (wie Flure) lassen wir den Mittelpunkt komplett weg!
                 // Dadurch entsteht kein "V" mehr, die Linie verläuft direkt vom einen Übergang zum nächsten.

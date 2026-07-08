@@ -8,6 +8,44 @@
         "coordinates": [
           [
             [
+              11.9369931,
+              51.4965948
+            ],
+            [
+              11.9369979,
+              51.4965912
+            ],
+            [
+              11.9369416,
+              51.49656
+            ],
+            [
+              11.9369361,
+              51.4965643
+            ],
+            [
+              11.9369931,
+              51.4965948
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "gid": 1919,
+        "unit_id": 130,
+        "use_type": "Flur",
+        "name": "7721_00_130",
+        "level_id": 0,
+        "area": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               11.935901277633596,
               51.495959577193126
             ],
@@ -3209,7 +3247,7 @@
       "properties": {
         "gid": 73,
         "unit_id": "010",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_010",
         "level_id": "4",
         "area": 4.04091840155
@@ -3551,7 +3589,7 @@
       "properties": {
         "gid": 82,
         "unit_id": "016",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_016",
         "level_id": "4",
         "area": 6.28427273738
@@ -3893,7 +3931,7 @@
       "properties": {
         "gid": 91,
         "unit_id": "001a",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_001a",
         "level_id": "4",
         "area": 2.3346882191
@@ -4159,7 +4197,7 @@
       "properties": {
         "gid": 100,
         "unit_id": "035",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_035",
         "level_id": "4",
         "area": 4.82818430119
@@ -4395,7 +4433,7 @@
       "properties": {
         "gid": 106,
         "unit_id": "037",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_037",
         "level_id": "4",
         "area": 0.666308093449
@@ -4585,7 +4623,7 @@
       "properties": {
         "gid": 111,
         "unit_id": "043",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_043",
         "level_id": "4",
         "area": 0.978434562013
@@ -4813,7 +4851,7 @@
       "properties": {
         "gid": 117,
         "unit_id": "033",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_033",
         "level_id": "4",
         "area": 0.251910395059
@@ -5505,7 +5543,7 @@
       "properties": {
         "gid": 135,
         "unit_id": "006",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_006",
         "level_id": "4",
         "area": 0.336857723367
@@ -5851,7 +5889,7 @@
       "properties": {
         "gid": 144,
         "unit_id": "008",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_008",
         "level_id": "4",
         "area": 0.733176673394
@@ -5965,7 +6003,7 @@
       "properties": {
         "gid": 147,
         "unit_id": "001b",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7723_00_001b",
         "level_id": "4",
         "area": 0.563901957606
@@ -7519,7 +7557,7 @@
       "properties": {
         "gid": 657,
         "unit_id": "015",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7724_00_015",
         "level_id": "4",
         "area": 1.45539870194
@@ -8193,7 +8231,7 @@
       "properties": {
         "gid": 674,
         "unit_id": "017",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7724_00_017",
         "level_id": "4",
         "area": 0.693426356953
@@ -10595,7 +10633,7 @@
       "properties": {
         "gid": 797,
         "unit_id": "012",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7722_00_012",
         "level_id": "4",
         "area": 0.590630565857
@@ -11203,7 +11241,7 @@
       "properties": {
         "gid": 813,
         "unit_id": "011",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7722_00_011",
         "level_id": "4",
         "area": 0.583407268557
@@ -11853,7 +11891,7 @@
       "properties": {
         "gid": 830,
         "unit_id": "013",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7722_00_013",
         "level_id": "4",
         "area": 0.302865678797
@@ -16753,7 +16791,7 @@
       "properties": {
         "gid": 1261,
         "unit_id": "062",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7721_00_062",
         "level_id": "4",
         "area": 0.487743658737
@@ -16791,7 +16829,7 @@
       "properties": {
         "gid": 1262,
         "unit_id": "015",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7721_00_015",
         "level_id": "4",
         "area": 2.2521351594
@@ -17061,7 +17099,7 @@
       "properties": {
         "gid": 1269,
         "unit_id": "016",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7721_00_016",
         "level_id": "4",
         "area": 0.318994518426
@@ -19193,7 +19231,7 @@
       "properties": {
         "gid": 1325,
         "unit_id": "012",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7721_00_012",
         "level_id": "4",
         "area": 0.457427545237
@@ -19459,7 +19497,7 @@
       "properties": {
         "gid": 1332,
         "unit_id": "021",
-        "use_type": "Eingangst├╝r",
+        "use_type": "Eingangstür",
         "name": "7721_00_021",
         "level_id": "4",
         "area": 4.38818966816
@@ -20757,6 +20795,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1890,
+        "unit_id": "101",
+        "use_type": "Flur",
+        "name": "7721_00_101",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -20795,6 +20841,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1891,
+        "unit_id": "102",
+        "use_type": "Flur",
+        "name": "7721_00_102",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -20833,6 +20887,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1892,
+        "unit_id": "103",
+        "use_type": "Flur",
+        "name": "7721_00_103",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -20871,6 +20933,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1893,
+        "unit_id": "104",
+        "use_type": "Flur",
+        "name": "7721_00_104",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -20909,6 +20979,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1894,
+        "unit_id": "105",
+        "use_type": "Flur",
+        "name": "7721_00_105",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -20947,6 +21025,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1895,
+        "unit_id": "106",
+        "use_type": "Flur",
+        "name": "7721_00_106",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -20985,6 +21071,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1896,
+        "unit_id": "107",
+        "use_type": "Flur",
+        "name": "7721_00_107",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21023,6 +21117,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1897,
+        "unit_id": "108",
+        "use_type": "Flur",
+        "name": "7721_00_108",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21061,6 +21163,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1898,
+        "unit_id": "109",
+        "use_type": "Flur",
+        "name": "7721_00_109",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21099,6 +21209,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1899,
+        "unit_id": "110",
+        "use_type": "Flur",
+        "name": "7721_00_110",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21137,6 +21255,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1900,
+        "unit_id": "111",
+        "use_type": "Flur",
+        "name": "7721_00_111",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21175,6 +21301,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1901,
+        "unit_id": "112",
+        "use_type": "Flur",
+        "name": "7721_00_112",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21213,6 +21347,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1902,
+        "unit_id": "113",
+        "use_type": "Flur",
+        "name": "7721_00_113",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21251,6 +21393,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1903,
+        "unit_id": "114",
+        "use_type": "Flur",
+        "name": "7721_00_114",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21289,6 +21439,14 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1904,
+        "unit_id": "115",
+        "use_type": "Flur",
+        "name": "7721_00_115",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
@@ -21314,12 +21472,12 @@
               51.4968748
             ],
             [
-              11.9350733,
-              51.4968276
+              11.9350755,
+              51.4968259
             ],
             [
-              11.9350748,
-              51.4968284
+              11.9350777,
+              51.496827
             ],
             [
               11.9350095,
@@ -21327,10 +21485,61 @@
             ]
           ]
         ]
+      },
+      "properties": {
+        "gid": 1905,
+        "unit_id": "116",
+        "use_type": "Flur",
+        "name": "7721_00_116",
+        "level_id": "0",
+        "area": 0
       }
     },
     {
       "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              11.935901277633596,
+              51.495959577193126
+            ],
+            [
+              11.935789487686389,
+              51.496037498818716
+            ],
+            [
+              11.935835312545661,
+              51.496063312155904
+            ],
+            [
+              11.935918968156507,
+              51.49600545247643
+            ],
+            [
+              11.935921743052411,
+              51.49600701561766
+            ],
+            [
+              11.935944583616807,
+              51.49599121642375
+            ],
+            [
+              11.935941792551231,
+              51.49598964433376
+            ],
+            [
+              11.935947564226948,
+              51.495985651750594
+            ],
+            [
+              11.935901277633596,
+              51.495959577193126
+            ]
+          ]
+        ]
+      },
       "properties": {
         "gid": 1906,
         "unit_id": "117",
@@ -21344,24 +21553,24 @@
         "coordinates": [
           [
             [
-              11.9359196,
-              51.497387
+              11.9361634,
+              51.4961187
             ],
             [
-              11.9359171,
-              51.4973855
+              11.9362183,
+              51.4961481
             ],
             [
-              11.9359806,
-              51.4973399
+              11.9362137,
+              51.4961512
             ],
             [
-              11.9359834,
-              51.4973415
+              11.9361605,
+              51.4961207
             ],
             [
-              11.9359196,
-              51.497387
+              11.9361634,
+              51.4961187
             ]
           ]
         ]
