@@ -759,3 +759,53 @@ window.wechsleEtage = function (zielEtage) {
         }
     }
 };
+
+// --- Geolocation (GPS) Logik ---
+let userLocationMarker = null;
+
+map.on('locationfound', function (e) {
+    if (!userLocationMarker) {
+        userLocationMarker = L.marker(e.latlng, {
+            icon: L.divIcon({
+                className: 'gps-marker-icon',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            })
+        }).addTo(map);
+    } else {
+        userLocationMarker.setLatLng(e.latlng);
+    }
+
+    // Kurze Bestätigung in der Info-Box
+    const infoBox = document.getElementById("info-box");
+    if (infoBox.innerText === "Suche Standort...") {
+        infoBox.innerText = "Standort gefunden!";
+        setTimeout(() => {
+            if (infoBox.innerText === "Standort gefunden!") {
+                infoBox.innerText = ZIEL_RAUM ? `Ziel: ${ZIEL_RAUM}` : "Bereit zur Navigation";
+            }
+        }, 3000);
+    }
+});
+
+map.on('locationerror', function (e) {
+    const infoBox = document.getElementById("info-box");
+    infoBox.innerText = "Standort konnte nicht ermittelt werden (Kein GPS / Keine Berechtigung).";
+    infoBox.style.color = "red";
+    setTimeout(() => {
+        infoBox.style.color = "";
+        infoBox.innerText = ZIEL_RAUM ? `Ziel: ${ZIEL_RAUM}` : "Bereit zur Navigation";
+    }, 5000);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const locateBtn = document.getElementById('locate-btn');
+    if (locateBtn) {
+        locateBtn.addEventListener('click', () => {
+            document.getElementById("info-box").innerText = "Suche Standort...";
+            // setView: true zentriert die Karte auf den User. 
+            // watch: true sorgt dafür, dass sich der blaue Punkt bei Bewegung mitbewegt.
+            map.locate({setView: true, maxZoom: 20, watch: true, enableHighAccuracy: true});
+        });
+    }
+});
