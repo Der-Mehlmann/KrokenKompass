@@ -36,6 +36,7 @@
             justify-content: space-between;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 220px;
+            position: relative;
         }
 
         /* Highlight beim Anklicken des Inputs */
@@ -43,6 +44,45 @@
             box-shadow: 0 0 0 2px var(--bulma-info);
             background-color: transparent;
             width: 100%;
+        }
+
+        /* Dropdown Styling */
+        .search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: var(--bulma-scheme-main, #ffffff);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 6px;
+        }
+
+        html[data-theme="dark"] .search-dropdown {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--bulma-text);
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--button-light-bg, #f2f2f7);
+        }
+
+        .dropdown-item.is-active {
+            background-color: var(--bulma-info);
+            color: white;
         }
 
         .route-input {
@@ -177,6 +217,13 @@
                         <line x1="20" x2="3" y1="10" y2="21"></line>
                     </svg>
                 </button>
+
+                <div class="search-dropdown" id="startDropdown">
+                    <div class="dropdown-item is-active">7723_00_039</div>
+                    <div class="dropdown-item">7723_00_038</div>
+                    <div class="dropdown-item">7723_00_035</div>
+                    <div class="dropdown-item">7723_00_024</div>
+                </div>
             </div>
 
             <div class="route-line"></div>
@@ -199,6 +246,13 @@
                     <path d="M9.5 8L12 11.5 15.5 10"></path>
                     <path d="M7 16l3-6v-3l2 4"></path>
                 </svg>
+
+                <div class="search-dropdown" id="endDropdown">
+                    <div class="dropdown-item is-active">7723_00_024</div>
+                    <div class="dropdown-item">7723_00_039</div>
+                    <div class="dropdown-item">7723_00_038</div>
+                    <div class="dropdown-item">7723_00_035</div>
+                </div>
             </div>
 
             <div class="has-text-danger is-size-7 mt-3" id="errorMsg" style="display:none; font-weight: 500;">
@@ -262,6 +316,44 @@
     const btn = document.getElementById("submitBtn");
     const swapBtn = document.getElementById("swapBtn");
     const errorMsg = document.getElementById("errorMsg");
+
+    const startDropdown = document.getElementById("startDropdown");
+    const endDropdown = document.getElementById("endDropdown");
+
+    // Dropdowns öffnen bei Klick ins Feld
+    startInput.addEventListener("focus", () => {
+        startDropdown.style.display = "flex";
+        endDropdown.style.display = "none"; // das andere schließen
+    });
+
+    endInput.addEventListener("focus", () => {
+        endDropdown.style.display = "flex";
+        startDropdown.style.display = "none";
+    });
+
+    // Dropdowns schließen bei Klick nach draußen
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".route-pill")) {
+            startDropdown.style.display = "none";
+            endDropdown.style.display = "none";
+        }
+    });
+
+    // Klick auf ein Item im Dropdown
+    document.querySelectorAll(".dropdown-item").forEach(item => {
+        item.addEventListener("click", (e) => {
+            const val = e.target.innerText;
+            const parentDropdown = e.target.closest(".search-dropdown");
+
+            if (parentDropdown.id === "startDropdown") {
+                startInput.value = val;
+                startDropdown.style.display = "none";
+            } else if (parentDropdown.id === "endDropdown") {
+                endInput.value = val;
+                endDropdown.style.display = "none";
+            }
+        });
+    });
 
     // Start & Ziel tauschen
     swapBtn.addEventListener("click", () => {
