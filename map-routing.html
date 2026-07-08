@@ -200,6 +200,20 @@
         html[data-theme="dark"] .map-wrapper {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
+
+        #locate-btn {
+            background-color: var(--bulma-scheme-main) !important;
+            color: var(--bulma-text) !important;
+            border: none !important;
+        }
+
+        #locate-btn:hover {
+            filter: brightness(0.9);
+        }
+
+        html[data-theme="dark"] #locate-btn:hover {
+            filter: brightness(1.2);
+        }
     </style>
 </head>
 <body class="is-flex is-flex-direction-column" style="min-height: 100vh;">
