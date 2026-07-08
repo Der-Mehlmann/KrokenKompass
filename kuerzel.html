@@ -19,8 +19,12 @@
     <style>
         /* Spezifische Styles für die Routing-Komponente */
         .route-planner-container {
-            max-width: 320px;
+            max-width: 340px;
+            width: 100%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .route-pill {
@@ -30,13 +34,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 220px;
         }
 
         /* Highlight beim Anklicken des Inputs */
         .route-pill:focus-within {
             box-shadow: 0 0 0 2px var(--bulma-info);
             background-color: transparent;
+            width: 100%;
         }
 
         .route-input {
@@ -59,10 +65,16 @@
         /* Die feine vertikale Linie zwischen den Feldern */
         .route-line {
             width: 2px;
-            height: 24px;
+            height: 16px;
             background-color: #d1d1d6;
-            margin: 0.25rem auto;
+            margin: 0.25rem 0;
             border-radius: 2px;
+            transform: translateX(-81px);
+            transition: opacity 0.2s ease;
+        }
+
+        .route-planner-container:focus-within .route-line {
+            opacity: 0;
         }
 
         /* Dark Mode Anpassungen für die Linie */
@@ -193,8 +205,9 @@
                 Bitte wähle mindestens ein Ziel (End) aus.
             </div>
 
-            <button class="button is-info is-rounded has-text-weight-medium mt-5 is-fullwidth" id="submitBtn">
-                Navigation starten
+            <button class="button is-info is-rounded has-text-weight-medium mt-5" id="submitBtn"
+                    style="padding: 0.5rem 1.5rem; height: auto;">
+                Route finden
             </button>
 
         </div>
