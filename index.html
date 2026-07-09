@@ -18,7 +18,7 @@
 
 <header class="header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6">
 
-    <div class="is-flex is-align-items-center">
+    <div class="is-flex is-align-items-center cursor-pointer" onclick="window.location.href='index.html'">
         <svg class="mr-2" fill="currentColor" height="20" viewBox="0 0 24 24" width="20"
              xmlns="http://www.w3.org/2000/svg">
             <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z"/>
@@ -28,12 +28,14 @@
 
     <div class="is-flex is-align-items-center">
 
-        <button aria-label="Dark Mode wechseln" class="theme-toggle mr-3" id="theme-toggle">
-            <svg fill="none" height="20" id="moon-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+        <button aria-label="Dark Mode wechseln" class="theme-toggle mr-4" id="theme-toggle">
+            <svg fill="none" height="20" id="moon-icon" stroke="currentColor" stroke-linecap="round"
+                 stroke-linejoin="round"
                  stroke-width="2" viewBox="0 0 24 24" width="20">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
-            <svg fill="none" height="20" id="sun-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            <svg fill="none" height="20" id="sun-icon" stroke="currentColor" stroke-linecap="round"
+                 stroke-linejoin="round"
                  stroke-width="2" style="display: none;" viewBox="0 0 24 24" width="20">
                 <circle cx="12" cy="12" r="5"></circle>
                 <line x1="12" x2="12" y1="1" y2="3"></line>
@@ -47,16 +49,10 @@
             </svg>
         </button>
 
-        <div class="buttons header-buttons mb-0">
-            <button class="button is-rounded button-secondary px-4 is-hidden-mobile"
-                    onclick="window.location.href='map-routing.html'">
-                Zur Karte
-            </button>
-            <button class="button is-info is-rounded has-text-weight-medium px-4"
-                    onclick="window.location.href='raum.html'">
-                Raum finden
-            </button>
-        </div>
+        <button class="button is-info is-rounded has-text-weight-medium px-5"
+                onclick="window.location.href='kuerzel.html'">
+            Raum finden
+        </button>
     </div>
 </header>
 
@@ -139,7 +135,6 @@
 
 <footer class="footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center"
         style="border-top: 1px solid var(--bulma-border-weak);">
-
     <div class="is-flex is-align-items-center footer-links-custom">
         <svg class="mr-2" fill="currentColor" height="18" viewBox="0 0 24 24" width="18"
              xmlns="http://www.w3.org/2000/svg">
@@ -147,9 +142,10 @@
         </svg>
         <span class="has-text-weight-medium mr-5">KrokenKompass</span>
 
+        <a class="has-text-grey mr-4 is-size-7" href="#">Features</a>
+        <a class="has-text-grey mr-4 is-size-7" href="#">Learn more</a>
+        <a class="has-text-grey is-size-7" href="#">Support</a>
     </div>
-
-
 </footer>
 
 <script>
