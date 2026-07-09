@@ -224,10 +224,6 @@
                 </button>
 
                 <div class="search-dropdown" id="startDropdown">
-                    <div class="dropdown-item is-active">7723_00_039</div>
-                    <div class="dropdown-item">7723_00_038</div>
-                    <div class="dropdown-item">7723_00_035</div>
-                    <div class="dropdown-item">7723_00_024</div>
                 </div>
             </div>
 
@@ -255,10 +251,6 @@
                 </svg>
 
                 <div class="search-dropdown" id="endDropdown">
-                    <div class="dropdown-item is-active">7723_00_024</div>
-                    <div class="dropdown-item">7723_00_039</div>
-                    <div class="dropdown-item">7723_00_038</div>
-                    <div class="dropdown-item">7723_00_035</div>
                 </div>
             </div>
 
@@ -305,15 +297,94 @@
     const startDropdown = document.getElementById("startDropdown");
     const endDropdown = document.getElementById("endDropdown");
 
-    // Dropdowns öffnen bei Klick ins Feld
+    // Alias Map für benutzerfreundliche Namen
+    const aliases = {
+        "Café Einstein": {floor: "00", room: "010", vsp: "3"},
+        "Campus Eingang Ost": {floor: "00", room: "111", vsp: "1"}
+    };
+
+    const defaultSuggestions = [
+        "Café Einstein",
+        "Campus Eingang Ost",
+        "2.28 VSP 1",
+        "0.39 VSP 3"
+    ];
+
+    function formatRoomName(internalName) {
+        // z.B. 7723_00_039 -> 0.39 VSP 3
+        const parts = internalName.split("_");
+        if (parts.length !== 3) return internalName;
+        const b = parts[0];
+        const floor = parseInt(parts[1], 10);
+        const room = parts[2].replace(/^0+/, ''); // führende Nullen entfernen
+        const vspMap = {"7721": "1", "7722": "2", "7723": "3", "7724": "4"};
+        const vsp = vspMap[b];
+        if (!vsp) return internalName;
+        return `${floor}.${room} VSP ${vsp}`;
+    }
+
+    function renderDropdown(dropdownEl, inputEl, query) {
+        dropdownEl.innerHTML = "";
+        let matches = [];
+
+        if (!query) {
+            matches = [...defaultSuggestions];
+        } else {
+            const q = query.toLowerCase();
+            // 1. Aliases durchsuchen
+            for (let key of Object.keys(aliases)) {
+                if (key.toLowerCase().includes(q)) matches.push(key);
+            }
+            // 2. Räume durchsuchen
+            for (let r of rooms) {
+                if (r.use_type === "Tuer" || r.use_type === "Tür" || !r.name) continue;
+                const formatted = formatRoomName(r.name);
+                if (formatted.toLowerCase().includes(q) && !matches.includes(formatted)) {
+                    matches.push(formatted);
+                }
+                if (matches.length >= 15) break; // Max 15 Treffer
+            }
+        }
+
+        if (matches.length === 0) {
+            dropdownEl.style.display = "none";
+            return;
+        }
+
+        matches.forEach((m, index) => {
+            const div = document.createElement("div");
+            div.className = "dropdown-item";
+            if (index === 0 && query) div.classList.add("is-active");
+            div.innerText = m;
+
+            // Mouse down statt click, damit es feuert, bevor der input den focus verliert (falls onblur verwendet wird)
+            div.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                inputEl.value = m;
+                dropdownEl.style.display = "none";
+            });
+            dropdownEl.appendChild(div);
+        });
+        dropdownEl.style.display = "flex";
+    }
+
+    // Dropdowns öffnen & filtern bei Fokus und Eingabe
     startInput.addEventListener("focus", () => {
-        startDropdown.style.display = "flex";
-        endDropdown.style.display = "none"; // das andere schließen
+        renderDropdown(startDropdown, startInput, startInput.value.trim());
+        endDropdown.style.display = "none"; 
     });
 
     endInput.addEventListener("focus", () => {
-        endDropdown.style.display = "flex";
+        renderDropdown(endDropdown, endInput, endInput.value.trim());
         startDropdown.style.display = "none";
+    });
+
+    startInput.addEventListener("input", (e) => {
+        renderDropdown(startDropdown, startInput, e.target.value.trim());
+    });
+
+    endInput.addEventListener("input", (e) => {
+        renderDropdown(endDropdown, endInput, e.target.value.trim());
     });
 
     // Dropdowns schließen bei Klick nach draußen
@@ -322,22 +393,6 @@
             startDropdown.style.display = "none";
             endDropdown.style.display = "none";
         }
-    });
-
-    // Klick auf ein Item im Dropdown
-    document.querySelectorAll(".dropdown-item").forEach(item => {
-        item.addEventListener("click", (e) => {
-            const val = e.target.innerText;
-            const parentDropdown = e.target.closest(".search-dropdown");
-
-            if (parentDropdown.id === "startDropdown") {
-                startInput.value = val;
-                startDropdown.style.display = "none";
-            } else if (parentDropdown.id === "endDropdown") {
-                endInput.value = val;
-                endDropdown.style.display = "none";
-            }
-        });
     });
 
     // Start & Ziel tauschen
@@ -349,7 +404,14 @@
 
     function parseRooms(input) {
         return input.split(",").map(item => {
-            const match = item.match(/(\d)\.(\d{2}).*VSP\s*(\d)/i);
+            const trimmed = item.trim();
+            // 1. Alias Check
+            if (aliases[trimmed]) {
+                return aliases[trimmed];
+            }
+
+            // 2. Regex Check (erweitert auf \d+ für den Raum)
+            const match = trimmed.match(/(\d)\.(\d+).*VSP\s*(\d)/i);
 
             if (!match) return null;
 
