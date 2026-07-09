@@ -6,7 +6,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 22
 }).addTo(map);
 
-let START_RAUM = "7721_00_059b"; // Fallback
+let START_RAUM = "7721_00_111"; // Fallback
 const zielSuchwert = new URLSearchParams(window.location.search).get("ziel");
 const startSuchwert = new URLSearchParams(window.location.search).get("start");
 
