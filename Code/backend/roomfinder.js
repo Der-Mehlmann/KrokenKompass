@@ -1,9 +1,14 @@
+import { parseRooms, getBuilding } from "./utils/roomParser.js";
+import rooms from "./vsp_units.json" with { type: "json" };
+
 const input = document.getElementById("kuerzel");
 const btn = document.getElementById("submitBtn");
 const result = document.getElementById("result");
 const errorMsg = document.getElementById("errorMsg");
 
-btn.addEventListener("click", async () => {
+btn.addEventListener("click", () => {
+  console.log("Rooms geladen:", rooms.length);
+
   const value = input.value.trim();
 
   if (!value) {
@@ -14,23 +19,36 @@ btn.addEventListener("click", async () => {
   errorMsg.style.display = "none";
 
   try {
-    const res = await fetch(
-      `http://localhost:3000/room?input=${encodeURIComponent(value)}`
-    );
+    const parsed = parseRooms(value);
 
-    console.log(res.status);
-
-    const data = await res.json(); // WICHTIG
-
-    console.log(data);
-
-    if (!data || data.length === 0) {
-      result.innerHTML = " Raum nicht gefunden";
+    if (!parsed.length) {
+      result.innerHTML = "Ungültige Eingabe";
       return;
     }
 
-    // falls mehrere Räume zurückkommen
-    const room = data[0];
+    const p = parsed[0];
+    const buildingCode = getBuilding(p.vsp);
+
+    p.room = p.room.padStart(3, "0");
+    p.floor = p.floor.padStart(2, "0");
+
+    const filteredRooms = rooms.filter(room => {
+      const [b, floor, unit] = room.name.split("_");
+
+      return (
+        floor === p.floor &&
+        unit === p.room &&
+        b === buildingCode &&
+        room.use_type !== "Tür"
+      );
+    });
+
+    if (!filteredRooms.length) {
+      result.innerHTML = "Raum nicht gefunden";
+      return;
+    }
+
+    const room = filteredRooms[0];
 
     result.innerHTML = `
       <div style="padding:10px; border:1px solid #ccc; border-radius:8px;">
@@ -42,9 +60,8 @@ btn.addEventListener("click", async () => {
         <p><b>Fläche:</b> ${room.shape_area}</p>
       </div>
     `;
-
   } catch (err) {
-    console.error("SERVERFEHLER:", err);
-    result.innerHTML = " Serverfehler";
+    console.error(err);
+    result.innerHTML = "Serverfehler";
   }
 });
