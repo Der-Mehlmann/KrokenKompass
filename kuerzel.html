@@ -2,73 +2,333 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kürzel eingeben</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Route planen - KrokenKompass</title>
+
+    <link href="./Code/frontend/cssFiles/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"/>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+    </script>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Spezifische Styles für die Routing-Komponente */
+        .route-planner-container {
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .route-pill {
+            background-color: var(--button-light-bg, #f2f2f7);
+            border-radius: 9999px;
+            padding: 0.75rem 1.25rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
+            justify-content: space-between;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
         }
-        .form-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
+
+        /* Highlight beim Anklicken des Inputs */
+        .route-pill:focus-within {
+            box-shadow: 0 0 0 2px var(--bulma-info);
+            background-color: transparent;
         }
-        input {
-            padding: 10px 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin: 20px 0;
-            width: 200px;
-        }
-        button {
-            padding: 10px 25px;
-            font-size: 16px;
-            cursor: pointer;
+
+        .route-input {
             border: none;
-            border-radius: 5px;
-            background-color: #28a745;
-            color: white;
-            margin: 5px;
+            background: transparent;
+            outline: none;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--bulma-text);
+            width: 100%;
+            margin: 0 0.5rem;
+            font-weight: 500;
         }
-        button:hover {
-            background-color: #1e7e34;
+
+        .route-input::placeholder {
+            color: #8e8e93;
+            font-weight: 400;
         }
-        .back-btn {
-            background-color: #6c757d;
+
+        /* Die feine vertikale Linie zwischen den Feldern */
+        .route-line {
+            width: 2px;
+            height: 24px;
+            background-color: #d1d1d6;
+            margin: 0.25rem auto;
+            border-radius: 2px;
         }
-        .back-btn:hover {
-            background-color: #545b62;
+
+        /* Dark Mode Anpassungen für die Linie */
+        html[data-theme="dark"] .route-line,
+
+        @media (prefers-color-scheme: dark) {
+            html:not([data-theme="light"]) .route-line
+        }
+
+        {
+            background-color: #48484a
+        ;
+        }
+
+        /* Spezieller Schatten für den Header-Button wie im Figma Design */
+        .header-action-button {
+            background-color: var(--bulma-scheme-main, #ffffff);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-action-button:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body>
-    <script defer src="./Code/backend/roomfinder.js" type="module"></script>
-    <div class="form-container">
-        <h1>Kürzel eingeben</h1>
+<body class="is-flex is-flex-direction-column" style="min-height: 100vh;">
 
-        <input type="text" id="kuerzel" placeholder="z.B.GPU-Pool (3.02) [VSP 1]" maxlength="100">
-        <div id="errorMsg" style="color:red; font-size:12px; display:none; margin-top:5px;">
-            bitte Raum eintragen
-        </div>
-        <br>
+<header class="header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6">
 
-        <button id="submitBtn">Absenden</button>
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            Zurück
+    <div class="is-flex is-align-items-center cursor-pointer" onclick="window.location.href='index.html'">
+        <svg class="mr-2" fill="currentColor" height="20" viewBox="0 0 24 24" width="20"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z"/>
+        </svg>
+        <span class="has-text-weight-medium is-size-5-desktop is-size-6-mobile">KrokenKompass</span>
+    </div>
+
+    <div class="is-flex is-align-items-center">
+
+        <button aria-label="Dark Mode wechseln" class="theme-toggle mr-4" id="theme-toggle">
+            <svg fill="none" height="20" id="moon-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" viewBox="0 0 24 24" width="20">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg fill="none" height="20" id="sun-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" style="display: none;" viewBox="0 0 24 24" width="20">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" x2="12" y1="1" y2="3"></line>
+                <line x1="12" x2="12" y1="21" y2="23"></line>
+                <line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line>
+                <line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line>
+                <line x1="1" x2="3" y1="12" y2="12"></line>
+                <line x1="21" x2="23" y1="12" y2="12"></line>
+                <line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line>
+                <line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line>
+            </svg>
+        </button>
+
+        <button class="button is-rounded header-action-button has-text-weight-medium px-5"
+                onclick="window.location.href='map-routing.html'">
+            Zur Karte
         </button>
     </div>
-    <div id="result"></div>
+</header>
 
-    
+<main class="is-flex-grow-1 is-flex is-align-items-center is-justify-content-center px-4">
+    <div class="has-text-centered w-100">
+
+        <h1 class="title is-size-1-desktop is-size-2-mobile has-text-weight-bold mb-6" style="letter-spacing: -0.02em;">
+            Route planen
+        </h1>
+
+        <div class="route-planner-container">
+
+            <div class="route-pill mb-2">
+                <div class="is-flex is-align-items-center is-flex-grow-1">
+                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                         viewBox="0 0 24 24" width="18">
+                        <line x1="22" x2="11" y1="2" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+
+                    <input class="route-input" id="startInput" placeholder="Start" type="text">
+
+                    <svg class="mr-2" fill="none" height="16" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
+                         stroke-width="2" viewBox="0 0 24 24" width="16">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+
+                <button class="is-clickable is-flex is-align-items-center is-justify-content-center" id="swapBtn"
+                        style="background: none; border: none; padding: 0; cursor: pointer;">
+                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                         viewBox="0 0 24 24" width="18">
+                        <polyline points="16 3 21 3 21 8"></polyline>
+                        <line x1="4" x2="21" y1="14" y2="3"></line>
+                        <polyline points="8 21 3 21 3 16"></polyline>
+                        <line x1="20" x2="3" y1="10" y2="21"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="route-line"></div>
+
+            <div class="route-pill mt-2">
+                <div class="is-flex is-align-items-center is-flex-grow-1">
+                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                         viewBox="0 0 24 24" width="18">
+                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                        <line x1="4" x2="4" y1="22" y2="15"></line>
+                    </svg>
+
+                    <input autofocus class="route-input" id="endInput" placeholder="End" type="text">
+                </div>
+
+                <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     viewBox="0 0 24 24" width="18">
+                    <path d="M12 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path>
+                    <path d="M14.1 11.5L12 16h3l-2 6"></path>
+                    <path d="M9.5 8L12 11.5 15.5 10"></path>
+                    <path d="M7 16l3-6v-3l2 4"></path>
+                </svg>
+            </div>
+
+            <div class="has-text-danger is-size-7 mt-3" id="errorMsg" style="display:none; font-weight: 500;">
+                Bitte wähle mindestens ein Ziel (End) aus.
+            </div>
+
+            <button class="button is-info is-rounded has-text-weight-medium mt-5 is-fullwidth" id="submitBtn">
+                Navigation starten
+            </button>
+
+        </div>
+    </div>
+</main>
+
+<footer class="footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center"
+        style="border-top: 1px solid var(--bulma-border-weak);">
+    <div class="is-flex is-align-items-center footer-links-custom">
+        <svg class="mr-2" fill="currentColor" height="18" viewBox="0 0 24 24" width="18"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z"/>
+        </svg>
+        <span class="has-text-weight-medium mr-5">KrokenKompass</span>
+
+        <a class="has-text-grey mr-4 is-size-7" href="#">Features</a>
+        <a class="has-text-grey mr-4 is-size-7" href="#">Learn more</a>
+        <a class="has-text-grey is-size-7" href="#">Support</a>
+    </div>
+
+    <div class="is-flex is-align-items-center is-justify-content-center gap-4" style="gap: 1.5rem;">
+        <a class="social-icon" href="#">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 viewBox="0 0 24 24">
+                <rect height="20" rx="5" ry="5" width="20" x="2" y="2"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+            </svg>
+        </a>
+        <a class="social-icon" href="#">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 viewBox="0 0 24 24">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect height="12" width="4" x="2" y="9"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+        </a>
+        <a class="social-icon" href="#">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 viewBox="0 0 24 24">
+                <line x1="4" x2="20" y1="4" y2="20"></line>
+                <line x1="20" x2="4" y1="4" y2="20"></line>
+            </svg>
+        </a>
+    </div>
+</footer>
+
+<script>
+    // Logik für das Routing
+    const startInput = document.getElementById("startInput");
+    const endInput = document.getElementById("endInput");
+    const btn = document.getElementById("submitBtn");
+    const swapBtn = document.getElementById("swapBtn");
+    const errorMsg = document.getElementById("errorMsg");
+
+    // Start & Ziel tauschen
+    swapBtn.addEventListener("click", () => {
+        const temp = startInput.value;
+        startInput.value = endInput.value;
+        endInput.value = temp;
+    });
+
+    // Formular absenden
+    const triggerSearch = () => {
+        const startVal = startInput.value.trim();
+        const endVal = endInput.value.trim();
+
+        if (!endVal) {
+            errorMsg.style.display = "block";
+            endInput.focus();
+            return;
+        }
+
+        errorMsg.style.display = "none";
+
+        // Baut die URL auf. Wenn Start leer ist, wird nur 'ziel' übergeben.
+        let url = `map-routing.html?ziel=${encodeURIComponent(endVal)}`;
+        if (startVal) {
+            url += `&start=${encodeURIComponent(startVal)}`;
+        }
+
+        window.location.href = url;
+    };
+
+    btn.addEventListener("click", triggerSearch);
+
+    // Enter-Taste fangen
+    [startInput, endInput].forEach(input => {
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                triggerSearch();
+            }
+        });
+    });
+
+    // Logik für Theme Toggle (identisch zur Startseite)
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const htmlEl = document.documentElement;
+
+        function updateIcon() {
+            const isDark = htmlEl.getAttribute('data-theme') === 'dark' ||
+                (!htmlEl.hasAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        updateIcon();
+
+        toggleBtn.addEventListener('click', () => {
+            let currentTheme = htmlEl.getAttribute('data-theme');
+            if (!currentTheme) {
+                currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon();
+        });
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (!localStorage.getItem('theme')) {
+                updateIcon();
+            }
+        });
+    });
+</script>
 </body>
 </html>

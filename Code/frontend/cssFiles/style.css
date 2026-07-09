@@ -1,0 +1,198 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
+
+:root {
+    --figma-blue: #007AFF;
+    --figma-blue-hover: #0062cc;
+
+    --bulma-info: var(--figma-blue);
+    --bulma-info-hover: var(--figma-blue-hover);
+    --bulma-info-invert: #ffffff;
+
+    --button-light-bg: #f2f2f7;
+}
+
+/* =========================================
+   DARK MODE OPTIMIERUNG (Bulma v1 Kompatibel)
+   ========================================= */
+/* Greift, wenn System auf Dark ist UND nicht manuell Light gewählt wurde */
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) {
+        --bulma-info: #64D2FF;
+        --bulma-info-hover: #4bbbe8;
+        --bulma-info-invert: #000000;
+        --button-light-bg: #2C2C2E;
+    }
+
+    html:not([data-theme="light"]) .button-secondary:hover {
+        background-color: #3a3a3c !important;
+    }
+}
+
+/* Greift, wenn manuell Dark gewählt wurde */
+html[data-theme="dark"] {
+    --bulma-info: #64D2FF;
+    --bulma-info-hover: #4bbbe8;
+    --bulma-info-invert: #000000;
+    --button-light-bg: #2C2C2E;
+}
+
+html[data-theme="dark"] .button-secondary:hover {
+    background-color: #3a3a3c !important;
+}
+
+/* --- Typografie & Basis --- */
+body {
+    font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+}
+
+.hero-title-custom {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+}
+
+/* --- Buttons --- */
+.button-secondary {
+    background-color: var(--button-light-bg) !important;
+    border: none !important;
+    color: var(--bulma-text) !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.button-secondary:hover {
+    background-color: #e5e5ea !important;
+}
+
+/* Neuer Theme-Toggle Button */
+.theme-toggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--bulma-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background-color: var(--button-light-bg);
+}
+
+.theme-toggle svg {
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle:active svg {
+    transform: scale(0.85);
+}
+
+/* --- Karten Layout --- */
+.abstract-card {
+    height: 380px;
+    border-radius: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-block {
+    display: flex;
+    position: absolute;
+    gap: 0;
+}
+
+.color-square {
+    width: 24px;
+    height: 24px;
+}
+
+.social-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--bulma-text);
+    transition: opacity 0.2s ease;
+}
+
+.social-icon:hover {
+    opacity: 0.7;
+}
+
+/* =========================================
+   DESKTOP OPTIMIERUNG (Perfekte Symmetrie)
+   ========================================= */
+@media (min-width: 769px) {
+    /* Macht beide Buttons exakt gleich breit, damit die Lücke in der absoluten Mitte liegt */
+    .hero-buttons-custom .button {
+        min-width: 180px;
+        justify-content: center;
+    }
+}
+
+/* =========================================
+   MOBILE OPTIMIERUNG (Smartphones bis 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    .hero-title-custom {
+        font-size: 2.25rem;
+    }
+
+    .hero-subtitle-custom {
+        font-size: 1.1rem !important;
+    }
+
+    .header-custom {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+    }
+
+    .footer-custom {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .header-buttons .button {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+    }
+
+    .hero-buttons-custom {
+        flex-direction: column;
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .hero-buttons-custom .button {
+        width: 100%;
+        margin-bottom: 0.75rem;
+    }
+
+    .abstract-card {
+        height: 200px;
+    }
+
+    .footer-custom {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .footer-links-custom {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .footer-links-custom span {
+        margin-right: 0 !important;
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-links-custom a {
+        margin-right: 0 !important;
+    }
+}

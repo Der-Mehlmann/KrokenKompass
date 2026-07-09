@@ -11,12 +11,12 @@ btn.addEventListener("click", () => {
 
   const value = input.value.trim();
 
-  if (!value) {
-    errorMsg.style.display = "block";
-    return;
-  }
+    if (!value) {
+        errorMsg.style.display = "block";
+        return;
+    }
 
-  errorMsg.style.display = "none";
+    errorMsg.style.display = "none";
 
   try {
     const parsed = parseRooms(value);
@@ -50,7 +50,7 @@ btn.addEventListener("click", () => {
 
     const room = filteredRooms[0];
 
-    result.innerHTML = `
+        result.innerHTML = `
       <div style="padding:10px; border:1px solid #ccc; border-radius:8px;">
         <h2> Raum gefunden</h2>
         <p><b>Name:</b> ${room.name}</p>
