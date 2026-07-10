@@ -388,7 +388,7 @@ Promise.all(ladeProzesse)
             routingPfad = berechneDijkstra(startKnotenId, zielKnotenId, graph);
 
             if (routingPfad) {
-                document.getElementById("info-box").innerHTML = `<strong>Route gefunden!</strong> Ziel: ${ZIEL_RAUM} (${routingPfad.length} Wegpunkte)`;
+                document.getElementById("info-box").innerHTML = `<strong>Route gefunden!</strong> Ziel: ${zielSuchwert} (${routingPfad.length} Wegpunkte)`;
             } else {
                 document.getElementById("info-box").innerText = "Keine Route gefunden. Fehlen Treppenverbindungen oder ist der Raum nicht erreichbar?";
             }
