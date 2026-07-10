@@ -6,7 +6,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 22
 }).addTo(map);
 
-let START_RAUM = "7721_00_059b"; // Fallback
+let START_RAUM = "7721_00_111"; // Fallback
 const zielSuchwert = new URLSearchParams(window.location.search).get("ziel");
 const startSuchwert = new URLSearchParams(window.location.search).get("start");
 
@@ -387,8 +387,11 @@ Promise.all(ladeProzesse)
 
             routingPfad = berechneDijkstra(startKnotenId, zielKnotenId, graph);
 
+            document.getElementById("info-box").textContent =
+  `Route gefunden! Ziel: ${zielSuchwert} (${routingPfad.length} Wegpunkte)`;
+            
             if (routingPfad) {
-                document.getElementById("info-box").innerHTML = `<strong>Route gefunden!</strong> Ziel: ${ZIEL_RAUM} (${routingPfad.length} Wegpunkte)`;
+                document.getElementById("info-box").textContent = `Route gefunden! Ziel: ${zielSuchwert} (${routingPfad.length} Wegpunkte)`;
             } else {
                 document.getElementById("info-box").innerText = "Keine Route gefunden. Fehlen Treppenverbindungen oder ist der Raum nicht erreichbar?";
             }

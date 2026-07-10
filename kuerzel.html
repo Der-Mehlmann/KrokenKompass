@@ -19,8 +19,12 @@
     <style>
         /* Spezifische Styles für die Routing-Komponente */
         .route-planner-container {
-            max-width: 320px;
+            max-width: 340px;
+            width: 100%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .route-pill {
@@ -30,13 +34,55 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 220px;
+            position: relative;
         }
 
         /* Highlight beim Anklicken des Inputs */
         .route-pill:focus-within {
             box-shadow: 0 0 0 2px var(--bulma-info);
             background-color: transparent;
+            width: 100%;
+        }
+
+        /* Dropdown Styling */
+        .search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: var(--bulma-scheme-main, #ffffff);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 6px;
+        }
+
+        html[data-theme="dark"] .search-dropdown {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--bulma-text);
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--button-light-bg, #f2f2f7);
+        }
+
+        .dropdown-item.is-active {
+            background-color: var(--bulma-info);
+            color: white;
         }
 
         .route-input {
@@ -59,10 +105,16 @@
         /* Die feine vertikale Linie zwischen den Feldern */
         .route-line {
             width: 2px;
-            height: 24px;
+            height: 16px;
             background-color: #d1d1d6;
-            margin: 0.25rem auto;
+            margin: 0.25rem 0;
             border-radius: 2px;
+            transform: translateX(-81px);
+            transition: opacity 0.2s ease;
+        }
+
+        .route-planner-container:focus-within .route-line {
+            opacity: 0;
         }
 
         /* Dark Mode Anpassungen für die Linie */
@@ -105,11 +157,13 @@
     <div class="is-flex is-align-items-center">
 
         <button aria-label="Dark Mode wechseln" class="theme-toggle mr-4" id="theme-toggle">
-            <svg fill="none" height="20" id="moon-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            <svg fill="none" height="20" id="moon-icon" stroke="currentColor" stroke-linecap="round"
+                 stroke-linejoin="round"
                  stroke-width="2" viewBox="0 0 24 24" width="20">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
-            <svg fill="none" height="20" id="sun-icon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            <svg fill="none" height="20" id="sun-icon" stroke="currentColor" stroke-linecap="round"
+                 stroke-linejoin="round"
                  stroke-width="2" style="display: none;" viewBox="0 0 24 24" width="20">
                 <circle cx="12" cy="12" r="5"></circle>
                 <line x1="12" x2="12" y1="1" y2="3"></line>
@@ -141,7 +195,8 @@
 
             <div class="route-pill mb-2">
                 <div class="is-flex is-align-items-center is-flex-grow-1">
-                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
+                         stroke-width="2"
                          viewBox="0 0 24 24" width="18">
                         <line x1="22" x2="11" y1="2" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -149,7 +204,8 @@
 
                     <input class="route-input" id="startInput" placeholder="Start" type="text">
 
-                    <svg class="mr-2" fill="none" height="16" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
+                    <svg class="mr-2" fill="none" height="16" stroke="#8e8e93" stroke-linecap="round"
+                         stroke-linejoin="round"
                          stroke-width="2" viewBox="0 0 24 24" width="16">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
@@ -157,7 +213,8 @@
 
                 <button class="is-clickable is-flex is-align-items-center is-justify-content-center" id="swapBtn"
                         style="background: none; border: none; padding: 0; cursor: pointer;">
-                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
+                         stroke-width="2"
                          viewBox="0 0 24 24" width="18">
                         <polyline points="16 3 21 3 21 8"></polyline>
                         <line x1="4" x2="21" y1="14" y2="3"></line>
@@ -165,13 +222,17 @@
                         <line x1="20" x2="3" y1="10" y2="21"></line>
                     </svg>
                 </button>
+
+                <div class="search-dropdown" id="startDropdown">
+                </div>
             </div>
 
             <div class="route-line"></div>
 
             <div class="route-pill mt-2">
                 <div class="is-flex is-align-items-center is-flex-grow-1">
-                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
+                         stroke-width="2"
                          viewBox="0 0 24 24" width="18">
                         <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
                         <line x1="4" x2="4" y1="22" y2="15"></line>
@@ -180,21 +241,28 @@
                     <input autofocus class="route-input" id="endInput" placeholder="End" type="text">
                 </div>
 
-                <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
+                     stroke-width="2"
                      viewBox="0 0 24 24" width="18">
                     <path d="M12 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path>
                     <path d="M14.1 11.5L12 16h3l-2 6"></path>
                     <path d="M9.5 8L12 11.5 15.5 10"></path>
                     <path d="M7 16l3-6v-3l2 4"></path>
                 </svg>
+
+                <div class="search-dropdown" id="endDropdown">
+                </div>
             </div>
 
             <div class="has-text-danger is-size-7 mt-3" id="errorMsg" style="display:none; font-weight: 500;">
                 Bitte wähle mindestens ein Ziel (End) aus.
             </div>
 
-            <button class="button is-info is-rounded has-text-weight-medium mt-5 is-fullwidth" id="submitBtn">
-                Navigation starten
+            <p class="has-text-danger is-size-7 mt-3" id="result"></p>
+
+            <button class="button is-info is-rounded has-text-weight-medium mt-5" id="submitBtn"
+                    style="padding: 0.5rem 1.5rem; height: auto;">
+                Route finden
             </button>
 
         </div>
@@ -214,41 +282,118 @@
         <a class="has-text-grey mr-4 is-size-7" href="#">Learn more</a>
         <a class="has-text-grey is-size-7" href="#">Support</a>
     </div>
-
-    <div class="is-flex is-align-items-center is-justify-content-center gap-4" style="gap: 1.5rem;">
-        <a class="social-icon" href="#">
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                 viewBox="0 0 24 24">
-                <rect height="20" rx="5" ry="5" width="20" x="2" y="2"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-            </svg>
-        </a>
-        <a class="social-icon" href="#">
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                 viewBox="0 0 24 24">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                <rect height="12" width="4" x="2" y="9"></rect>
-                <circle cx="4" cy="4" r="2"></circle>
-            </svg>
-        </a>
-        <a class="social-icon" href="#">
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                 viewBox="0 0 24 24">
-                <line x1="4" x2="20" y1="4" y2="20"></line>
-                <line x1="20" x2="4" y1="4" y2="20"></line>
-            </svg>
-        </a>
-    </div>
 </footer>
 
-<script>
+<script type="module">
+    import rooms from "./Code/backend/vsp_units.json" with {type: "json"};
     // Logik für das Routing
     const startInput = document.getElementById("startInput");
     const endInput = document.getElementById("endInput");
     const btn = document.getElementById("submitBtn");
     const swapBtn = document.getElementById("swapBtn");
     const errorMsg = document.getElementById("errorMsg");
+    const result = document.getElementById("result");
+
+    const startDropdown = document.getElementById("startDropdown");
+    const endDropdown = document.getElementById("endDropdown");
+
+    // Alias Map für benutzerfreundliche Namen
+    const aliases = {
+        "Café Einstein": {floor: "00", room: "010", vsp: "3"},
+        "Campus Eingang Ost": {floor: "00", room: "111", vsp: "1"}
+    };
+
+    const defaultSuggestions = [
+        "Café Einstein",
+        "Campus Eingang Ost",
+        "2.28 VSP 1",
+        "0.39 VSP 3"
+    ];
+
+    function formatRoomName(internalName) {
+        // z.B. 7723_00_039 -> 0.39 VSP 3
+        const parts = internalName.split("_");
+        if (parts.length !== 3) return internalName;
+        const b = parts[0];
+        const floor = parseInt(parts[1], 10);
+        const room = parts[2].replace(/^0+/, ''); // führende Nullen entfernen
+        const vspMap = {"7721": "1", "7722": "2", "7723": "3", "7724": "4"};
+        const vsp = vspMap[b];
+        if (!vsp) return internalName;
+        return `${floor}.${room} VSP ${vsp}`;
+    }
+
+    function renderDropdown(dropdownEl, inputEl, query) {
+        dropdownEl.innerHTML = "";
+        let matches = [];
+
+        if (!query) {
+            matches = [...defaultSuggestions];
+        } else {
+            const q = query.toLowerCase();
+            // 1. Aliases durchsuchen
+            for (let key of Object.keys(aliases)) {
+                if (key.toLowerCase().includes(q)) matches.push(key);
+            }
+            // 2. Räume durchsuchen
+            for (let r of rooms) {
+                if (r.use_type === "Tuer" || r.use_type === "Tür" || !r.name) continue;
+                const formatted = formatRoomName(r.name);
+                if (formatted.toLowerCase().includes(q) && !matches.includes(formatted)) {
+                    matches.push(formatted);
+                }
+                if (matches.length >= 15) break; // Max 15 Treffer
+            }
+        }
+
+        if (matches.length === 0) {
+            dropdownEl.style.display = "none";
+            return;
+        }
+
+        matches.forEach((m, index) => {
+            const div = document.createElement("div");
+            div.className = "dropdown-item";
+            if (index === 0 && query) div.classList.add("is-active");
+            div.innerText = m;
+
+            // Mouse down statt click, damit es feuert, bevor der input den focus verliert (falls onblur verwendet wird)
+            div.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                inputEl.value = m;
+                dropdownEl.style.display = "none";
+            });
+            dropdownEl.appendChild(div);
+        });
+        dropdownEl.style.display = "flex";
+    }
+
+    // Dropdowns öffnen & filtern bei Fokus und Eingabe
+    startInput.addEventListener("focus", () => {
+        renderDropdown(startDropdown, startInput, startInput.value.trim());
+        endDropdown.style.display = "none"; 
+    });
+
+    endInput.addEventListener("focus", () => {
+        renderDropdown(endDropdown, endInput, endInput.value.trim());
+        startDropdown.style.display = "none";
+    });
+
+    startInput.addEventListener("input", (e) => {
+        renderDropdown(startDropdown, startInput, e.target.value.trim());
+    });
+
+    endInput.addEventListener("input", (e) => {
+        renderDropdown(endDropdown, endInput, e.target.value.trim());
+    });
+
+    // Dropdowns schließen bei Klick nach draußen
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".route-pill")) {
+            startDropdown.style.display = "none";
+            endDropdown.style.display = "none";
+        }
+    });
 
     // Start & Ziel tauschen
     swapBtn.addEventListener("click", () => {
@@ -257,27 +402,117 @@
         endInput.value = temp;
     });
 
+    function parseRooms(input) {
+        return input.split(",").map(item => {
+            const trimmed = item.trim();
+            // 1. Alias Check
+            if (aliases[trimmed]) {
+                return aliases[trimmed];
+            }
+
+            // 2. Regex Check (erweitert auf \d+ für den Raum)
+            const match = trimmed.match(/(\d)\.(\d+).*VSP\s*(\d)/i);
+
+            if (!match) return null;
+
+            return {
+                floor: match[1],
+                room: match[2],
+                vsp: match[3]
+            };
+        }).filter(Boolean);
+    }
+
+    function getBuilding(vsp) {
+        return {
+            "1": "7721",
+            "2": "7722",
+            "3": "7723",
+            "4": "7724"
+        }[vsp] || null;
+    }
+
     // Formular absenden
     const triggerSearch = () => {
-        const startVal = startInput.value.trim();
-        const endVal = endInput.value.trim();
+        console.log("Rooms geladen:", rooms.length);
+        const valueStart = startInput.value.trim();
+        const valueEnd = endInput.value.trim();
 
-        if (!endVal) {
+        if (!valueEnd) {
             errorMsg.style.display = "block";
-            endInput.focus();
             return;
         }
 
         errorMsg.style.display = "none";
 
-        // Baut die URL auf. Wenn Start leer ist, wird nur 'ziel' übergeben.
-        let url = `map-routing.html?ziel=${encodeURIComponent(endVal)}`;
-        if (startVal) {
-            url += `&start=${encodeURIComponent(startVal)}`;
-        }
+        try {
+            const parsedStart = parseRooms(valueStart);
+            const parsedEnd = parseRooms(valueEnd);
+            if (!parsedEnd.length) {
+                result.innerHTML = "Ungültige  hier Eingabe";
+                return;
+            }
+            console.log("-2")
 
-        window.location.href = url;
-    };
+            const pEnd = parsedEnd[0];
+            let pStart = parsedStart[0];
+            const buildingCodeEnd = getBuilding(pEnd.vsp);
+            if (pStart == null) {
+                pStart = {floor: "0", room: "111", vsp: "1"}
+
+            }
+            const buildingCodeStart = getBuilding(pStart.vsp);
+
+            pStart.room = pStart.room.padStart(3, "0");
+            pEnd.room = pEnd.room.padStart(3, "0");
+            pStart.floor = pStart.floor.padStart(2, "0");
+            pEnd.floor = pEnd.floor.padStart(2, "0");
+            const filteredRoomsStart = rooms.filter(room => {
+                const [b, floor, unit] = room.name.split("_");
+                return (
+                    floor === pStart.floor &&
+                    unit === pStart.room &&
+                    b === buildingCodeStart
+                );
+            });
+
+
+            if (!filteredRoomsStart.length) {
+                result.innerHTML = "Start-Raum nicht gefunden";
+                return;
+            }
+
+            const filteredRoomsEnd = rooms.filter(room => {
+                const [b, floor, unit] = room.name.split("_");
+
+                return (
+                    floor === pEnd.floor &&
+                    unit === pEnd.room &&
+                    b === buildingCodeEnd &&
+                    room.use_type !== "Tür"
+                );
+            });
+
+            if (!filteredRoomsEnd.length) {
+                result.innerHTML = "End-Raum nicht gefunden";
+                return;
+            }
+
+            const roomStart = filteredRoomsStart[0];
+            const roomEnd = filteredRoomsEnd[0];
+
+
+            let url = `map-routing.html?ziel=${encodeURIComponent(roomEnd.name)}`;
+            if (roomStart.name) {
+                url += `&start=${encodeURIComponent(roomStart.name)}`;
+            }
+            window.location.href = url;
+
+        } catch (err) {
+            console.error(err);
+            result.innerHTML = "Ungültige Catch Eingabe";
+        }
+    }
 
     btn.addEventListener("click", triggerSearch);
 
