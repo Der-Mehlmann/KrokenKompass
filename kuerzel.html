@@ -19,7 +19,7 @@
     <style>
         /* Spezifische Styles für die Routing-Komponente */
         .route-planner-container {
-            max-width: 340px;
+            max-width: 420px;
             width: 100%;
             margin: 0 auto;
             display: flex;
@@ -30,12 +30,12 @@
         .route-pill {
             background-color: var(--button-light-bg, #f2f2f7);
             border-radius: 9999px;
-            padding: 0.75rem 1.25rem;
+            padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 220px;
+            width: 260px;
             position: relative;
         }
 
@@ -60,6 +60,35 @@
             flex-direction: column;
             overflow: hidden;
             padding: 6px;
+            animation: slideDownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: top center;
+        }
+
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20%, 60% {
+                transform: translateX(-4px);
+            }
+            40%, 80% {
+                transform: translateX(4px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
         }
 
         html[data-theme="dark"] .search-dropdown {
@@ -67,11 +96,11 @@
         }
 
         .dropdown-item {
-            padding: 10px 16px;
+            padding: 12px 20px;
             border-radius: 8px;
             cursor: pointer;
             color: var(--bulma-text);
-            font-size: 0.95rem;
+            font-size: 1rem;
             transition: background-color 0.2s ease;
             text-align: left;
         }
@@ -89,7 +118,7 @@
             border: none;
             background: transparent;
             outline: none;
-            font-size: 1rem;
+            font-size: 1.15rem;
             font-family: inherit;
             color: var(--bulma-text);
             width: 100%;
@@ -187,7 +216,7 @@
 <main class="is-flex-grow-1 is-flex is-align-items-center is-justify-content-center px-4">
     <div class="has-text-centered w-100">
 
-        <h1 class="title is-size-1-desktop is-size-2-mobile has-text-weight-bold mb-6" style="letter-spacing: -0.02em;">
+        <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold mb-6" style="letter-spacing: -0.02em;">
             Route planen
         </h1>
 
@@ -195,31 +224,28 @@
 
             <div class="route-pill mb-2">
                 <div class="is-flex is-align-items-center is-flex-grow-1">
-                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
-                         stroke-width="2"
-                         viewBox="0 0 24 24" width="18">
-                        <line x1="22" x2="11" y1="2" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    <svg class="is-clickable" fill="none" height="24" id="locationBtn" style="cursor: pointer;" viewBox="0 0 26 24"
+                         width="26">
+                        <rect height="23.6879" opacity="0" width="25.8012" x="0" y="0"/>
+                        <path d="M1.46505 12.4836L11.0158 12.5227C11.1818 12.5227 11.2404 12.591 11.2404 12.7571L11.2697 22.2395C11.2697 23.8899 13.2619 24.2512 13.9943 22.6887L23.5158 2.27854C24.2678 0.637911 22.9787-0.426543 21.426 0.296114L0.908411 9.83713C-0.517371 10.4914-0.214636 12.4738 1.46505 12.4836Z"
+                              fill="#8e8e93"/>
                     </svg>
 
                     <input class="route-input" id="startInput" placeholder="Start" type="text">
 
-                    <svg class="mr-2" fill="none" height="16" stroke="#8e8e93" stroke-linecap="round"
-                         stroke-linejoin="round"
-                         stroke-width="2" viewBox="0 0 24 24" width="16">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+
                 </div>
 
                 <button class="is-clickable is-flex is-align-items-center is-justify-content-center" id="swapBtn"
                         style="background: none; border: none; padding: 0; cursor: pointer;">
-                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
-                         stroke-width="2"
-                         viewBox="0 0 24 24" width="18">
-                        <polyline points="16 3 21 3 21 8"></polyline>
-                        <line x1="4" x2="21" y1="14" y2="3"></line>
-                        <polyline points="8 21 3 21 3 16"></polyline>
-                        <line x1="20" x2="3" y1="10" y2="21"></line>
+                    <svg fill="none" height="24" viewBox="0 0 23 32" width="17">
+                        <rect height="31.7733" opacity="0" width="22.3926" x="0" y="0"/>
+                        <path d="M7.75585 24.9247L7.40234 24.9247C6.92383 24.9247 6.5332 25.3154 6.5332 25.7841C6.5332 26.2626 6.92383 26.6533 7.40234 26.6533L7.7492 26.6533C7.35266 28.3988 5.78978 29.7001 3.91602 29.7001C1.75781 29.7001 0 27.9423 0 25.7744C0 23.6162 1.75781 21.8583 3.91602 21.8583C5.79913 21.8583 7.36826 23.1727 7.75585 24.9247Z"
+                              fill="#8e8e93"/>
+                        <path d="M7.40234 26.6533L15.5371 26.6533C19.5215 26.6533 22.0312 24.5927 22.0312 21.331C22.0312 18.0205 19.5312 15.8232 14.8438 15.3447L7.45117 14.5732C3.71094 14.1826 1.73828 12.6591 1.73828 10.4423C1.73828 8.2353 3.56445 6.84858 6.49414 6.84858L11.6406 6.84858L10.4199 5.84272C10.166 5.62787 9.96094 5.38373 9.81445 5.12006L6.49414 5.12006C2.50977 5.12006 0 7.18061 0 10.4423C0 13.7529 2.50977 15.9599 7.1582 16.4287L14.5801 17.2001C18.3203 17.5908 20.3027 19.1142 20.3027 21.331C20.3027 23.538 18.4668 24.9247 15.5371 24.9247L7.40234 24.9247C6.92383 24.9247 6.5332 25.3154 6.5332 25.7841C6.5332 26.2626 6.92383 26.6533 7.40234 26.6533Z"
+                              fill="#8e8e93"/>
+                        <path d="M15.293 6.51655L15.293 0.764593C15.293 0.129827 14.707-0.241266 14.1992 0.178656L10.7715 2.99116C10.293 3.39155 10.2832 3.88959 10.7715 4.29975L14.1992 7.09272C14.707 7.51264 15.293 7.17084 15.293 6.51655ZM15.3027 10.6962C15.3027 11.165 15.6543 11.4384 16.1133 11.4384L17.7148 11.4384C20.3223 11.4384 22.2168 9.78803 22.2168 7.14155C22.2168 4.52436 20.332 2.8935 17.7246 2.8935L14.2969 2.8935C13.877 2.8935 13.5449 3.22553 13.5449 3.63569C13.5449 4.04584 13.877 4.37787 14.2969 4.37787L17.7246 4.37787C19.4336 4.37787 20.6836 5.35444 20.6836 7.08295C20.6836 8.85053 19.4629 9.94428 17.7148 9.94428L16.084 9.94428C15.6543 9.94428 15.3027 10.2177 15.3027 10.6962Z"
+                              fill="#8e8e93"/>
                     </svg>
                 </button>
 
@@ -231,23 +257,23 @@
 
             <div class="route-pill mt-2">
                 <div class="is-flex is-align-items-center is-flex-grow-1">
-                    <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
-                         stroke-width="2"
-                         viewBox="0 0 24 24" width="18">
-                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                        <line x1="4" x2="4" y1="22" y2="15"></line>
+                    <svg fill="none" height="24" viewBox="0 0 24 25" width="23">
+                        <rect height="24.3457" opacity="0" width="22.9492" x="0" y="0"/>
+                        <path d="M1.8457 24.3457C2.30469 24.3457 2.66602 23.9746 2.66602 23.5156L2.66602 16.3086C3.02734 16.2012 4.19922 15.7129 6.12305 15.7129C10.7422 15.7129 13.5938 17.9785 18.0078 17.9785C19.9121 17.9785 20.6836 17.7637 21.6016 17.3535C22.4121 16.9824 22.9492 16.3867 22.9492 15.3613L22.9492 2.73438C22.9492 2.09961 22.4414 1.74805 21.7871 1.74805C21.1816 1.74805 20.0195 2.29492 17.8516 2.29492C13.4277 2.29492 10.5762 0.0292969 5.9668 0.0292969C4.0625 0.0292969 3.30078 0.244141 2.38281 0.654297C1.5625 1.02539 1.02539 1.62109 1.02539 2.64648L1.02539 23.5156C1.02539 23.9648 1.40625 24.3457 1.8457 24.3457ZM2.66602 10.8496L2.66602 6.58203C2.86133 6.15234 4.00391 5.58594 5.9668 5.58594C6.36719 5.58594 6.86523 5.60547 7.31445 5.6543L7.31445 1.73828C9.01367 1.9043 10.5176 2.39258 12.041 2.85156L12.041 6.76758C13.6328 7.26562 15.1367 7.66602 16.7676 7.80273L16.7676 3.88672C17.1191 3.91602 17.4805 3.92578 17.8516 3.92578C19.1797 3.92578 20.3027 3.7793 21.3184 3.48633L21.3184 7.40234C20.6836 7.57812 19.4141 7.8418 17.8516 7.8418C17.4805 7.8418 17.0996 7.82227 16.7676 7.80273L16.7676 12.0703C17.0801 12.0996 17.4316 12.1191 17.8516 12.1191C19.1797 12.1191 20.3027 11.9629 21.3184 11.6699L21.3184 15.3418C21.123 15.7715 19.9902 16.3379 18.0078 16.3379C17.5879 16.3379 17.1777 16.3184 16.7676 16.2793L16.7676 12.0703C15.0781 11.8945 13.7207 11.582 12.041 11.0449L12.041 15.1465C10.5762 14.707 9.0625 14.2578 7.31445 14.1211L7.31445 9.92188C6.85547 9.88281 6.5625 9.85352 5.9668 9.85352C3.99414 9.85352 2.86133 10.4199 2.66602 10.8496ZM7.31445 9.92188C9.05273 10.1074 10.3711 10.5371 12.041 11.0449L12.041 6.76758C10.4688 6.29883 9.0625 5.83008 7.31445 5.6543Z"
+                              fill="#8e8e93"/>
                     </svg>
 
                     <input autofocus class="route-input" id="endInput" placeholder="End" type="text">
                 </div>
 
-                <svg fill="none" height="18" stroke="#8e8e93" stroke-linecap="round" stroke-linejoin="round"
-                     stroke-width="2"
-                     viewBox="0 0 24 24" width="18">
-                    <path d="M12 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path>
-                    <path d="M14.1 11.5L12 16h3l-2 6"></path>
-                    <path d="M9.5 8L12 11.5 15.5 10"></path>
-                    <path d="M7 16l3-6v-3l2 4"></path>
+                <svg class="is-flex" fill="none" height="24" viewBox="0 0 106 121" width="21">
+                    <rect height="120.239" style="fill-opacity:0;" width="105.754" x="0" y="0"/>
+                    <path
+                            d="M105.754,114.095c0,2.116 -1.75,3.865 -3.866,3.865c-2.116,0 -3.866,-1.75 -3.866,-3.865l0,-110.229c0,-2.157 1.75,-3.866 3.866,-3.866c2.116,0 3.866,1.709 3.866,3.866l0,110.229Z"
+                            fill="#8e8e93"/>
+                    <path
+                            d="M10.539,116.211l16.317,-19.409c1.587,-1.872 1.79,-2.319 2.441,-4.313l1.383,-4.272l-8.667,-10.824l-2.767,12.777l-16.113,19.084c-5.127,6.022 3.174,11.963 7.405,6.958Zm39.795,-1.587c3.337,6.714 13.224,2.604 9.644,-4.68l-11.068,-22.461c-0.855,-1.668 -2.035,-3.459 -3.052,-4.923l-7.08,-10.01l0.488,-1.505c1.913,-5.575 2.604,-8.992 3.011,-14.526l1.099,-15.666c0.529,-7.528 -3.906,-13.102 -11.434,-13.102c-5.697,0 -9.522,2.93 -14.811,8.057l-8.301,8.179c-2.685,2.645 -3.622,4.802 -3.866,8.301l-0.976,12.858c-0.244,3.174 1.505,5.453 4.476,5.534c3.011,0.203 4.801,-1.546 5.086,-4.964l1.221,-14.079l3.987,-3.581c1.465,-1.343 3.499,-0.488 3.377,1.058l-0.936,11.922c-0.448,5.982 0.977,8.83 5.086,13.997l10.987,13.753c1.098,1.424 1.261,1.953 1.709,2.848l11.352,22.99Zm18.84,-65.633l-12.573,-0l-8.341,-9.277l-0.855,13.021l3.581,3.581c1.79,1.79 3.296,2.32 6.47,2.32l11.719,0c3.215,0 5.371,-1.872 5.371,-4.842c0,-2.93 -2.197,-4.802 -5.371,-4.802Zm-31.25,-26.164c6.347,0 11.434,-5.086 11.434,-11.434c0,-6.307 -5.086,-11.393 -11.434,-11.393c-6.307,0 -11.393,5.086 -11.393,11.393c0,6.348 5.086,11.434 11.393,11.434Z"
+                            fill="#8e8e93"/>
                 </svg>
 
                 <div class="search-dropdown" id="endDropdown">
@@ -261,7 +287,7 @@
             <p class="has-text-danger is-size-7 mt-3" id="result"></p>
 
             <button class="button is-info is-rounded has-text-weight-medium mt-5" id="submitBtn"
-                    style="padding: 0.5rem 1.5rem; height: auto;">
+                    style="padding: 0.75rem 2rem; height: auto; font-size: 1.1rem;">
                 Route finden
             </button>
 
@@ -347,7 +373,17 @@
         }
 
         if (matches.length === 0) {
-            dropdownEl.style.display = "none";
+            if (query) {
+                const div = document.createElement("div");
+                div.className = "dropdown-item";
+                div.style.cursor = "default";
+                div.style.color = "#8e8e93";
+                div.innerText = "Keine Treffer gefunden";
+                dropdownEl.appendChild(div);
+                dropdownEl.style.display = "flex";
+            } else {
+                dropdownEl.style.display = "none";
+            }
             return;
         }
 
@@ -402,6 +438,14 @@
         endInput.value = temp;
     });
 
+    // Standort Button
+    const locationBtn = document.getElementById("locationBtn");
+    if (locationBtn) {
+        locationBtn.addEventListener("click", () => {
+            startInput.value = "Campus Eingang Ost";
+        });
+    }
+
     function parseRooms(input) {
         return input.split(",").map(item => {
             const trimmed = item.trim();
@@ -437,9 +481,20 @@
         console.log("Rooms geladen:", rooms.length);
         const valueStart = startInput.value.trim();
         const valueEnd = endInput.value.trim();
+        const container = document.querySelector(".route-planner-container");
+
+        const triggerError = (msg) => {
+            if (msg) {
+                errorMsg.innerText = msg;
+                errorMsg.style.display = "block";
+            }
+            container.classList.remove("shake");
+            void container.offsetWidth; // trigger reflow
+            container.classList.add("shake");
+        };
 
         if (!valueEnd) {
-            errorMsg.style.display = "block";
+            triggerError("Bitte wähle mindestens ein Ziel (End) aus.");
             return;
         }
 
@@ -449,7 +504,7 @@
             const parsedStart = parseRooms(valueStart);
             const parsedEnd = parseRooms(valueEnd);
             if (!parsedEnd.length) {
-                result.innerHTML = "Ungültige  hier Eingabe";
+                triggerError("Ungültige Zieleingabe");
                 return;
             }
             console.log("-2")
@@ -478,7 +533,7 @@
 
 
             if (!filteredRoomsStart.length) {
-                result.innerHTML = "Start-Raum nicht gefunden";
+                triggerError("Start-Raum nicht gefunden");
                 return;
             }
 
@@ -494,7 +549,7 @@
             });
 
             if (!filteredRoomsEnd.length) {
-                result.innerHTML = "End-Raum nicht gefunden";
+                triggerError("End-Raum nicht gefunden");
                 return;
             }
 
@@ -510,7 +565,7 @@
 
         } catch (err) {
             console.error(err);
-            result.innerHTML = "Ungültige Catch Eingabe";
+            triggerError("Es ist ein Fehler aufgetreten.");
         }
     }
 
