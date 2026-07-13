@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>KrokenKompass</title>
+    <link href="./cssFiles/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"/>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        window.toggleTheme = function () {
+            const htmlEl = document.documentElement;
+            let currentTheme = htmlEl.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        };
+    </script>
+
+    <style>
+        .route-planner-container {
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .route-pill {
+            background-color: var(--button-light-bg, #f2f2f7);
+            border-radius: 9999px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 260px;
+            position: relative;
+        }
+
+        .route-pill:focus-within {
+            box-shadow: 0 0 0 2px var(--bulma-info);
+            background-color: transparent;
+            width: 100%;
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: var(--bulma-scheme-main, #ffffff);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 6px;
+            animation: slideDownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: top center;
+        }
+
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20%, 60% {
+                transform: translateX(-4px);
+            }
+            40%, 80% {
+                transform: translateX(4px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        html[data-theme="dark"] .search-dropdown {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--bulma-text);
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--button-light-bg, #f2f2f7);
+        }
+
+        .dropdown-item.is-active {
+            background-color: var(--bulma-info);
+            color: white;
+        }
+
+        .route-input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 1.15rem;
+            font-family: inherit;
+            color: var(--bulma-text);
+            width: 100%;
+            margin: 0 0.5rem;
+            font-weight: 500;
+        }
+
+        .route-input::placeholder {
+            color: #8e8e93;
+            font-weight: 400;
+        }
+
+        .route-line {
+            width: 2px;
+            height: 16px;
+            background-color: #d1d1d6;
+            margin: 0.25rem 0;
+            border-radius: 2px;
+            transform: translateX(-81px);
+            transition: opacity 0.2s ease;
+        }
+
+        .route-planner-container:focus-within .route-line {
+            opacity: 0;
+        }
+
+        html[data-theme="dark"] .route-line,
+
+        @media (prefers-color-scheme: dark) {
+            html:not([data-theme="light"]) .route-line {
+                background-color: #48484a;
+            }
+        }
+
+        .header-action-button {
+            background-color: var(--bulma-scheme-main, #ffffff);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-action-button:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        html[data-theme="dark"] #moon-icon {
+            display: none !important;
+        }
+
+        html[data-theme="dark"] #sun-icon {
+            display: block !important;
+        }
+
+        html:not([data-theme="dark"]) #moon-icon {
+            display: block !important;
+        }
+
+        html:not([data-theme="dark"]) #sun-icon {
+            display: none !important;
+        }
+
+        /* Dark Mode Map Shadow */
+        @media (prefers-color-scheme: dark) {
+            html:not([data-theme="light"]) .map-wrapper-bg {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        html[data-theme="dark"] .map-wrapper-bg {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="is-flex is-flex-direction-column"
+      style="min-height: 100vh; position: relative; background-color: transparent !important;">
+<style>html {
+    background-color: transparent !important;
+}</style>
+<!-- Leaflet dependencies -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+
+<div id="elm-app"></div>
+
+<script src="elm.js?v=3"></script>
+<script src="map-view.js?v=3"></script>
+<script>
+    const app = Elm.Main.init({
+        node: document.getElementById("elm-app")
+    });
+
+    app.ports.sendRoute.subscribe(function (routeCoords) {
+        console.log("Route received from Elm!", routeCoords);
+        if (window.zeichneRoute) {
+            window.zeichneRoute(routeCoords);
+        }
+    });
+
+    app.ports.routingFailed.subscribe(function (msg) {
+        alert("Routing fehlgeschlagen: " + msg);
+    });
+
+    app.ports.switchFloor.subscribe(function (etage) {
+        console.log("Wechsle zu Etage: " + etage);
+        if (window.wechsleEtage) {
+            window.wechsleEtage(etage);
+        }
+    });
+</script>
+</body>
+</html>
