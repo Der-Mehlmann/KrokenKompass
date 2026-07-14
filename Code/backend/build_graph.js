@@ -104,21 +104,14 @@ function addEdge(graph, from, to, cost) {
 let etagenListe = ["-1", "00", "01", "02", "03", "04", "05"];
 let alleFeatures = [];
 
-// Try to load vsp_units.json which has everything
-try {
-    const data = JSON.parse(fs.readFileSync('./vsp_units.json', 'utf8'));
-    alleFeatures = data.map(d => {
-        // convert to GeoJSON feature format expected by turf
-        return {
-            type: "Feature",
-            properties: d,
-            geometry: d.geom
-        };
-    });
-} catch (e) {
-    console.log("Could not read vsp_units.json. Error:", e.message);
-    process.exit(1);
-}
+etagenListe.forEach(etage => {
+    try {
+        const data = JSON.parse(fs.readFileSync('../../Data/vsp_etage_' + etage + '.json', 'utf8'));
+        alleFeatures = alleFeatures.concat(data.features);
+    } catch (e) {
+        console.log("Could not read vsp_etage_" + etage + ".json. Error:", e.message);
+    }
+});
 
 console.log(`Loaded ${alleFeatures.length} features. Building graph...`);
 
@@ -165,6 +158,35 @@ for (let i = 0; i < valideFeatures.length; i++) {
         let meta2 = nodeMeta[n2];
         let etage1 = meta1.etage;
         let etage2 = meta2.etage;
+
+        if (meta1.gebaeude !== meta2.gebaeude) {
+            if (etage1 === etage2) {
+                let typ1 = meta1.typ;
+                let typ2 = meta2.typ;
+
+                // Für externe Verbindungen (Gebäudeübergänge) erlauben wir eine höhere Toleranz (3.0 Meter), 
+                // da die Polygone draußen oft Lücken aufweisen.
+                if (istSameFloorVerbindungZulaessig(typ1, typ2) && habenKontakt(f1, f2, 3.0)) {
+                    // Nur erlauben, wenn mindestens eines der Elemente eine Tür/Eingang ist,
+                    // oder wenn zwei Außenwege (Flur) aneinandergrenzen.
+                    if (typ1 === "tuer" || typ2 === "tuer" || (typ1 === "flur" && typ2 === "flur")) {
+                        let distanz = turf.distance(turf.point(centroids[n1]), turf.point(centroids[n2]), {units: "meters"});
+
+                        let isRaum1 = (typ1 !== "tuer" && typ1 !== "flur" && typ1 !== "vertikal" && typ1 !== "eingang" && typ1 !== "durchgang" && typ1 !== "lobby");
+                        let isRaum2 = (typ2 !== "tuer" && typ2 !== "flur" && typ2 !== "vertikal" && typ2 !== "eingang" && typ2 !== "durchgang" && typ2 !== "lobby");
+                        if (isRaum1 || isRaum2) {
+                            distanz += 5000;
+                        }
+                        if (typ1 === "tuer" && typ2 === "tuer") {
+                            distanz += 500;
+                        }
+
+                        addEdge(graph, n1, n2, distanz);
+                    }
+                }
+            }
+            continue;
+        }
 
         if (etage1 === etage2) {
             let typ1 = meta1.typ;

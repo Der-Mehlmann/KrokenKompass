@@ -1,6 +1,7 @@
 port module Main exposing (main)
 
 import Browser
+import Browser.Events
 import Browser.Navigation as Nav
 import Dict exposing (Dict)
 import Dijkstra
@@ -38,19 +39,24 @@ routeParser =
 parseUrl : Url.Url -> Route
 parseUrl url =
     let
-        pathFromFragment =
+        ( pathStr, queryStr ) =
             case url.fragment of
-                Just frag -> "/" ++ frag
-                Nothing -> "/"
+                Just frag ->
+                    case String.split "?" frag of
+                        [ p ] -> ( "/" ++ p, Nothing )
+                        p :: rest -> ( "/" ++ p, Just (String.join "?" rest) )
+                        [] -> ( "/", Nothing )
+                Nothing ->
+                    ( "/", Nothing )
                 
         fragmentUrl =
-            { url | path = pathFromFragment, fragment = Nothing, query = Nothing }
+            { url | path = pathStr, fragment = Nothing, query = queryStr }
     in
     Maybe.withDefault Home (parse routeParser fragmentUrl)
 
 -- PORTS
 
-port sendRoute : List (List Float) -> Cmd msg
+port sendRoute : { route : List String, startRoom : String, endRoom : String } -> Cmd msg
 port routingFailed : String -> Cmd msg
 port switchFloor : String -> Cmd msg
 port toggleThemeCmd : () -> Cmd msg
@@ -105,7 +111,7 @@ init _ url key =
       , aktuelleEtage = "00"
       , currentFloor = "EG / 0"
       }
-    , fetchGraph
+    , Cmd.batch [ fetchGraph, fetchVspUnits ]
     )
 
 -- HTTP & DECODERS
@@ -117,13 +123,25 @@ fetchGraph =
         , expect = Http.expectJson GotGraph decodeGraphData
         }
 
+fetchVspUnits : Cmd Msg
+fetchVspUnits =
+    Http.get
+        { url = "../../Code/backend/vsp_units.json"
+        , expect = Http.expectJson GotVspUnits decodeVspUnits
+        }
+
 formatRoomName : String -> String
 formatRoomName internalName =
     let
         parts = String.split "_" internalName
+        
+        stripZeros s =
+            case String.toInt s of
+                Just num -> String.fromInt num
+                Nothing -> s
     in
     case parts of
-        [ b, floor, room ] ->
+        [ b, e, r ] ->
             let
                 vsp =
                     case b of
@@ -132,18 +150,9 @@ formatRoomName internalName =
                         "7723" -> "3"
                         "7724" -> "4"
                         _ -> ""
-                
-                cleanRoom =
-                    if String.startsWith "0" room && String.length room > 1 then
-                        if String.startsWith "00" room && String.length room > 2 then
-                            String.dropLeft 2 room
-                        else
-                            String.dropLeft 1 room
-                    else
-                        room
             in
             if vsp /= "" then
-                floor ++ "." ++ cleanRoom ++ " VSP " ++ vsp
+                stripZeros e ++ "." ++ stripZeros r ++ " VSP " ++ vsp
             else
                 internalName
 
@@ -155,7 +164,7 @@ buildRoomList data =
     let
         rawList =
             Dict.toList data.nodeMeta
-                |> List.filter (\( _, meta ) -> meta.rawTyp == "raum" && meta.name /= "")
+                |> List.filter (\( _, meta ) -> meta.name /= "")
                 |> List.map (\( _, meta ) -> meta.name)
         
         -- Remove duplicates
@@ -165,12 +174,38 @@ buildRoomList data =
     in
     List.map (\name -> ( formatRoomName name, name )) uniqueNames
 
+type alias VspUnit =
+    { name : String }
+
+decodeVspUnits : Decode.Decoder (List VspUnit)
+decodeVspUnits =
+    Decode.list (Decode.map VspUnit (Decode.field "name" Decode.string))
+
+buildRoomListFromVsp : List VspUnit -> List ( String, String )
+buildRoomListFromVsp units =
+    let
+        rawList =
+            units
+                |> List.filter (\u -> u.name /= "")
+                |> List.map (\u -> u.name)
+        
+        -- Remove duplicates
+        uniqueList =
+            List.foldl (\name acc -> if List.member name acc then acc else name :: acc) [] rawList
+
+        -- Format
+        formattedList =
+            List.map (\name -> ( formatRoomName name, name )) uniqueList
+    in
+    List.sortBy Tuple.first formattedList
+
 -- UPDATE
 
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | GotGraph (Result Http.Error GraphData)
+    | GotVspUnits (Result Http.Error (List VspUnit))
     | UpdateStart String
     | UpdateEnd String
     | FocusStart
@@ -184,6 +219,63 @@ type Msg
     | SubmitForm
     | LocationFill
     | ToggleTheme
+    | NoOp
+
+calculateRoute : Model -> ( Model, Cmd Msg )
+calculateRoute model =
+    let
+        s = String.trim model.startInput
+        e = String.trim model.endInput
+    in
+    if e == "" then
+        ( { model | errorMsg = Just "Bitte wähle mindestens ein Ziel (End) aus.", shake = True }, Cmd.none )
+    else
+        case model.graphData of
+            Nothing ->
+                ( { model | errorMsg = Just "Gebäudedaten werden noch geladen..." }, Cmd.none )
+            
+            Just graphData ->
+                let
+                    sInternal = getInternalName s model.rooms
+                    eInternal = getInternalName e model.rooms
+
+                    startId = getBestNodeId sInternal "tuer" graphData
+                    endId = getBestNodeId eInternal "" graphData
+                in
+                case (startId, endId) of
+                    (Just sid, Just eid) ->
+                        case Dijkstra.shortestPath sid eid graphData.graph of
+                            Just path ->
+                                let
+                                    startEtage =
+                                        case String.split "_" sInternal of
+                                            _ :: etage :: _ -> etage
+                                            _ -> "00"
+                                            
+                                    targetFragment = "map?start=" ++ Url.percentEncode sInternal ++ "&ziel=" ++ Url.percentEncode eInternal
+                                    
+                                    navCmd =
+                                        case model.url.fragment of
+                                            Just frag ->
+                                                if frag == targetFragment then
+                                                    Cmd.none
+                                                else
+                                                    Nav.pushUrl model.key (Url.toString { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just targetFragment })
+                                            Nothing ->
+                                                Nav.pushUrl model.key (Url.toString { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just targetFragment })
+                                in
+                                ( { model | errorMsg = Nothing, aktuelleEtage = startEtage }
+                                , Cmd.batch
+                                    [ sendRoute { route = path, startRoom = sInternal, endRoom = eInternal }
+                                    , switchFloor startEtage
+                                    , navCmd
+                                    ]
+                                )
+                            Nothing ->
+                                ( { model | errorMsg = Just "Keine Route gefunden (Graph ist nicht zusammenhängend)." }, routingFailed "Keine Route" )
+                    _ ->
+                        ( { model | errorMsg = Just "Start- oder Zielknoten nicht gefunden." }, routingFailed "Raum nicht gefunden" )
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -197,15 +289,60 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | url = url, route = parseUrl url }, Cmd.none )
+            let
+                newRoute = parseUrl url
+                m1 = { model | url = url, route = newRoute }
+            in
+            case newRoute of
+                Map params ->
+                    case (params.start, params.ziel) of
+                        (Just s, Just z) ->
+                            let
+                                m2 = { m1 | startInput = formatRoomName s, endInput = formatRoomName z }
+                            in
+                            calculateRoute m2
+                        _ ->
+                            ( m1, Cmd.none )
+                _ ->
+                    ( m1, Cmd.none )
 
         GotGraph result ->
             case result of
                 Ok loadedGraph ->
-                    ( { model | graphData = Just loadedGraph, rooms = buildRoomList loadedGraph }, Cmd.none )
+                    let
+                        baseModel = { model | graphData = Just loadedGraph }
+                    in
+                    case baseModel.route of
+                        Map params ->
+                            case (params.start, params.ziel) of
+                                (Just s, Just z) ->
+                                    let
+                                        m1 = { baseModel | startInput = formatRoomName s, endInput = formatRoomName z }
+                                    in
+                                    calculateRoute m1
+                                _ ->
+                                    ( baseModel, Cmd.none )
+                        _ ->
+                            ( baseModel, Cmd.none )
 
+                Err err ->
+                    let
+                        errStr =
+                            case err of
+                                Http.BadUrl eMsg -> "BadUrl: " ++ eMsg
+                                Http.Timeout -> "Timeout"
+                                Http.NetworkError -> "NetworkError"
+                                Http.BadStatus status -> "BadStatus: " ++ String.fromInt status
+                                Http.BadBody eMsg -> "BadBody: " ++ eMsg
+                    in
+                    ( { model | errorMsg = Just ("Fehler beim Laden (Graph): " ++ errStr) }, Cmd.none )
+
+        GotVspUnits result ->
+            case result of
+                Ok units ->
+                    ( { model | rooms = buildRoomListFromVsp units }, Cmd.none )
                 Err _ ->
-                    ( { model | errorMsg = Just "Fehler beim Laden der Gebäudedaten." }, Cmd.none )
+                    ( { model | errorMsg = Just "Fehler beim Laden der VSP Units." }, Cmd.none )
 
         UpdateStart val ->
             ( { model | startInput = val, dropdownState = StartOpen, errorMsg = Nothing, shake = False }, Cmd.none )
@@ -241,66 +378,22 @@ update msg model =
             ( { model | aktuelleEtage = etage }, switchFloor etage )
 
         SubmitForm ->
-            let
-                s = String.trim model.startInput
-                e = String.trim model.endInput
-            in
-            if e == "" then
-                ( { model | errorMsg = Just "Bitte wähle mindestens ein Ziel (End) aus.", shake = True }, Cmd.none )
-            else
-                case model.graphData of
-                    Nothing ->
-                        ( { model | errorMsg = Just "Gebäudedaten werden noch geladen..." }, Cmd.none )
-                    
-                    Just graphData ->
-                        let
-                            sInternal = getInternalName s model.rooms
-                            eInternal = getInternalName e model.rooms
-
-                            startId = getBestNodeId sInternal "tuer" graphData
-                            endId = getBestNodeId eInternal "" graphData
-                        in
-                        case (startId, endId) of
-                            (Just sid, Just eid) ->
-                                case Dijkstra.shortestPath sid eid graphData.graph of
-                                    Just path ->
-                                        let
-                                            coords =
-                                                List.filterMap (\id -> Dict.get id graphData.centroids) path
-                                                
-                                            -- Extrahiere Etage aus Startraum (z.B. "7721_00_111" -> "00")
-                                            startEtage =
-                                                case String.split "_" sInternal of
-                                                    _ :: etage :: _ -> etage
-                                                    _ -> "00"
-                                        in
-                                        ( { model | errorMsg = Nothing, aktuelleEtage = startEtage }
-                                        , Cmd.batch
-                                            [ sendRoute coords
-                                            , switchFloor startEtage
-                                            , Nav.pushUrl model.key (Url.toString { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just ("map?start=" ++ Url.percentEncode sInternal ++ "&ziel=" ++ Url.percentEncode eInternal) })
-                                            ]
-                                        )
-                                    Nothing ->
-                                        ( { model | errorMsg = Just "Keine Route gefunden." }, routingFailed "Keine Route" )
-
-                            _ ->
-                                ( { model | errorMsg = Just "Start- oder Zielraum nicht gefunden im Graph." }, routingFailed "Raum nicht gefunden" )
+            calculateRoute model
         
         ToggleTheme ->
             ( model, toggleThemeCmd () )
+            
+        NoOp ->
+            ( model, Cmd.none )
 
-getInternalName : String -> List (String, String) -> String
+getInternalName : String -> List ( String, String ) -> String
 getInternalName display rooms =
-    let
-        lower = String.toLower display
-    in
-    if lower == "café einstein" || lower == "cafe einstein" || lower == "einstein" then
-        "7723_00_039"
-    else if lower == "campus eingang ost" then
+    if String.toLower display == "campus eingang ost" then
         "7721_00_111"
+    else if String.toLower display == "café einstein" || String.toLower display == "cafe einstein" || String.toLower display == "einstein" then
+        "7723_00_010"
     else
-        case List.filter (\( d, _ ) -> String.toLower d == lower) rooms of
+        case List.filter (\( d, _ ) -> String.toLower d == String.toLower display) rooms of
             ( _, internal ) :: _ ->
                 internal
             [] ->
@@ -309,8 +402,12 @@ getInternalName display rooms =
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    case model.dropdownState of
+        Closed ->
+            Sub.none
+        _ ->
+            Browser.Events.onClick (Decode.succeed CloseDropdowns)
 
 -- VIEW
 
@@ -660,7 +757,7 @@ viewRoutePlanner model =
             else
                 "route-planner-container"
     in
-    div [ class containerClass, stopPropagationOn "click" (Decode.succeed ( CloseDropdowns, True )) ]
+    div [ class containerClass, stopPropagationOn "click" (Decode.succeed ( NoOp, True )) ]
         [ div [ class "route-pill mb-2" ]
             [ div [ class "is-flex is-align-items-center is-flex-grow-1" ]
                 [ viewStartIcon
@@ -762,7 +859,7 @@ getSuggestions rooms query =
         let
             matches =
                 rooms
-                    |> List.filter (\( d, _ ) -> String.contains q (String.toLower d))
+                    |> List.filter (\( d, internalName ) -> String.contains q (String.toLower d) || String.contains q (String.toLower internalName))
                     |> List.map (\( d, _ ) -> d)
                     |> List.take 15
         in

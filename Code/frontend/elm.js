@@ -3862,6 +3862,7 @@ type alias Process =
 	});
 
 
+
 // PAGE VISIBILITY
 
 
@@ -3879,6 +3880,7 @@ type alias Process =
 						? {hidden: 'webkitHidden', change: 'webkitvisibilitychange'}
 						: {hidden: 'hidden', change: 'visibilitychange'};
 	}
+
 
 
 // ANIMATION FRAMES
@@ -3902,6 +3904,7 @@ type alias Process =
 			callback(_Scheduler_succeed(Date.now()));
 		});
 	}
+
 
 
 // DOM STUFF
@@ -3940,6 +3943,7 @@ type alias Process =
 	});
 
 
+
 // WINDOW VIEWPORT
 
 
@@ -3972,6 +3976,7 @@ type alias Process =
 	});
 
 
+
 // ELEMENT VIEWPORT
 
 
@@ -4002,6 +4007,7 @@ type alias Process =
 	});
 
 
+
 // ELEMENT
 
 
@@ -4029,6 +4035,7 @@ type alias Process =
 	}
 
 
+
 // LOAD and RELOAD
 
 
@@ -4049,6 +4056,7 @@ type alias Process =
 			}
 		}));
 	}
+
 
 
 // SEND REQUEST
@@ -5035,6 +5043,7 @@ type alias Process =
 		});
 	var $elm$browser$Browser$application = _Browser_application;
 	var $author$project$Main$Closed = {$: 'Closed'};
+	var $elm$core$Platform$Cmd$batch = _Platform_batch;
 	var $author$project$Main$GotGraph = function (a) {
 		return {$: 'GotGraph', a: a};
 	};
@@ -5904,6 +5913,22 @@ type alias Process =
 			expect: A2($elm$http$Http$expectJson, $author$project$Main$GotGraph, $author$project$GraphData$decodeGraphData),
 			url: '../../Code/backend/graph.json'
 		});
+	var $author$project$Main$GotVspUnits = function (a) {
+		return {$: 'GotVspUnits', a: a};
+	};
+	var $author$project$Main$VspUnit = function (name) {
+		return {name: name};
+	};
+	var $author$project$Main$decodeVspUnits = $elm$json$Json$Decode$list(
+		A2(
+			$elm$json$Json$Decode$map,
+			$author$project$Main$VspUnit,
+			A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string)));
+	var $author$project$Main$fetchVspUnits = $elm$http$Http$get(
+		{
+			expect: A2($elm$http$Http$expectJson, $author$project$Main$GotVspUnits, $author$project$Main$decodeVspUnits),
+			url: '../../Code/backend/vsp_units.json'
+		});
 	var $author$project$Main$Home = {$: 'Home'};
 	var $elm$url$Url$Parser$State = F5(
 		function (visited, unvisited, params, frag, value) {
@@ -6223,18 +6248,35 @@ type alias Process =
 						$elm$url$Url$Parser$Query$string('ziel')))
 			]));
 	var $author$project$Main$parseUrl = function (url) {
-		var pathFromFragment = function () {
-			var _v0 = url.fragment;
-			if (_v0.$ === 'Just') {
-				var frag = _v0.a;
-				return '/' + frag;
+		var _v0 = function () {
+			var _v1 = url.fragment;
+			if (_v1.$ === 'Just') {
+				var frag = _v1.a;
+				var _v2 = A2($elm$core$String$split, '?', frag);
+				if (_v2.b) {
+					if (!_v2.b.b) {
+						var p = _v2.a;
+						return _Utils_Tuple2('/' + p, $elm$core$Maybe$Nothing);
+					} else {
+						var p = _v2.a;
+						var rest = _v2.b;
+						return _Utils_Tuple2(
+							'/' + p,
+							$elm$core$Maybe$Just(
+								A2($elm$core$String$join, '?', rest)));
+					}
+				} else {
+					return _Utils_Tuple2('/', $elm$core$Maybe$Nothing);
+				}
 			} else {
-				return '/';
+				return _Utils_Tuple2('/', $elm$core$Maybe$Nothing);
 			}
 		}();
+		var pathStr = _v0.a;
+		var queryStr = _v0.b;
 		var fragmentUrl = _Utils_update(
 			url,
-			{fragment: $elm$core$Maybe$Nothing, path: pathFromFragment, query: $elm$core$Maybe$Nothing});
+			{fragment: $elm$core$Maybe$Nothing, path: pathStr, query: queryStr});
 		return A2(
 			$elm$core$Maybe$withDefault,
 			$author$project$Main$Home,
@@ -6257,16 +6299,282 @@ type alias Process =
 					startInput: '',
 					url: url
 				},
-				$author$project$Main$fetchGraph);
+				$elm$core$Platform$Cmd$batch(
+					_List_fromArray(
+						[$author$project$Main$fetchGraph, $author$project$Main$fetchVspUnits])));
 		});
+	var $author$project$Main$CloseDropdowns = {$: 'CloseDropdowns'};
 	var $elm$core$Platform$Sub$batch = _Platform_batch;
 	var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-	var $author$project$Main$subscriptions = function (_v0) {
+	var $elm$browser$Browser$Events$Document = {$: 'Document'};
+	var $elm$browser$Browser$Events$MySub = F3(
+		function (a, b, c) {
+			return {$: 'MySub', a: a, b: b, c: c};
+		});
+	var $elm$browser$Browser$Events$State = F2(
+		function (subs, pids) {
+			return {pids: pids, subs: subs};
+		});
+	var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
+		A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
+	var $elm$browser$Browser$Events$nodeToKey = function (node) {
+		if (node.$ === 'Document') {
+			return 'd_';
+		} else {
+			return 'w_';
+		}
+	};
+	var $elm$browser$Browser$Events$addKey = function (sub) {
+		var node = sub.a;
+		var name = sub.b;
+		return _Utils_Tuple2(
+			_Utils_ap(
+				$elm$browser$Browser$Events$nodeToKey(node),
+				name),
+			sub);
+	};
+	var $elm$core$Dict$foldl = F3(
+		function (func, acc, dict) {
+			foldl:
+				while (true) {
+					if (dict.$ === 'RBEmpty_elm_builtin') {
+						return acc;
+					} else {
+						var key = dict.b;
+						var value = dict.c;
+						var left = dict.d;
+						var right = dict.e;
+						var $temp$func = func,
+							$temp$acc = A3(
+								func,
+								key,
+								value,
+								A3($elm$core$Dict$foldl, func, acc, left)),
+							$temp$dict = right;
+						func = $temp$func;
+						acc = $temp$acc;
+						dict = $temp$dict;
+
+					}
+				}
+		});
+	var $elm$core$Dict$merge = F6(
+		function (leftStep, bothStep, rightStep, leftDict, rightDict, initialResult) {
+			var stepState = F3(
+				function (rKey, rValue, _v0) {
+					stepState:
+						while (true) {
+							var list = _v0.a;
+							var result = _v0.b;
+							if (!list.b) {
+								return _Utils_Tuple2(
+									list,
+									A3(rightStep, rKey, rValue, result));
+							} else {
+								var _v2 = list.a;
+								var lKey = _v2.a;
+								var lValue = _v2.b;
+								var rest = list.b;
+								if (_Utils_cmp(lKey, rKey) < 0) {
+									var $temp$rKey = rKey,
+										$temp$rValue = rValue,
+										$temp$_v0 = _Utils_Tuple2(
+											rest,
+											A3(leftStep, lKey, lValue, result));
+									rKey = $temp$rKey;
+									rValue = $temp$rValue;
+									_v0 = $temp$_v0;
+
+								} else {
+									if (_Utils_cmp(lKey, rKey) > 0) {
+										return _Utils_Tuple2(
+											list,
+											A3(rightStep, rKey, rValue, result));
+									} else {
+										return _Utils_Tuple2(
+											rest,
+											A4(bothStep, lKey, lValue, rValue, result));
+									}
+								}
+							}
+						}
+				});
+			var _v3 = A3(
+				$elm$core$Dict$foldl,
+				stepState,
+				_Utils_Tuple2(
+					$elm$core$Dict$toList(leftDict),
+					initialResult),
+				rightDict);
+			var leftovers = _v3.a;
+			var intermediateResult = _v3.b;
+			return A3(
+				$elm$core$List$foldl,
+				F2(
+					function (_v4, result) {
+						var k = _v4.a;
+						var v = _v4.b;
+						return A3(leftStep, k, v, result);
+					}),
+				intermediateResult,
+				leftovers);
+		});
+	var $elm$browser$Browser$Events$Event = F2(
+		function (key, event) {
+			return {event: event, key: key};
+		});
+	var $elm$browser$Browser$Events$spawn = F3(
+		function (router, key, _v0) {
+			var node = _v0.a;
+			var name = _v0.b;
+			var actualNode = function () {
+				if (node.$ === 'Document') {
+					return _Browser_doc;
+				} else {
+					return _Browser_window;
+				}
+			}();
+			return A2(
+				$elm$core$Task$map,
+				function (value) {
+					return _Utils_Tuple2(key, value);
+				},
+				A3(
+					_Browser_on,
+					actualNode,
+					name,
+					function (event) {
+						return A2(
+							$elm$core$Platform$sendToSelf,
+							router,
+							A2($elm$browser$Browser$Events$Event, key, event));
+					}));
+		});
+	var $elm$core$Dict$union = F2(
+		function (t1, t2) {
+			return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
+		});
+	var $elm$browser$Browser$Events$onEffects = F3(
+		function (router, subs, state) {
+			var stepRight = F3(
+				function (key, sub, _v6) {
+					var deads = _v6.a;
+					var lives = _v6.b;
+					var news = _v6.c;
+					return _Utils_Tuple3(
+						deads,
+						lives,
+						A2(
+							$elm$core$List$cons,
+							A3($elm$browser$Browser$Events$spawn, router, key, sub),
+							news));
+				});
+			var stepLeft = F3(
+				function (_v4, pid, _v5) {
+					var deads = _v5.a;
+					var lives = _v5.b;
+					var news = _v5.c;
+					return _Utils_Tuple3(
+						A2($elm$core$List$cons, pid, deads),
+						lives,
+						news);
+				});
+			var stepBoth = F4(
+				function (key, pid, _v2, _v3) {
+					var deads = _v3.a;
+					var lives = _v3.b;
+					var news = _v3.c;
+					return _Utils_Tuple3(
+						deads,
+						A3($elm$core$Dict$insert, key, pid, lives),
+						news);
+				});
+			var newSubs = A2($elm$core$List$map, $elm$browser$Browser$Events$addKey, subs);
+			var _v0 = A6(
+				$elm$core$Dict$merge,
+				stepLeft,
+				stepBoth,
+				stepRight,
+				state.pids,
+				$elm$core$Dict$fromList(newSubs),
+				_Utils_Tuple3(_List_Nil, $elm$core$Dict$empty, _List_Nil));
+			var deadPids = _v0.a;
+			var livePids = _v0.b;
+			var makeNewPids = _v0.c;
+			return A2(
+				$elm$core$Task$andThen,
+				function (pids) {
+					return $elm$core$Task$succeed(
+						A2(
+							$elm$browser$Browser$Events$State,
+							newSubs,
+							A2(
+								$elm$core$Dict$union,
+								livePids,
+								$elm$core$Dict$fromList(pids))));
+				},
+				A2(
+					$elm$core$Task$andThen,
+					function (_v1) {
+						return $elm$core$Task$sequence(makeNewPids);
+					},
+					$elm$core$Task$sequence(
+						A2($elm$core$List$map, $elm$core$Process$kill, deadPids))));
+		});
+	var $elm$browser$Browser$Events$onSelfMsg = F3(
+		function (router, _v0, state) {
+			var key = _v0.key;
+			var event = _v0.event;
+			var toMessage = function (_v2) {
+				var subKey = _v2.a;
+				var _v3 = _v2.b;
+				var node = _v3.a;
+				var name = _v3.b;
+				var decoder = _v3.c;
+				return _Utils_eq(subKey, key) ? A2(_Browser_decodeEvent, decoder, event) : $elm$core$Maybe$Nothing;
+			};
+			var messages = A2($elm$core$List$filterMap, toMessage, state.subs);
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v1) {
+					return $elm$core$Task$succeed(state);
+				},
+				$elm$core$Task$sequence(
+					A2(
+						$elm$core$List$map,
+						$elm$core$Platform$sendToApp(router),
+						messages)));
+		});
+	var $elm$browser$Browser$Events$subMap = F2(
+		function (func, _v0) {
+			var node = _v0.a;
+			var name = _v0.b;
+			var decoder = _v0.c;
+			return A3(
+				$elm$browser$Browser$Events$MySub,
+				node,
+				name,
+				A2($elm$json$Json$Decode$map, func, decoder));
+		});
+	_Platform_effectManagers['Browser.Events'] = _Platform_createManager($elm$browser$Browser$Events$init, $elm$browser$Browser$Events$onEffects, $elm$browser$Browser$Events$onSelfMsg, 0, $elm$browser$Browser$Events$subMap);
+	var $elm$browser$Browser$Events$subscription = _Platform_leaf('Browser.Events');
+	var $elm$browser$Browser$Events$on = F3(
+		function (node, name, decoder) {
+			return $elm$browser$Browser$Events$subscription(
+				A3($elm$browser$Browser$Events$MySub, node, name, decoder));
+		});
+	var $elm$browser$Browser$Events$onClick = A2($elm$browser$Browser$Events$on, $elm$browser$Browser$Events$Document, 'click');
+	var $author$project$Main$subscriptions = function (model) {
+		var _v0 = model.dropdownState;
+		if (_v0.$ === 'Closed') {
 		return $elm$core$Platform$Sub$none;
+		} else {
+			return $elm$browser$Browser$Events$onClick(
+				$elm$json$Json$Decode$succeed($author$project$Main$CloseDropdowns));
+		}
 	};
 	var $author$project$Main$EndOpen = {$: 'EndOpen'};
 	var $author$project$Main$StartOpen = {$: 'StartOpen'};
-	var $elm$core$Platform$Cmd$batch = _Platform_batch;
 	var $elm$core$List$filter = F2(
 		function (isGood, list) {
 			return A3(
@@ -6280,13 +6588,22 @@ type alias Process =
 		});
 	var $elm$core$Basics$neq = _Utils_notEqual;
 	var $author$project$Main$formatRoomName = function (internalName) {
+		var stripZeros = function (s) {
+			var _v4 = $elm$core$String$toInt(s);
+			if (_v4.$ === 'Just') {
+				var num = _v4.a;
+				return $elm$core$String$fromInt(num);
+			} else {
+				return s;
+			}
+		};
 		var parts = A2($elm$core$String$split, '_', internalName);
 		if (((parts.b && parts.b.b) && parts.b.b.b) && (!parts.b.b.b.b)) {
 			var b = parts.a;
 			var _v1 = parts.b;
-			var floor = _v1.a;
+			var e = _v1.a;
 			var _v2 = _v1.b;
-			var room = _v2.a;
+			var r = _v2.a;
 			var vsp = function () {
 				switch (b) {
 					case '7721':
@@ -6301,8 +6618,7 @@ type alias Process =
 						return '';
 				}
 			}();
-			var cleanRoom = (A2($elm$core$String$startsWith, '0', room) && ($elm$core$String$length(room) > 1)) ? ((A2($elm$core$String$startsWith, '00', room) && ($elm$core$String$length(room) > 2)) ? A2($elm$core$String$dropLeft, 2, room) : A2($elm$core$String$dropLeft, 1, room)) : room;
-			return (vsp !== '') ? (floor + ('.' + (cleanRoom + (' VSP ' + vsp)))) : internalName;
+			return (vsp !== '') ? (stripZeros(e) + ('.' + (stripZeros(r) + (' VSP ' + vsp)))) : internalName;
 		} else {
 			return internalName;
 		}
@@ -6337,21 +6653,20 @@ type alias Process =
 				},
 				xs);
 		});
-	var $author$project$Main$buildRoomList = function (data) {
+	var $elm$core$List$sortBy = _List_sortBy;
+	var $author$project$Main$buildRoomListFromVsp = function (units) {
 		var rawList = A2(
 			$elm$core$List$map,
-			function (_v1) {
-				var meta = _v1.b;
-				return meta.name;
+			function (u) {
+				return u.name;
 			},
 			A2(
 				$elm$core$List$filter,
-				function (_v0) {
-					var meta = _v0.b;
-					return (meta.rawTyp === 'raum') && (meta.name !== '');
+				function (u) {
+					return u.name !== '';
 				},
-				$elm$core$Dict$toList(data.nodeMeta)));
-		var uniqueNames = A3(
+				units));
+		var uniqueList = A3(
 			$elm$core$List$foldl,
 			F2(
 				function (name, acc) {
@@ -6359,14 +6674,15 @@ type alias Process =
 				}),
 			_List_Nil,
 			rawList);
-		return A2(
+		var formattedList = A2(
 			$elm$core$List$map,
 			function (name) {
 				return _Utils_Tuple2(
 					$author$project$Main$formatRoomName(name),
 					name);
 			},
-			uniqueNames);
+			uniqueList);
+		return A2($elm$core$List$sortBy, $elm$core$Tuple$first, formattedList);
 	};
 	var $elm$core$List$head = function (list) {
 		if (list.b) {
@@ -6381,7 +6697,6 @@ type alias Process =
 		function (typ, zielTyp) {
 			return ((zielTyp !== '') && _Utils_eq(typ, zielTyp)) ? 0 : ((typ === 'tuer') ? 1 : ((typ === 'flur') ? 2 : ((typ === 'vertikal') ? 3 : 4)));
 		});
-	var $elm$core$List$sortBy = _List_sortBy;
 	var $author$project$GraphData$getBestNodeId = F3(
 		function (roomName, zielTyp, graphData) {
 			var matchingNodes = A2(
@@ -6410,12 +6725,11 @@ type alias Process =
 	var $elm$core$String$toLower = _String_toLower;
 	var $author$project$Main$getInternalName = F2(
 		function (display, rooms) {
-			var lower = $elm$core$String$toLower(display);
-			if ((lower === 'café einstein') || ((lower === 'cafe einstein') || (lower === 'einstein'))) {
-				return '7723_00_039';
+			if ($elm$core$String$toLower(display) === 'campus eingang ost') {
+				return '7721_00_111';
 			} else {
-				if (lower === 'campus eingang ost') {
-					return '7721_00_111';
+				if (($elm$core$String$toLower(display) === 'café einstein') || (($elm$core$String$toLower(display) === 'cafe einstein') || ($elm$core$String$toLower(display) === 'einstein'))) {
+					return '7723_00_010';
 				} else {
 					var _v0 = A2(
 						$elm$core$List$filter,
@@ -6423,7 +6737,7 @@ type alias Process =
 							var d = _v1.a;
 							return _Utils_eq(
 								$elm$core$String$toLower(d),
-								lower);
+								$elm$core$String$toLower(display));
 						},
 						rooms);
 					if (_v0.b) {
@@ -6436,13 +6750,11 @@ type alias Process =
 				}
 			}
 		});
-	var $elm$browser$Browser$Navigation$load = _Browser_load;
 	var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 	var $elm$url$Url$percentEncode = _Url_percentEncode;
 	var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 	var $elm$json$Json$Encode$string = _Json_wrap;
 	var $author$project$Main$routingFailed = _Platform_outgoingPort('routingFailed', $elm$json$Json$Encode$string);
-	var $elm$json$Json$Encode$float = _Json_wrap;
 	var $elm$json$Json$Encode$list = F2(
 		function (func, entries) {
 			return _Json_wrap(
@@ -6452,10 +6764,36 @@ type alias Process =
 					_Json_emptyArray(_Utils_Tuple0),
 					entries));
 		});
+	var $elm$json$Json$Encode$object = function (pairs) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				F2(
+					function (_v0, obj) {
+						var k = _v0.a;
+						var v = _v0.b;
+						return A3(_Json_addField, k, v, obj);
+					}),
+				_Json_emptyObject(_Utils_Tuple0),
+				pairs));
+	};
 	var $author$project$Main$sendRoute = _Platform_outgoingPort(
 		'sendRoute',
-		$elm$json$Json$Encode$list(
-			$elm$json$Json$Encode$list($elm$json$Json$Encode$float)));
+		function ($) {
+			return $elm$json$Json$Encode$object(
+				_List_fromArray(
+					[
+						_Utils_Tuple2(
+							'endRoom',
+							$elm$json$Json$Encode$string($.endRoom)),
+						_Utils_Tuple2(
+							'route',
+							$elm$json$Json$Encode$list($elm$json$Json$Encode$string)($.route)),
+						_Utils_Tuple2(
+							'startRoom',
+							$elm$json$Json$Encode$string($.startRoom))
+					]));
+		});
 	var $elm$core$List$isEmpty = function (xs) {
 		if (!xs.b) {
 			return true;
@@ -6479,31 +6817,6 @@ type alias Process =
 						current = $temp$current;
 						parents = $temp$parents;
 						acc = $temp$acc;
-
-					}
-				}
-		});
-	var $elm$core$Dict$foldl = F3(
-		function (func, acc, dict) {
-			foldl:
-				while (true) {
-					if (dict.$ === 'RBEmpty_elm_builtin') {
-						return acc;
-					} else {
-						var key = dict.b;
-						var value = dict.c;
-						var left = dict.d;
-						var right = dict.e;
-						var $temp$func = func,
-							$temp$acc = A3(
-								func,
-								key,
-								value,
-								A3($elm$core$Dict$foldl, func, acc, left)),
-							$temp$dict = right;
-						func = $temp$func;
-						acc = $temp$acc;
-						dict = $temp$dict;
 
 					}
 				}
@@ -6650,13 +6963,124 @@ type alias Process =
 						_Utils_ap(http, url.host)),
 					url.path)));
 	};
+	var $elm$core$String$trim = _String_trim;
+	var $author$project$Main$calculateRoute = function (model) {
+		var s = $elm$core$String$trim(model.startInput);
+		var e = $elm$core$String$trim(model.endInput);
+		if (e === '') {
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						errorMsg: $elm$core$Maybe$Just('Bitte wähle mindestens ein Ziel (End) aus.'),
+						shake: true
+					}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var _v0 = model.graphData;
+			if (_v0.$ === 'Nothing') {
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							errorMsg: $elm$core$Maybe$Just('Gebäudedaten werden noch geladen...')
+						}),
+					$elm$core$Platform$Cmd$none);
+			} else {
+				var graphData = _v0.a;
+				var sInternal = A2($author$project$Main$getInternalName, s, model.rooms);
+				var startId = A3($author$project$GraphData$getBestNodeId, sInternal, 'tuer', graphData);
+				var eInternal = A2($author$project$Main$getInternalName, e, model.rooms);
+				var endId = A3($author$project$GraphData$getBestNodeId, eInternal, '', graphData);
+				var _v1 = _Utils_Tuple2(startId, endId);
+				if ((_v1.a.$ === 'Just') && (_v1.b.$ === 'Just')) {
+					var sid = _v1.a.a;
+					var eid = _v1.b.a;
+					var _v2 = A3($author$project$Dijkstra$shortestPath, sid, eid, graphData.graph);
+					if (_v2.$ === 'Just') {
+						var path = _v2.a;
+						var targetFragment = 'map?start=' + ($elm$url$Url$percentEncode(sInternal) + ('&ziel=' + $elm$url$Url$percentEncode(eInternal)));
+						var startEtage = function () {
+							var _v4 = A2($elm$core$String$split, '_', sInternal);
+							if (_v4.b && _v4.b.b) {
+								var _v5 = _v4.b;
+								var etage = _v5.a;
+								return etage;
+							} else {
+								return '00';
+							}
+						}();
+						var navCmd = function () {
+							var _v3 = model.url.fragment;
+							if (_v3.$ === 'Just') {
+								var frag = _v3.a;
+								return _Utils_eq(frag, targetFragment) ? $elm$core$Platform$Cmd$none : A2(
+									$elm$browser$Browser$Navigation$pushUrl,
+									model.key,
+									$elm$url$Url$toString(
+										{
+											fragment: $elm$core$Maybe$Just(targetFragment),
+											host: model.url.host,
+											path: model.url.path,
+											port_: model.url.port_,
+											protocol: model.url.protocol,
+											query: model.url.query
+										}));
+							} else {
+								return A2(
+									$elm$browser$Browser$Navigation$pushUrl,
+									model.key,
+									$elm$url$Url$toString(
+										{
+											fragment: $elm$core$Maybe$Just(targetFragment),
+											host: model.url.host,
+											path: model.url.path,
+											port_: model.url.port_,
+											protocol: model.url.protocol,
+											query: model.url.query
+										}));
+							}
+						}();
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{aktuelleEtage: startEtage, errorMsg: $elm$core$Maybe$Nothing}),
+							$elm$core$Platform$Cmd$batch(
+								_List_fromArray(
+									[
+										$author$project$Main$sendRoute(
+											{endRoom: eInternal, route: path, startRoom: sInternal}),
+										$author$project$Main$switchFloor(startEtage),
+										navCmd
+									])));
+					} else {
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									errorMsg: $elm$core$Maybe$Just('Keine Route gefunden (Graph ist nicht zusammenhängend).')
+								}),
+							$author$project$Main$routingFailed('Keine Route'));
+					}
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								errorMsg: $elm$core$Maybe$Just('Start- oder Zielknoten nicht gefunden.')
+							}),
+						$author$project$Main$routingFailed('Raum nicht gefunden'));
+				}
+			}
+		}
+	};
+	var $elm$browser$Browser$Navigation$load = _Browser_load;
 	var $elm$json$Json$Encode$null = _Json_encodeNull;
 	var $author$project$Main$toggleThemeCmd = _Platform_outgoingPort(
 		'toggleThemeCmd',
 		function ($) {
 			return $elm$json$Json$Encode$null;
 		});
-	var $elm$core$String$trim = _String_trim;
 	var $author$project$Main$update = F2(
 		function (msg, model) {
 			switch (msg.$) {
@@ -6678,24 +7102,94 @@ type alias Process =
 					}
 				case 'UrlChanged':
 					var url = msg.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								route: $author$project$Main$parseUrl(url),
-								url: url
-							}),
-						$elm$core$Platform$Cmd$none);
+					var newRoute = $author$project$Main$parseUrl(url);
+					var m1 = _Utils_update(
+						model,
+						{route: newRoute, url: url});
+					if (newRoute.$ === 'Map') {
+						var params = newRoute.a;
+						var _v3 = _Utils_Tuple2(params.start, params.ziel);
+						if ((_v3.a.$ === 'Just') && (_v3.b.$ === 'Just')) {
+							var s = _v3.a.a;
+							var z = _v3.b.a;
+							var m2 = _Utils_update(
+								m1,
+								{
+									endInput: $author$project$Main$formatRoomName(z),
+									startInput: $author$project$Main$formatRoomName(s)
+								});
+							return $author$project$Main$calculateRoute(m2);
+						} else {
+							return _Utils_Tuple2(m1, $elm$core$Platform$Cmd$none);
+						}
+					} else {
+						return _Utils_Tuple2(m1, $elm$core$Platform$Cmd$none);
+					}
 				case 'GotGraph':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
 						var loadedGraph = result.a;
+						var baseModel = _Utils_update(
+							model,
+							{
+								graphData: $elm$core$Maybe$Just(loadedGraph)
+							});
+						var _v5 = baseModel.route;
+						if (_v5.$ === 'Map') {
+							var params = _v5.a;
+							var _v6 = _Utils_Tuple2(params.start, params.ziel);
+							if ((_v6.a.$ === 'Just') && (_v6.b.$ === 'Just')) {
+								var s = _v6.a.a;
+								var z = _v6.b.a;
+								var m1 = _Utils_update(
+									baseModel,
+									{
+										endInput: $author$project$Main$formatRoomName(z),
+										startInput: $author$project$Main$formatRoomName(s)
+									});
+								return $author$project$Main$calculateRoute(m1);
+							} else {
+								return _Utils_Tuple2(baseModel, $elm$core$Platform$Cmd$none);
+							}
+						} else {
+							return _Utils_Tuple2(baseModel, $elm$core$Platform$Cmd$none);
+						}
+					} else {
+						var err = result.a;
+						var errStr = function () {
+							switch (err.$) {
+								case 'BadUrl':
+									var eMsg = err.a;
+									return 'BadUrl: ' + eMsg;
+								case 'Timeout':
+									return 'Timeout';
+								case 'NetworkError':
+									return 'NetworkError';
+								case 'BadStatus':
+									var status = err.a;
+									return 'BadStatus: ' + $elm$core$String$fromInt(status);
+								default:
+									var eMsg = err.a;
+									return 'BadBody: ' + eMsg;
+							}
+						}();
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								errorMsg: $elm$core$Maybe$Just('Fehler beim Laden (Graph): ' + errStr)
+							}),
+						$elm$core$Platform$Cmd$none);
+					}
+				case 'GotVspUnits':
+					var result = msg.a;
+					if (result.$ === 'Ok') {
+						var units = result.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
-									graphData: $elm$core$Maybe$Just(loadedGraph),
-									rooms: $author$project$Main$buildRoomList(loadedGraph)
+									rooms: $author$project$Main$buildRoomListFromVsp(units)
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
@@ -6703,7 +7197,7 @@ type alias Process =
 							_Utils_update(
 								model,
 								{
-									errorMsg: $elm$core$Maybe$Just('Fehler beim Laden der Gebäudedaten.')
+									errorMsg: $elm$core$Maybe$Just('Fehler beim Laden der VSP Units.')
 								}),
 							$elm$core$Platform$Cmd$none);
 					}
@@ -6785,103 +7279,13 @@ type alias Process =
 							{aktuelleEtage: etage}),
 						$author$project$Main$switchFloor(etage));
 				case 'SubmitForm':
-					var s = $elm$core$String$trim(model.startInput);
-					var e = $elm$core$String$trim(model.endInput);
-					if (e === '') {
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									errorMsg: $elm$core$Maybe$Just('Bitte wähle mindestens ein Ziel (End) aus.'),
-									shake: true
-								}),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						var _v3 = model.graphData;
-						if (_v3.$ === 'Nothing') {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										errorMsg: $elm$core$Maybe$Just('Gebäudedaten werden noch geladen...')
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							var graphData = _v3.a;
-							var sInternal = A2($author$project$Main$getInternalName, s, model.rooms);
-							var startId = A3($author$project$GraphData$getBestNodeId, sInternal, 'tuer', graphData);
-							var eInternal = A2($author$project$Main$getInternalName, e, model.rooms);
-							var endId = A3($author$project$GraphData$getBestNodeId, eInternal, '', graphData);
-							var _v4 = _Utils_Tuple2(startId, endId);
-							if ((_v4.a.$ === 'Just') && (_v4.b.$ === 'Just')) {
-								var sid = _v4.a.a;
-								var eid = _v4.b.a;
-								var _v5 = A3($author$project$Dijkstra$shortestPath, sid, eid, graphData.graph);
-								if (_v5.$ === 'Just') {
-									var path = _v5.a;
-									var startEtage = function () {
-										var _v6 = A2($elm$core$String$split, '_', sInternal);
-										if (_v6.b && _v6.b.b) {
-											var _v7 = _v6.b;
-											var etage = _v7.a;
-											return etage;
-										} else {
-											return '00';
-										}
-									}();
-									var coords = A2(
-										$elm$core$List$filterMap,
-										function (id) {
-											return A2($elm$core$Dict$get, id, graphData.centroids);
-										},
-										path);
-									return _Utils_Tuple2(
-										_Utils_update(
-											model,
-											{aktuelleEtage: startEtage, errorMsg: $elm$core$Maybe$Nothing}),
-										$elm$core$Platform$Cmd$batch(
-											_List_fromArray(
-												[
-													$author$project$Main$sendRoute(coords),
-													$author$project$Main$switchFloor(startEtage),
-													A2(
-														$elm$browser$Browser$Navigation$pushUrl,
-														model.key,
-														$elm$url$Url$toString(
-															{
-																fragment: $elm$core$Maybe$Just(
-																	'map?start=' + ($elm$url$Url$percentEncode(sInternal) + ('&ziel=' + $elm$url$Url$percentEncode(eInternal)))),
-																host: model.url.host,
-																path: model.url.path,
-																port_: model.url.port_,
-																protocol: model.url.protocol,
-																query: model.url.query
-															}))
-												])));
-								} else {
-									return _Utils_Tuple2(
-										_Utils_update(
-											model,
-											{
-												errorMsg: $elm$core$Maybe$Just('Keine Route gefunden.')
-											}),
-										$author$project$Main$routingFailed('Keine Route'));
-								}
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											errorMsg: $elm$core$Maybe$Just('Start- oder Zielraum nicht gefunden im Graph.')
-										}),
-									$author$project$Main$routingFailed('Raum nicht gefunden'));
-							}
-						}
-					}
-				default:
+					return $author$project$Main$calculateRoute(model);
+				case 'ToggleTheme':
 					return _Utils_Tuple2(
 						model,
 						$author$project$Main$toggleThemeCmd(_Utils_Tuple0));
+				default:
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			}
 		});
 	var $elm$html$Html$div = _VirtualDom_node('div');
@@ -8093,9 +8497,9 @@ type alias Process =
 	};
 	var $elm$html$Html$h2 = _VirtualDom_node('h2');
 	var $elm$html$Html$main_ = _VirtualDom_node('main');
-	var $author$project$Main$CloseDropdowns = {$: 'CloseDropdowns'};
 	var $author$project$Main$FocusEnd = {$: 'FocusEnd'};
 	var $author$project$Main$FocusStart = {$: 'FocusStart'};
+	var $author$project$Main$NoOp = {$: 'NoOp'};
 	var $author$project$Main$SelectEnd = function (a) {
 		return {$: 'SelectEnd', a: a};
 	};
@@ -8297,10 +8701,14 @@ type alias Process =
 							$elm$core$List$filter,
 							function (_v0) {
 								var d = _v0.a;
+								var internalName = _v0.b;
 								return A2(
 									$elm$core$String$contains,
 									q,
-									$elm$core$String$toLower(d));
+									$elm$core$String$toLower(d)) || A2(
+									$elm$core$String$contains,
+									q,
+									$elm$core$String$toLower(internalName));
 							},
 							rooms)));
 				var aliasMatches = A2(
@@ -8536,7 +8944,7 @@ type alias Process =
 						$elm$html$Html$Events$stopPropagationOn,
 						'click',
 						$elm$json$Json$Decode$succeed(
-							_Utils_Tuple2($author$project$Main$CloseDropdowns, true)))
+							_Utils_Tuple2($author$project$Main$NoOp, true)))
 				]),
 			_List_fromArray(
 				[

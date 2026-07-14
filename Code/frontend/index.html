@@ -289,12 +289,13 @@
 }</style>
 <!-- Leaflet dependencies -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet"/>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 
 <div id="elm-app"></div>
 
-<script src="elm.js?v=19"></script>
-<script src="map-view.js?v=19"></script>
+<script src="elm.js?v=22"></script>
+<script src="map-view.js?v=22"></script>
 <script>
     const app = Elm.Main.init({
         node: document.getElementById("elm-app")
@@ -308,10 +309,9 @@
         });
     }
 
-    app.ports.sendRoute.subscribe(function (routeCoords) {
-        console.log("Route received from Elm!", routeCoords);
+    app.ports.sendRoute.subscribe(function (payload) {
         if (window.zeichneRoute) {
-            window.zeichneRoute(routeCoords);
+            window.zeichneRoute(payload);
         }
     });
 
