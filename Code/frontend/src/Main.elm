@@ -13,12 +13,47 @@ import Json.Decode as Decode
 import Svg
 import Svg.Attributes as SvgAttr
 import Url
+import Url.Parser exposing (Parser, (<?>), map, oneOf, parse, s, top)
+import Url.Parser.Query as Query
+
+-- ROUTING
+type Route
+    = Home
+    | Planner
+    | Map RouteParams
+
+type alias RouteParams =
+    { start : Maybe String
+    , ziel : Maybe String
+    }
+
+routeParser : Parser (Route -> a) a
+routeParser =
+    oneOf
+        [ Url.Parser.map Home top
+        , Url.Parser.map Planner (Url.Parser.s "plan")
+        , Url.Parser.map (\st zi -> Map { start = st, ziel = zi }) (Url.Parser.s "map" <?> Query.string "start" <?> Query.string "ziel")
+        ]
+
+parseUrl : Url.Url -> Route
+parseUrl url =
+    let
+        pathFromFragment =
+            case url.fragment of
+                Just frag -> "/" ++ frag
+                Nothing -> "/"
+                
+        fragmentUrl =
+            { url | path = pathFromFragment, fragment = Nothing, query = Nothing }
+    in
+    Maybe.withDefault Home (parse routeParser fragmentUrl)
 
 -- PORTS
 
 port sendRoute : List (List Float) -> Cmd msg
 port routingFailed : String -> Cmd msg
 port switchFloor : String -> Cmd msg
+port toggleThemeCmd : () -> Cmd msg
 
 -- MAIN
 
@@ -43,6 +78,7 @@ type DropdownState
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
+    , route : Route
     , graphData : Maybe GraphData
     , rooms : List ( String, String ) -- List of (DisplayName, InternalName)
     , startInput : String
@@ -51,12 +87,14 @@ type alias Model =
     , errorMsg : Maybe String
     , shake : Bool
     , aktuelleEtage : String
+    , currentFloor : String
     }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init _ url key =
     ( { key = key
       , url = url
+      , route = parseUrl url
       , graphData = Nothing
       , rooms = []
       , startInput = ""
@@ -65,6 +103,7 @@ init flags url key =
       , errorMsg = Nothing
       , shake = False
       , aktuelleEtage = "00"
+      , currentFloor = "EG / 0"
       }
     , fetchGraph
     )
@@ -144,6 +183,7 @@ type Msg
     | SwapInputs
     | SubmitForm
     | LocationFill
+    | ToggleTheme
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -157,7 +197,7 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | url = url }, Cmd.none )
+            ( { model | url = url, route = parseUrl url }, Cmd.none )
 
         GotGraph result ->
             case result of
@@ -246,6 +286,9 @@ update msg model =
 
                             _ ->
                                 ( { model | errorMsg = Just "Start- oder Zielraum nicht gefunden im Graph." }, routingFailed "Raum nicht gefunden" )
+        
+        ToggleTheme ->
+            ( model, toggleThemeCmd () )
 
 getInternalName : String -> List (String, String) -> String
 getInternalName display rooms =
@@ -274,10 +317,21 @@ subscriptions _ =
 view : Model -> Browser.Document Msg
 view model =
     let
-        fragment =
-            Maybe.withDefault "" model.url.fragment
+        content =
+            case model.route of
+                Home ->
+                    viewHome model
+
+                Planner ->
+                    viewPlanner model
+
+                Map _ ->
+                    viewMapOverlay model
+
         onMap =
-            String.startsWith "map" fragment
+            case model.route of
+                Map _ -> True
+                _ -> False
     in
     { title = "KrokenKompass"
     , body =
@@ -289,41 +343,19 @@ view model =
             , style "left" "0"
             , style "width" "100%"
             , style "height" "100%"
-            , style "z-index" "0"
+            , style "z-index" "1"
             ]
-            [ div [ class "is-flex is-flex-direction-column", style "min-height" "100vh", style "height" "100%" ]
-                [ div [ style "height" "76px" ] []
-                , Html.main_ [ class "section py-4 is-flex-grow-1 is-flex is-flex-direction-column", style "height" "100%" ]
-                    [ div [ class "container is-max-widescreen is-flex-grow-1 is-flex is-flex-direction-column w-100", style "height" "100%" ]
-                        [ div [ class "map-wrapper-bg is-flex-grow-1", style "position" "relative", style "border-radius" "1.5rem", style "overflow" "hidden", style "background" "#e5e5ea", style "height" "100%" ]
-                            [ Html.node "leaflet-map-container" [ style "display" "block", style "width" "100%", style "height" "100%" ] []
-                            ]
-                        ]
-                    ]
+            [ div [ style "position" "absolute", style "top" "76px", style "bottom" "24px", style "left" "24px", style "right" "24px", style "border-radius" "1.5rem", style "overflow" "hidden", style "background" "#e5e5ea" ]
+                [ Html.node "leaflet-map-container" [ style "display" "block", style "width" "100%", style "height" "100%", style "position" "relative" ] []
                 ]
             ]
-        , div
-            [ style "position" "relative"
-            , style "z-index" "10"
-            , style "min-height" "100vh"
-            , style "pointer-events" (if onMap then "none" else "auto")
-            , style "background" (if onMap then "transparent" else "var(--bulma-scheme-main, #ffffff)")
-            ]
-            [ if onMap then
-                viewMapOverlay model
-              else
-                div []
-                    [ viewHeader model
-                    , Html.main_ [ class "section py-4 is-flex-grow-1 is-flex is-flex-direction-column", style "background-color" "transparent" ]
-                        [ viewRoutePlanner model ]
-                    ]
-            ]
+        , content
         ]
     }
 
 viewMapOverlay : Model -> Html Msg
 viewMapOverlay model =
-    div [ style "position" "absolute", style "top" "0", style "left" "0", style "width" "100%", style "height" "100%", style "pointer-events" "none", style "display" "flex", style "flex-direction" "column" ]
+    div [ style "position" "absolute", style "top" "0", style "left" "0", style "width" "100%", style "height" "100%", style "pointer-events" "none", style "display" "flex", style "flex-direction" "column", style "z-index" "10" ]
         [ header [ class "header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6", style "pointer-events" "auto", style "background" "var(--bulma-scheme-main, #ffffff)" ]
             [ div [ class "is-flex is-align-items-center cursor-pointer", onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Nothing })) ]
                 [ Svg.svg
@@ -341,7 +373,7 @@ viewMapOverlay model =
                     [ Html.Attributes.attribute "aria-label" "Dark Mode wechseln"
                     , class "theme-toggle mr-4"
                     , id "theme-toggle"
-                    , onClick (LinkClicked (Browser.External "javascript:window.toggleTheme()"))
+                    , onClick ToggleTheme
                     , style "background" "transparent"
                     , style "border" "none"
                     , style "cursor" "pointer"
@@ -368,7 +400,6 @@ viewMapOverlay model =
                         , SvgAttr.strokeWidth "2"
                         , SvgAttr.viewBox "0 0 24 24"
                         , SvgAttr.width "20"
-                        , style "display" "none"
                         ]
                         [ Svg.circle [ SvgAttr.cx "12", SvgAttr.cy "12", SvgAttr.r "5" ] []
                         , Svg.line [ SvgAttr.x1 "12", SvgAttr.x2 "12", SvgAttr.y1 "1", SvgAttr.y2 "3" ] []
@@ -382,7 +413,7 @@ viewMapOverlay model =
                         ]
                     ]
                 , button
-                    [ class "button is-rounded header-action-button has-text-weight-medium px-5"
+                    [ class "button is-info is-rounded header-action-button has-text-weight-medium px-5"
                     , onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just "plan" }))
                     ]
                     [ text "Neue Route" ]
@@ -395,7 +426,7 @@ viewMapOverlay model =
                         Nothing -> div [ id "info-box", style "pointer-events" "auto" ] [ text "Lade Gebäudedaten..." ]
                         Just _ -> text ""
             ]
-        , div [ id "etagen-menue", style "pointer-events" "auto", style "position" "absolute", style "top" "100px", style "left" "24px", style "background" "var(--bulma-scheme-main, #ffffff)", style "padding" "8px", style "border-radius" "1rem", style "box-shadow" "0 4px 15px rgba(0, 0, 0, 0.08)", style "display" "flex", style "flex-direction" "column", style "gap" "2px", style "min-width" "80px" ]
+        , div [ id "etagen-menue", style "pointer-events" "auto", style "position" "absolute", style "top" "100px", style "left" "48px", style "background" "var(--bulma-scheme-main, #ffffff)", style "padding" "8px", style "border-radius" "1rem", style "box-shadow" "0 4px 15px rgba(0, 0, 0, 0.08)", style "display" "flex", style "flex-direction" "column", style "gap" "2px", style "min-width" "80px" ]
             [ div [ class "etagen-label", style "font-size" "0.75rem", style "color" "#8e8e93", style "padding" "4px 8px" ] [ text "Etage" ]
             , viewFloorButton model "05" "5"
             , viewFloorButton model "04" "4"
@@ -414,7 +445,7 @@ viewFloorButton model etage label =
         activeClass = if isActive then " active" else ""
     in
     button
-        [ class ("button is-ghost etagen-btn" ++ activeClass)
+        [ class ("etagen-btn" ++ activeClass)
         , style "border-radius" "0.5rem"
         , style "width" "100%"
         , style "justify-content" "flex-start"
@@ -424,34 +455,131 @@ viewFloorButton model etage label =
         ]
         [ text label ]
 
+
+viewHome : Model -> Html Msg
+viewHome model =
+    div [ style "display" "flex", style "flex-direction" "column", style "min-height" "100vh" ]
+        [ viewHeader model
+        , Html.section [ class "hero is-medium mt-4", style "flex-grow" "1" ]
+            [ div [ class "hero-body has-text-centered is-flex is-flex-direction-column is-justify-content-center" ]
+                [ div [ class "container is-max-widescreen" ]
+                    [ h1 [ class "title hero-title-custom" ]
+                        [ text "Finde deinen Weg über"
+                        , br [] []
+                        , text "den Campus."
+                        ]
+                    , p [ class "subtitle hero-subtitle-custom is-size-5 mt-4", style "font-weight" "300" ]
+                        [ text "Suche nach Gebäuden oder Räumen und starte die Navigation." ]
+                    , div [ class "buttons is-centered mt-5 hero-buttons-custom" ]
+                        [ button [ class "button is-info is-medium is-rounded has-text-weight-medium px-6", onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just "plan" })) ]
+                            [ text "Raum finden" ]
+                        , button [ class "button button-secondary is-medium is-rounded px-6", onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just "map" })) ]
+                            [ text "Zur Karte" ]
+                        ]
+                    ]
+                ]
+            ]
+        , viewAbstractCards
+        , viewFooter
+        ]
+
+viewAbstractCards : Html Msg
+viewAbstractCards =
+    Html.section [ class "section pt-0 pb-6 mt-4" ]
+        [ div [ class "container is-max-widescreen" ]
+            [ div [ class "columns is-variable is-3" ]
+                [ div [ class "column" ]
+                    [ div [ class "abstract-card", style "background-color" "#B2D8C6" ]
+                        [ div [ class "color-block", style "flex-direction" "column", style "bottom" "40px", style "left" "40px" ]
+                            [ span [ class "color-square", style "background-color" "#007AFF" ] []
+                            , span [ class "color-square", style "background-color" "#FFD60A" ] []
+                            , span [ class "color-square", style "background-color" "#FF375F" ] []
+                            , span [ class "color-square", style "background-color" "#34C759" ] []
+                            ]
+                        ]
+                    ]
+                , div [ class "column" ]
+                    [ div [ class "abstract-card", style "background-color" "#EBBCA4" ]
+                        [ div [ class "color-block", style "flex-direction" "row", style "bottom" "40px", style "left" "40px" ]
+                            [ span [ class "color-square", style "background-color" "#FF3B30" ] []
+                            , span [ class "color-square", style "background-color" "#000000" ] []
+                            , span [ class "color-square", style "background-color" "#FFFFFF" ] []
+                            , span [ class "color-square", style "background-color" "#5AC8FA" ] []
+                            ]
+                        ]
+                    ]
+                , div [ class "column" ]
+                    [ div [ class "abstract-card", style "background-color" "#A9BCE4" ]
+                        [ div [ class "color-block", style "flex-direction" "column", style "top" "50%", style "left" "50%", style "transform" "translate(-50%, -50%)" ]
+                            [ span [ class "color-square", style "background-color" "#34C759" ] []
+                            , span [ class "color-square", style "background-color" "#FF9500" ] []
+                            , span [ class "color-square", style "background-color" "#1C1C1E" ] []
+                            ]
+                        ]
+                    ]
+                , div [ class "column" ]
+                    [ div [ class "abstract-card", style "background-color" "#BBDD9B" ]
+                        [ div [ class "color-block", style "flex-direction" "column", style "top" "40px", style "right" "40px" ]
+                            [ span [ class "color-square", style "background-color" "#FF3B30" ] []
+                            , span [ class "color-square", style "background-color" "#FFFFFF" ] []
+                            , span [ class "color-square", style "background-color" "#007AFF" ] []
+                            , span [ class "color-square", style "background-color" "#0040DD" ] []
+                            , span [ class "color-square", style "background-color" "#34C759" ] []
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+viewPlanner : Model -> Html Msg
+viewPlanner model =
+    div
+        [ style "position" "relative"
+        , style "z-index" "10"
+        , style "display" "flex"
+        , style "flex-direction" "column"
+        , style "min-height" "100vh"
+        , style "background" "var(--bulma-scheme-main, #ffffff)"
+        ]
+        [ viewHeader model
+        , Html.main_ [ class "section py-4 is-flex-grow-1 is-flex is-flex-direction-column", style "background-color" "transparent", style "justify-content" "center", style "align-items" "center" ]
+            [ div [ class "container is-max-widescreen is-flex-grow-1 w-100", style "display" "flex", style "flex-direction" "column", style "justify-content" "center", style "align-items" "center" ]
+                [ h2 [ class "title has-text-centered mb-5 is-size-3" ] [ text "Route planen" ]
+                , viewRoutePlanner model
+                ]
+            ]
+        , viewFooter
+        ]
+
 viewHeader : Model -> Html Msg
 viewHeader model =
-    header [ class "header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6" ]
+    header [ class "header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6", style "background" "var(--bulma-scheme-main, #ffffff)", style "pointer-events" "auto" ]
         [ div [ class "is-flex is-align-items-center cursor-pointer", onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Nothing })) ]
-                [ Svg.svg
+            [ Svg.svg
                 [ SvgAttr.class "mr-2"
                 , SvgAttr.fill "currentColor"
-                , SvgAttr.height "20"
+                , SvgAttr.height "24"
                 , SvgAttr.viewBox "0 0 24 24"
-                , SvgAttr.width "20"
+                , SvgAttr.width "24"
                 ]
                 [ Svg.path [ SvgAttr.d "M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" ] [] ]
             , span [ class "has-text-weight-medium is-size-5-desktop is-size-6-mobile" ] [ text "KrokenKompass" ]
             ]
         , div [ class "is-flex is-align-items-center" ]
             [ button
-                [ Html.Attributes.attribute "aria-label" "Dark Mode wechseln"
-                , class "theme-toggle mr-4"
+                [ class "theme-toggle mr-4"
                 , id "theme-toggle"
-                , onClick (LinkClicked (Browser.External "javascript:window.toggleTheme()"))
+                , attribute "aria-label" "Dark Mode wechseln"
+                , onClick ToggleTheme
                 , style "background" "transparent"
                 , style "border" "none"
                 , style "cursor" "pointer"
                 ]
                 [ Svg.svg
-                    [ SvgAttr.fill "none"
+                    [ SvgAttr.id "moon-icon"
+                    , SvgAttr.fill "none"
                     , SvgAttr.height "20"
-                    , SvgAttr.id "moon-icon"
                     , SvgAttr.stroke "currentColor"
                     , SvgAttr.strokeLinecap "round"
                     , SvgAttr.strokeLinejoin "round"
@@ -461,43 +589,65 @@ viewHeader model =
                     ]
                     [ Svg.path [ SvgAttr.d "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" ] [] ]
                 , Svg.svg
-                    [ SvgAttr.fill "none"
+                    [ SvgAttr.id "sun-icon"
+                    , SvgAttr.fill "none"
                     , SvgAttr.height "20"
-                    , SvgAttr.id "sun-icon"
                     , SvgAttr.stroke "currentColor"
                     , SvgAttr.strokeLinecap "round"
                     , SvgAttr.strokeLinejoin "round"
                     , SvgAttr.strokeWidth "2"
                     , SvgAttr.viewBox "0 0 24 24"
                     , SvgAttr.width "20"
-                    , style "display" "none"
                     ]
                     [ Svg.circle [ SvgAttr.cx "12", SvgAttr.cy "12", SvgAttr.r "5" ] []
-                    , Svg.line [ SvgAttr.x1 "12", SvgAttr.x2 "12", SvgAttr.y1 "1", SvgAttr.y2 "3" ] []
-                    , Svg.line [ SvgAttr.x1 "12", SvgAttr.x2 "12", SvgAttr.y1 "21", SvgAttr.y2 "23" ] []
-                    , Svg.line [ SvgAttr.x1 "4.22", SvgAttr.x2 "5.64", SvgAttr.y1 "4.22", SvgAttr.y2 "5.64" ] []
-                    , Svg.line [ SvgAttr.x1 "18.36", SvgAttr.x2 "19.78", SvgAttr.y1 "18.36", SvgAttr.y2 "19.78" ] []
-                    , Svg.line [ SvgAttr.x1 "1", SvgAttr.x2 "3", SvgAttr.y1 "12", SvgAttr.y2 "12" ] []
-                    , Svg.line [ SvgAttr.x1 "21", SvgAttr.x2 "23", SvgAttr.y1 "12", SvgAttr.y2 "12" ] []
-                    , Svg.line [ SvgAttr.x1 "4.22", SvgAttr.x2 "5.64", SvgAttr.y1 "19.78", SvgAttr.y2 "18.36" ] []
-                    , Svg.line [ SvgAttr.x1 "18.36", SvgAttr.x2 "19.78", SvgAttr.y1 "5.64", SvgAttr.y2 "4.22" ] []
+                    , Svg.line [ SvgAttr.x1 "12", SvgAttr.y1 "1", SvgAttr.x2 "12", SvgAttr.y2 "3" ] []
+                    , Svg.line [ SvgAttr.x1 "12", SvgAttr.y1 "21", SvgAttr.x2 "12", SvgAttr.y2 "23" ] []
+                    , Svg.line [ SvgAttr.x1 "4.22", SvgAttr.y1 "4.22", SvgAttr.x2 "5.64", SvgAttr.y2 "5.64" ] []
+                    , Svg.line [ SvgAttr.x1 "18.36", SvgAttr.y1 "18.36", SvgAttr.x2 "19.78", SvgAttr.y2 "19.78" ] []
+                    , Svg.line [ SvgAttr.x1 "1", SvgAttr.y1 "12", SvgAttr.x2 "3", SvgAttr.y2 "12" ] []
+                    , Svg.line [ SvgAttr.x1 "21", SvgAttr.y1 "12", SvgAttr.x2 "23", SvgAttr.y2 "12" ] []
+                    , Svg.line [ SvgAttr.x1 "4.22", SvgAttr.y1 "19.78", SvgAttr.x2 "5.64", SvgAttr.y2 "18.36" ] []
+                    , Svg.line [ SvgAttr.x1 "18.36", SvgAttr.y1 "5.64", SvgAttr.x2 "19.78", SvgAttr.y2 "4.22" ] []
                     ]
                 ]
-            , let
-                  fragment = Maybe.withDefault "" model.url.fragment
-                  (btnText, targetFrag) =
-                      if fragment == "" then
-                          ("Raum finden", Just "plan")
-                      else if String.startsWith "map" fragment then
-                          ("Neue Route", Just "plan")
-                      else
-                          ("Zur Karte", Just "map")
-              in
-              button
-                [ class "button is-rounded header-action-button has-text-weight-medium px-5"
-                , onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = targetFrag }))
+            , case model.route of
+                Planner ->
+                    button
+                        [ class "button is-info is-rounded has-text-weight-medium px-5"
+                        , onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just "map" }))
+                        ]
+                        [ text "Zur Karte" ]
+                Map _ ->
+                    button
+                        [ class "button is-info is-rounded has-text-weight-medium px-5"
+                        , onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just "plan" }))
+                        ]
+                        [ text "Neue Route" ]
+                _ ->
+                    button
+                        [ class "button is-info is-rounded has-text-weight-medium px-5"
+                        , onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Just "plan" }))
+                        ]
+                        [ text "Raum finden" ]
+            ]
+        ]
+
+viewFooter : Html Msg
+viewFooter =
+    footer [ class "footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center", style "border-top" "1px solid var(--bulma-border-weak)" ]
+        [ div [ class "is-flex is-align-items-center footer-links-custom" ]
+            [ Svg.svg
+                [ SvgAttr.class "mr-2"
+                , SvgAttr.fill "currentColor"
+                , SvgAttr.height "24"
+                , SvgAttr.viewBox "0 0 24 24"
+                , SvgAttr.width "24"
                 ]
-                [ text btnText ]
+                [ Svg.path [ SvgAttr.d "M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" ] [] ]
+            , span [ class "has-text-weight-medium mr-5 is-size-5" ] [ text "KrokenKompass" ]
+            , a [ class "has-text-grey mr-4 is-size-6", href "#" ] [ text "Features" ]
+            , a [ class "has-text-grey mr-4 is-size-6", href "#" ] [ text "Learn more" ]
+            , a [ class "has-text-grey is-size-6", href "#" ] [ text "Support" ]
             ]
         ]
 

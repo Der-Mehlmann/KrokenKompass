@@ -23,6 +23,8 @@
             htmlEl.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         };
+
+
     </script>
 
     <style>
@@ -160,7 +162,6 @@
         }
 
         .header-action-button {
-            background-color: var(--bulma-scheme-main, #ffffff);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             border: none;
             transition: all 0.2s ease;
@@ -196,6 +197,89 @@
         html[data-theme="dark"] .map-wrapper-bg {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
+
+        /* --- Missing CSS for Floor Menu and Abstract Cards --- */
+        .etagen-label {
+            font-size: 0.75rem;
+            color: var(--bulma-text, #8e8e93);
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .etagen-btn {
+            padding: 6px 12px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--bulma-text, #1c1c1e);
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .etagen-btn:hover {
+            background-color: var(--button-light-bg, #f2f2f7);
+        }
+
+        .etagen-btn.active {
+            background-color: var(--bulma-info, #007AFF);
+            color: var(--bulma-info-invert, #ffffff);
+            font-weight: 600;
+        }
+
+        #info-box {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--bulma-scheme-main, #ffffff);
+            color: var(--bulma-text, #1c1c1e);
+            padding: 10px 20px;
+            border-radius: 999px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        /* Start Page Abstract Cards */
+        .abstract-card {
+            border-radius: 1.5rem;
+            padding: 2rem;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .abstract-card:hover {
+            transform: scale(1.02);
+        }
+
+        .color-block {
+            position: absolute;
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-square {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-title-custom {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
     </style>
 </head>
 <body class="is-flex is-flex-direction-column"
@@ -209,12 +293,20 @@
 
 <div id="elm-app"></div>
 
-<script src="elm.js?v=3"></script>
-<script src="map-view.js?v=3"></script>
+<script src="elm.js?v=19"></script>
+<script src="map-view.js?v=19"></script>
 <script>
     const app = Elm.Main.init({
         node: document.getElementById("elm-app")
     });
+
+    if (app.ports && app.ports.toggleThemeCmd) {
+        app.ports.toggleThemeCmd.subscribe(function () {
+            if (window.toggleTheme) {
+                window.toggleTheme();
+            }
+        });
+    }
 
     app.ports.sendRoute.subscribe(function (routeCoords) {
         console.log("Route received from Elm!", routeCoords);

@@ -3,10 +3,29 @@ class LeafletMapContainer extends HTMLElement {
         if (this.initialized) return;
         this.initialized = true;
 
-        this.innerHTML = `<div id="leaflet-map" style="width: 100%; height: 100%; z-index: 1;"></div>`;
+        // Use Shadow DOM to completely isolate Leaflet from Elm's Virtual DOM diffing!
+        // Elm cannot see inside the shadow root, so it will never delete the map tiles.
+        const shadow = this.attachShadow({mode: 'open'});
 
-        // Leaflet setup for KrokenKompass Elm SPA
-        window.map = L.map(this.querySelector('#leaflet-map'), {zoomControl: false}).setView([51.496796, 11.935968], 18);
+        // Leaflet CSS MUST be inside the Shadow DOM to apply to the map!
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css';
+        shadow.appendChild(link);
+
+        const mapContainer = document.createElement('div');
+        mapContainer.id = 'leaflet-map';
+        // We style the mapContainer to fill the custom element
+        mapContainer.style.width = '100%';
+        mapContainer.style.height = '100%';
+        mapContainer.style.position = 'absolute';
+        mapContainer.style.top = '0';
+        mapContainer.style.left = '0';
+        mapContainer.style.zIndex = '0';
+        shadow.appendChild(mapContainer);
+
+        // Leaflet setup
+        window.map = L.map(mapContainer, {zoomControl: false}).setView([51.496796, 11.935968], 18);
         L.control.zoom({position: "bottomright"}).addTo(window.map);
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 22}).addTo(window.map);
 
