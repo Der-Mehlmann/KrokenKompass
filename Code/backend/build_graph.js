@@ -232,5 +232,5 @@ for (let i = 0; i < valideFeatures.length; i++) {
     }
 }
 
-fs.writeFileSync(path.join(__dirname, 'graph.json'), JSON.stringify({graph, centroids, nodeMeta}));
+fs.writeFileSync(path.join(__dirname, '../../Data/graph.json'), JSON.stringify({graph, centroids, nodeMeta}));
 console.log("Done! Saved to graph.json");

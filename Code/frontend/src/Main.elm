@@ -119,14 +119,14 @@ init _ url key =
 fetchGraph : Cmd Msg
 fetchGraph =
     Http.get
-        { url = "Code/backend/graph.json"
+        { url = "Data/graph.json"
         , expect = Http.expectJson GotGraph decodeGraphData
         }
 
 fetchVspUnits : Cmd Msg
 fetchVspUnits =
     Http.get
-        { url = "Code/backend/vsp_units.json"
+        { url = "Data/vsp_units.json"
         , expect = Http.expectJson GotVspUnits decodeVspUnits
         }
 
