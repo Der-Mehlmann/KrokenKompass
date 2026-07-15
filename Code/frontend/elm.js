@@ -159,7 +159,7 @@
 		return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 	}
 
-	console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.2/optimize for better performance and smaller assets.');
+	console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.1/optimize for better performance and smaller assets.');
 
 
 // EQUALITY
@@ -790,7 +790,7 @@
 					'TODO in module `' + moduleName + '` from the `case` expression '
 					+ _Debug_regionToString(region) + '\n\nIt received the following value:\n\n    '
 					+ _Debug_toString(value).replace('\n', '\n    ')
-					+ '\n\nBut the branch that handles it says:\n\n    ' + message.replace('\n', '\n    ')
+					+ '\n\nBut the branch that handles it says:\n\n    ' + message.replace(/\n/g, '\n    ')
 				);
 
 			case 10:
@@ -4380,8 +4380,8 @@ type alias Process =
 	var $elm$json$Json$Decode$indent = function (str) {
 		return A2(
 			$elm$core$String$join,
-			'\u000A    ',
-			A2($elm$core$String$split, '\u000A', str));
+			'\n    ',
+			A2($elm$core$String$split, '\n', str));
 	};
 	var $elm$core$List$foldl = F3(
 		function (func, acc, list) {
@@ -4473,7 +4473,7 @@ type alias Process =
 	var $elm$core$String$uncons = _String_uncons;
 	var $elm$json$Json$Decode$errorOneOf = F2(
 		function (i, error) {
-			return '\u000A\u000A(' + ($elm$core$String$fromInt(i + 1) + (') ' + $elm$json$Json$Decode$indent(
+			return '\n\n(' + ($elm$core$String$fromInt(i + 1) + (') ' + $elm$json$Json$Decode$indent(
 				$elm$json$Json$Decode$errorToString(error))));
 		});
 	var $elm$json$Json$Decode$errorToString = function (error) {
@@ -4498,7 +4498,7 @@ type alias Process =
 									return $elm$core$Char$isAlpha(_char) && A2($elm$core$String$all, $elm$core$Char$isAlphaNum, rest);
 								}
 							}();
-							var fieldName = isSimple ? ('.' + f) : ('[\u0027' + (f + '\u0027]'));
+							var fieldName = isSimple ? ('.' + f) : ('[\'' + (f + '\']'));
 							var $temp$error = err,
 								$temp$context = A2($elm$core$List$cons, fieldName, context);
 							error = $temp$error;
@@ -4549,7 +4549,7 @@ type alias Process =
 										$elm$core$List$length(errors)) + ' ways:'));
 									return A2(
 										$elm$core$String$join,
-										'\u000A\u000A',
+										'\n\n',
 										A2(
 											$elm$core$List$cons,
 											introduction,
@@ -4561,16 +4561,16 @@ type alias Process =
 							var json = error.b;
 							var introduction = function () {
 								if (!context.b) {
-									return 'Problem with the given value:\u000A\u000A';
+									return 'Problem with the given value:\n\n';
 								} else {
 									return 'Problem with the value at json' + (A2(
 										$elm$core$String$join,
 										'',
-										$elm$core$List$reverse(context)) + ':\u000A\u000A    ');
+										$elm$core$List$reverse(context)) + ':\n\n    ');
 								}
 							}();
 							return introduction + ($elm$json$Json$Decode$indent(
-								A2($elm$json$Json$Encode$encode, 4, json)) + ('\u000A\u000A' + msg));
+								A2($elm$json$Json$Encode$encode, 4, json)) + ('\n\n' + msg));
 					}
 				}
 		});
@@ -5246,6 +5246,7 @@ type alias Process =
 	var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 	var $elm$core$Dict$get = F2(
 		function (targetKey, dict) {
+			get:
 			while (true) {
 				if (dict.$ === 'RBEmpty_elm_builtin') {
 					return $elm$core$Maybe$Nothing;
@@ -6058,11 +6059,11 @@ type alias Process =
 	};
 	var $elm$url$Url$Parser$mapState = F2(
 		function (func, _v0) {
-			var value = _v0.value;
-			var frag = _v0.frag;
-			var params = _v0.params;
-			var unvisited = _v0.unvisited;
 			var visited = _v0.visited;
+			var unvisited = _v0.unvisited;
+			var params = _v0.params;
+			var frag = _v0.frag;
+			var value = _v0.value;
 			return A5(
 				$elm$url$Url$Parser$State,
 				visited,
@@ -6076,11 +6077,11 @@ type alias Process =
 			var parseArg = _v0.a;
 			return $elm$url$Url$Parser$Parser(
 				function (_v1) {
-					var value = _v1.value;
-					var frag = _v1.frag;
-					var params = _v1.params;
-					var unvisited = _v1.unvisited;
 					var visited = _v1.visited;
+					var unvisited = _v1.unvisited;
+					var params = _v1.params;
+					var frag = _v1.frag;
+					var value = _v1.value;
 					return A2(
 						$elm$core$List$map,
 						$elm$url$Url$Parser$mapState(value),
@@ -6120,11 +6121,11 @@ type alias Process =
 		var queryParser = _v0.a;
 		return $elm$url$Url$Parser$Parser(
 			function (_v1) {
-				var value = _v1.value;
-				var frag = _v1.frag;
-				var params = _v1.params;
-				var unvisited = _v1.unvisited;
 				var visited = _v1.visited;
+				var unvisited = _v1.unvisited;
+				var params = _v1.params;
+				var frag = _v1.frag;
+				var value = _v1.value;
 				return _List_fromArray(
 					[
 						A5(
@@ -6160,11 +6161,11 @@ type alias Process =
 	var $elm$url$Url$Parser$s = function (str) {
 		return $elm$url$Url$Parser$Parser(
 			function (_v0) {
-				var value = _v0.value;
-				var frag = _v0.frag;
-				var params = _v0.params;
-				var unvisited = _v0.unvisited;
 				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
 				if (!unvisited.b) {
 					return _List_Nil;
 				} else {
@@ -6523,8 +6524,8 @@ type alias Process =
 		});
 	var $elm$browser$Browser$Events$onSelfMsg = F3(
 		function (router, _v0, state) {
-			var event = _v0.event;
 			var key = _v0.key;
+			var event = _v0.event;
 			var toMessage = function (_v2) {
 				var subKey = _v2.a;
 				var _v3 = _v2.b;
@@ -7193,29 +7194,11 @@ type alias Process =
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						var err = result.a;
-						var errStr = function () {
-							switch (err.$) {
-								case 'BadUrl':
-									var eMsg = err.a;
-									return 'BadUrl: ' + eMsg;
-								case 'Timeout':
-									return 'Timeout';
-								case 'NetworkError':
-									return 'NetworkError';
-								case 'BadStatus':
-									var status = err.a;
-									return 'BadStatus: ' + $elm$core$String$fromInt(status);
-								default:
-									var eMsg = err.a;
-									return 'BadBody: ' + eMsg;
-							}
-						}();
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
-									errorMsg: $elm$core$Maybe$Just('Fehler beim Laden der VSP Units: ' + errStr)
+									errorMsg: $elm$core$Maybe$Just('Fehler beim Laden der VSP Units.')
 								}),
 							$elm$core$Platform$Cmd$none);
 					}
