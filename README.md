@@ -64,13 +64,13 @@ Wenn sich die Raumpläne ändern, müssen die Graphen neu berechnet werden:
 ```bash
 node Code/backend/build_graph.js
 ```
-Dies generiert aktualisierte `graph.json` und `vsp_units.json` Dateien aus den hinterlegten Geo-Daten.
+Dies generiert eine aktualisierte `graph.json` Datei aus den hinterlegten Geo-Daten.
 
 ### Elm Frontend kompilieren
 Falls Änderungen am Elm-Code (`Code/frontend/src/*.elm`) vorgenommen werden:
 ```bash
 cd Code/frontend
-elm make src/Main.elm --output=elm.js
+npx elm make src/Main.elm --output=elm.js
 ```
 
 ## 📄 Lizenz
