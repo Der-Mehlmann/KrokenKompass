@@ -5912,7 +5912,7 @@ type alias Process =
 	var $author$project$Main$fetchGraph = $elm$http$Http$get(
 		{
 			expect: A2($elm$http$Http$expectJson, $author$project$Main$GotGraph, $author$project$GraphData$decodeGraphData),
-			url: 'Code/backend/graph.json'
+			url: 'Data/graph.json'
 		});
 	var $author$project$Main$GotVspUnits = function (a) {
 		return {$: 'GotVspUnits', a: a};
@@ -5928,7 +5928,7 @@ type alias Process =
 	var $author$project$Main$fetchVspUnits = $elm$http$Http$get(
 		{
 			expect: A2($elm$http$Http$expectJson, $author$project$Main$GotVspUnits, $author$project$Main$decodeVspUnits),
-			url: 'Code/backend/vsp_units.json'
+			url: 'Data/vsp_units.json'
 		});
 	var $author$project$Main$Home = {$: 'Home'};
 	var $elm$url$Url$Parser$State = F5(
