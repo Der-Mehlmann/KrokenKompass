@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "elm": "^0.19.2-0"
+    "elm": "0.19.1"
   },
   "dependencies": {
     "@turf/turf": "^7.3.5"
