@@ -22,7 +22,11 @@ class LeafletMapContainer extends HTMLElement {
 
         window.map = L.map(mapContainer, {zoomControl: false}).setView([51.496796, 11.935968], 18);
         L.control.zoom({position: 'bottomright'}).addTo(window.map);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 22}).addTo(window.map);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 22,
+            maxNativeZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(window.map);
 
         const resizeObserver = new ResizeObserver(() => {
             if (window.map) {
@@ -242,17 +246,20 @@ class LeafletMapContainer extends HTMLElement {
                         let nextMeta = nextId ? globaleKnotenMeta[nextId] : null;
                         let prevMeta = prevId ? globaleKnotenMeta[prevId] : null;
 
-                        let msg = 'Treppe / Aufzug';
+                        let msg;
+
                         if (nextMeta && nextMeta.etage !== zielEtage) {
                             msg = `Hier Etage wechseln (nach ${nextMeta.etage})`;
                         } else if (prevMeta && prevMeta.etage !== zielEtage) {
                             msg = `Von Etage ${prevMeta.etage} kommend`;
                         }
 
-                        let m = L.circleMarker([koord[1], koord[0]], {
-                            radius: 7, fillColor: '#ec4899', color: '#fff', weight: 2, opacity: 1, fillOpacity: 1
-                        }).bindTooltip(msg, {permanent: true, direction: 'right'}).addTo(window.map);
-                        window.aktuelleRoutenMarker.push(m);
+                        if (msg) {
+                            let m = L.circleMarker([koord[1], koord[0]], {
+                                radius: 7, fillColor: '#ec4899', color: '#fff', weight: 2, opacity: 1, fillOpacity: 1
+                            }).bindTooltip(msg, {permanent: true, direction: 'right'}).addTo(window.map);
+                            window.aktuelleRoutenMarker.push(m);
+                        }
                     }
                 }
             });
