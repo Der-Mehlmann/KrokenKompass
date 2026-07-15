@@ -35,7 +35,7 @@ jobs:
       - name: Compile Elm
         run: |
           cd Code/frontend
-          npx elm make src/Main.elm --output=elm.js --optimize
+          npx elm@0.19.1 make src/Main.elm --output=elm.js --optimize
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
