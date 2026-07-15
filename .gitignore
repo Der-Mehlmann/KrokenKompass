@@ -517,3 +517,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/webstorm,visualstudio
 .idea/discord.xml
+elm-stuff/
