@@ -97,7 +97,7 @@ class LeafletMapContainer extends HTMLElement {
         }
 
         var ladeProzesse = etagenListe.map(etage =>
-            fetch(`../../Data/vsp_etage_${etage}.json`)
+            fetch(`Data/vsp_etage_${etage}.json`)
                 .then(response => {
                     if (!response.ok) throw new Error('Netzwerkfehler');
                     return response.json();
