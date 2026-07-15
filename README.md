@@ -9,6 +9,10 @@
 
 ---
 
+> **KrokenKompass**: Die interaktive Web-Karte für die **MLU Halle-Wittenberg**. Aktuell fokussiert auf den **Heide-Campus**, aber modular skalierbar für weitere Standorte. Entwickelt als Single-Page-Application mit Elm und JavaScript. 🧭🎓
+
+---
+
 ## 📖 Über das Projekt
 
 **KrokenKompass** löst das Problem der komplexen **Indoor-Navigation** in Gebäudestrukturen ohne den Einsatz von teurer Hardware (wie z.B. Bluetooth-Beacons). Anstelle einer serverseitigen On-Demand-Berechnung nutzt KrokenKompass einen cleveren, zweistufigen Ansatz für maximale Performance:
