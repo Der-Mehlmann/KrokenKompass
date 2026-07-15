@@ -63,7 +63,7 @@ port toggleThemeCmd : () -> Cmd msg
 
 -- MAIN
 
-main : Program () Model Msg
+main : Program String Model Msg
 main =
     Browser.application
         { init = init
