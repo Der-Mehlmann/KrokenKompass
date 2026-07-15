@@ -750,10 +750,7 @@ viewFooter =
                 , SvgAttr.width "24"
                 ]
                 [ Svg.path [ SvgAttr.d "M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" ] [] ]
-            , span [ class "has-text-weight-medium mr-5 is-size-5" ] [ text "KrokenKompass" ]
-            , a [ class "has-text-grey mr-4 is-size-6", href "#" ] [ text "Features" ]
-            , a [ class "has-text-grey mr-4 is-size-6", href "#" ] [ text "Learn more" ]
-            , a [ class "has-text-grey is-size-6", href "#" ] [ text "Support" ]
+            , span [ class "has-text-weight-medium is-size-5" ] [ text "KrokenKompass" ]
             ]
         ]
 
