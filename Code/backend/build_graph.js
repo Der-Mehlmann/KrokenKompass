@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const turf = require('@turf/turf');
 
 // Helper functions copied from map-routing.js
@@ -106,7 +107,7 @@ let alleFeatures = [];
 
 etagenListe.forEach(etage => {
     try {
-        const data = JSON.parse(fs.readFileSync('../../Data/vsp_etage_' + etage + '.json', 'utf8'));
+        const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../../Data/vsp_etage_' + etage + '.json'), 'utf8'));
         alleFeatures = alleFeatures.concat(data.features);
     } catch (e) {
         console.log("Could not read vsp_etage_" + etage + ".json. Error:", e.message);
@@ -231,5 +232,5 @@ for (let i = 0; i < valideFeatures.length; i++) {
     }
 }
 
-fs.writeFileSync('./graph.json', JSON.stringify({graph, centroids, nodeMeta}));
+fs.writeFileSync(path.join(__dirname, 'graph.json'), JSON.stringify({graph, centroids, nodeMeta}));
 console.log("Done! Saved to graph.json");

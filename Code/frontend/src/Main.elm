@@ -341,8 +341,17 @@ update msg model =
             case result of
                 Ok units ->
                     ( { model | rooms = buildRoomListFromVsp units }, Cmd.none )
-                Err _ ->
-                    ( { model | errorMsg = Just "Fehler beim Laden der VSP Units." }, Cmd.none )
+                Err err ->
+                    let
+                        errStr =
+                            case err of
+                                Http.BadUrl eMsg -> "BadUrl: " ++ eMsg
+                                Http.Timeout -> "Timeout"
+                                Http.NetworkError -> "NetworkError"
+                                Http.BadStatus status -> "BadStatus: " ++ String.fromInt status
+                                Http.BadBody eMsg -> "BadBody: " ++ eMsg
+                    in
+                    ( { model | errorMsg = Just ("Fehler beim Laden der VSP Units: " ++ errStr) }, Cmd.none )
 
         UpdateStart val ->
             ( { model | startInput = val, dropdownState = StartOpen, errorMsg = Nothing, shake = False }, Cmd.none )
