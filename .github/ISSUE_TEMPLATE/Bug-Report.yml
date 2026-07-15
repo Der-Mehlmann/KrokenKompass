@@ -63,6 +63,15 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: version
+    attributes:
+      label: App-Version
+      description: "Welche Version nutzt du? (Den kurzen Git-Hash findest du auf der Webseite unten rechts im Footer)"
+      placeholder: z.B. va1b2c3d
+    validations:
+      required: true
+
   - type: dropdown
     id: area
     attributes:
