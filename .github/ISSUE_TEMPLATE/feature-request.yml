@@ -1,84 +1,60 @@
-name: "Feature request"
-description: "Suggest an idea or improvement."
-title: "feat: <short description>"
+name: Feature-Vorschlag
+description: Schlage eine neue Funktion oder Verbesserung vor.
+title: "✨ Feature: kurze Beschreibung"
 labels: ["Status: To Do", "Type: Feature"]
 assignees: []
 body:
-
   - type: checkboxes
     id: checks
     attributes:
-      label: Pre-checks
+      label: Vorab-Check
       options:
-        - label: I searched existing issues and discussions for a related request.
+        - label: Ich habe geprüft, ob es diese Idee bereits als Issue gibt.
           required: true
 
   - type: textarea
     id: problem
     attributes:
-      label: Problem to solve
-      description: What problem does this feature solve?
-      placeholder: Describe the user problem or pain point.
+      label: Welches Problem löst das Feature?
+      description: Beschreibe kurz, in welcher Situation dir diese Funktion helfen würde.
+      placeholder: Mir ist aufgefallen, dass...
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Proposed solution
-      description: How would you like this to work?
-      placeholder: Describe the feature or behavior you'd like to see.
+      label: Lösungsvorschlag
+      description: Wie stellst du dir die neue Funktion vor?
+      placeholder: Ich fände es super, wenn KrokenKompass...
     validations:
       required: true
-
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives considered
-      description: What alternative solutions have you considered?
-      placeholder: List any alternative approaches.
 
   - type: dropdown
     id: area
     attributes:
-      label: Area
+      label: Welchen Projektbereich betrifft das?
       multiple: true
       options:
-        - UI
-        - JavaScript logic
-        - Build
-        - Documentation
-        - Other
+        - Frontend / UI Design
+        - Elm Logik / Neue Routing-Features
+        - Interaktion mit der Karte
+        - Zusätzliche Gebäude / Räume (Geodaten)
+        - Sonstiges
 
   - type: dropdown
     id: priority
     attributes:
-      label: Priority
+      label: Priorität (deiner Einschätzung nach)
       options:
-        - Low
-        - Medium
-        - High
+        - Wäre cool (Low)
+        - Sehr nützlich (Medium)
+        - Dringend benötigt (High)
     validations:
       required: true
 
   - type: textarea
-    id: acceptance
-    attributes:
-      label: Acceptance criteria
-      description: Define clear criteria for completion.
-      placeholder: |
-        - [ ] Criterion 1
-        - [ ] Criterion 2
-        - [ ] Criterion 3
-
-  - type: textarea
-    id: impact
-    attributes:
-      label: Breaking changes / risks
-      description: Could this break existing behavior? Any risks?
-
-  - type: textarea
     id: context
     attributes:
-      label: Additional context / mockups
-      description: Add any extra details, links, or sketches.
+      label: Zusätzlicher Kontext / Mockups
+      description: Falls du Skizzen, Links oder weitere Ideen hast, immer her damit!
