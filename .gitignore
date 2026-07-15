@@ -19,6 +19,7 @@
 
 # Generated files
 .idea/**/contentModel.xml
+Code/frontend/elm.js
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
