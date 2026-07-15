@@ -30,11 +30,11 @@ Anschließend öffne `http://localhost:3000` in deinem Browser.
 ## 📚 Dokumentation & Wiki
 Detaillierte Informationen zur Architektur, Implementierung und Datenstruktur findest du in unserem ausführlichen Wiki:
 👉 **[Zur vollständigen Wiki-Dokumentation](docs/Home.md)**
-*   [🏠 Home](docs/Home.md)
-*   [🏗 Architektur & Technologien](docs/Architektur.md)
-*   [⚙️ Backend & Routing-Graph](docs/Backend-Routing.md)
-*   [🖥 Frontend & Elm](docs/Frontend-Elm.md)
-*   [🚀 Installation & Setup](docs/Installation.md)
+*   [🏠 Home]([docs/Home.md](https://github.com/Der-Mehlmann/KrokenKompass/wiki))
+*   [🏗 Architektur & Technologien]([docs/Architektur.md](https://github.com/Der-Mehlmann/KrokenKompass/wiki/Architektur-&-Technologien))
+*   [⚙️ Backend & Routing-Graph]([docs/Backend-Routing.md](https://github.com/Der-Mehlmann/KrokenKompass/wiki/Backend))
+*   [🖥 Frontend & Elm]([docs/Frontend-Elm.md](https://github.com/Der-Mehlmann/KrokenKompass/wiki/Frontend))
+*   [🚀 Installation & Setup]([docs/Installation.md](https://github.com/Der-Mehlmann/KrokenKompass/wiki/Installation-&-Setup))
 ## 🤝 Mitwirken (Contributing)
 Beiträge, Issues und Feature Requests sind willkommen! 
 Schau gerne in unseren [Issues](https://github.com/Der-Mehlmann/KrokenKompass/issues) vorbei, wenn du mithelfen möchtest.
