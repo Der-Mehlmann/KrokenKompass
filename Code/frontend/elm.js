@@ -789,7 +789,7 @@
 				throw new Error(
 					'TODO in module `' + moduleName + '` from the `case` expression '
 					+ _Debug_regionToString(region) + '\n\nIt received the following value:\n\n    '
-					+ _Debug_toString(value).replace(/\n/g, '\n    ')
+					+ _Debug_toString(value).replace('\n', '\n    ')
 					+ '\n\nBut the branch that handles it says:\n\n    ' + message.replace(/\n/g, '\n    ')
 				);
 
