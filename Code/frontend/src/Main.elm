@@ -453,7 +453,7 @@ view model =
             , style "height" "100%"
             , style "z-index" "1"
             ]
-            [ div [ style "position" "absolute", style "top" "76px", style "bottom" "24px", style "left" "24px", style "right" "24px", style "border-radius" "1.5rem", style "overflow" "hidden", style "background" "#e5e5ea" ]
+            [ div [ style "position" "absolute", style "top" "76px", style "bottom" "88px", style "left" "24px", style "right" "24px", style "border-radius" "1.5rem", style "overflow" "hidden", style "background" "#e5e5ea" ]
                 [ Html.node "leaflet-map-container" [ style "display" "block", style "width" "100%", style "height" "100%", style "position" "relative" ] []
                 ]
             ]
@@ -744,7 +744,7 @@ viewHeader model =
 
 viewFooter : Model -> Html Msg
 viewFooter model =
-    footer [ class "footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center", style "border-top" "1px solid var(--bulma-border-weak)", style "pointer-events" "auto" ]
+    footer [ class "footer-custom py-4 px-6 is-flex is-justify-content-space-between is-align-items-center", style "border-top" "1px solid var(--bulma-border-weak)", style "pointer-events" "auto", style "background" "var(--bulma-scheme-main, #ffffff)" ]
         [ div [ class "is-flex is-align-items-center footer-links-custom" ]
             [ Svg.svg
                 [ SvgAttr.class "mr-2"
