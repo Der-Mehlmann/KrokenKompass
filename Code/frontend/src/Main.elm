@@ -544,6 +544,8 @@ viewMapOverlay model =
             , viewFloorButton model "00" "EG / 0"
             , viewFloorButton model "-1" "-1"
             ]
+        , div [ style "flex-grow" "1", style "pointer-events" "none" ] []
+        , viewFooter model
         ]
 
 viewFloorButton : Model -> String -> String -> Html Msg
@@ -742,7 +744,7 @@ viewHeader model =
 
 viewFooter : Model -> Html Msg
 viewFooter model =
-    footer [ class "footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center", style "border-top" "1px solid var(--bulma-border-weak)" ]
+    footer [ class "footer-custom py-5 px-6 is-flex is-justify-content-space-between is-align-items-center", style "border-top" "1px solid var(--bulma-border-weak)", style "pointer-events" "auto" ]
         [ div [ class "is-flex is-align-items-center footer-links-custom" ]
             [ Svg.svg
                 [ SvgAttr.class "mr-2"
