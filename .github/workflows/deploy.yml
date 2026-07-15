@@ -37,6 +37,11 @@ jobs:
           cd Code/frontend
           npx elm@0.19.1 make src/Main.elm --output=elm.js --optimize
 
+      - name: Inject Version Tag
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          sed -i "s/dev-local/$SHORT_SHA/g" index.html
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
