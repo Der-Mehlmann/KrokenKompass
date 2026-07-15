@@ -298,7 +298,8 @@
 <script src="Code/frontend/map-view.js?v=25"></script>
 <script>
     const app = Elm.Main.init({
-        node: document.getElementById("elm-app")
+        node: document.getElementById("elm-app"),
+        flags: "dev-local"
     });
 
     if (app.ports && app.ports.toggleThemeCmd) {
