@@ -22,7 +22,11 @@ class LeafletMapContainer extends HTMLElement {
 
         window.map = L.map(mapContainer, {zoomControl: false}).setView([51.496796, 11.935968], 18);
         L.control.zoom({position: 'bottomright'}).addTo(window.map);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 22}).addTo(window.map);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 22,
+            maxNativeZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(window.map);
 
         const resizeObserver = new ResizeObserver(() => {
             if (window.map) {
