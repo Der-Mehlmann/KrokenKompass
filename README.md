@@ -22,7 +22,7 @@
 
 ## ✨ Features
 
-- ⚡ **Offline-fähiges Client-Side-Routing**: Wegfindung via Dijkstra-Algorithmus direkt im Browser.
+- ⚡ **Client-Side-Routing**: Wegfindung via Dijkstra-Algorithmus direkt im Browser.
 - 🗺️ **Interaktive Karten**: Darstellung der Gebäudepläne und Wege mit Leaflet.js.
 - 🛡️ **Sicheres State-Management**: Keine Laufzeitfehler dank der Architektur in [Elm](https://elm-lang.org/).
 - 📐 **Geometrische Vorverarbeitung**: Automatisierte Graphengenerierung aus GeoJSON (via [@turf/turf](https://turfjs.org/)).
@@ -41,7 +41,7 @@ Das Frontend ist eine Single-Page-Applikation (SPA).
 ### Datenaufbereitung (Backend)
 Skripte, die zur Laufzeit der Entwicklung oder beim Build-Prozess ausgeführt werden, um Geodaten zu verarbeiten.
 * **Node.js**
-* **@turf/turf (7.3.5)**: Eine mächtige JavaScript-Bibliothek für räumliche Analysen und Geometrie-Operationen.
+* **@turf/turf (7.3.5)**: Eine JavaScript-Bibliothek für räumliche Analysen und Geometrie-Operationen.
 
 ## 🚀 Quick Start
 
