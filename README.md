@@ -22,7 +22,7 @@
 
 ## ✨ Features
 
-- ⚡ **Offline-fähiges Client-Side-Routing**: Wegfindung via Dijkstra-Algorithmus direkt im Browser.
+- ⚡ **Client-Side-Routing**: Wegfindung via Dijkstra-Algorithmus direkt im Browser.
 - 🗺️ **Interaktive Karten**: Darstellung der Gebäudepläne und Wege mit Leaflet.js.
 - 🛡️ **Sicheres State-Management**: Keine Laufzeitfehler dank der Architektur in [Elm](https://elm-lang.org/).
 - 📐 **Geometrische Vorverarbeitung**: Automatisierte Graphengenerierung aus GeoJSON (via [@turf/turf](https://turfjs.org/)).
