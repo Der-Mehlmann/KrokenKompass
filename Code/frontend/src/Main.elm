@@ -466,14 +466,7 @@ viewMapOverlay model =
     div [ style "position" "absolute", style "top" "0", style "left" "0", style "width" "100%", style "height" "100%", style "pointer-events" "none", style "display" "flex", style "flex-direction" "column", style "z-index" "10" ]
         [ header [ class "header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6", style "pointer-events" "auto", style "background" "var(--bulma-scheme-main, #ffffff)" ]
             [ div [ class "is-flex is-align-items-center cursor-pointer", onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Nothing })) ]
-                [ Svg.svg
-                    [ SvgAttr.class "mr-2"
-                    , SvgAttr.fill "currentColor"
-                    , SvgAttr.height "20"
-                    , SvgAttr.viewBox "0 0 24 24"
-                    , SvgAttr.width "20"
-                    ]
-                    [ Svg.path [ SvgAttr.d "M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" ] [] ]
+                [ img [ src "Code/frontend/assets/logo.png", class "mr-2", style "height" "24px", style "width" "24px", style "object-fit" "contain" ] []
                 , span [ class "has-text-weight-medium is-size-5-desktop is-size-6-mobile" ] [ text "KrokenKompass" ]
                 ]
             , div [ class "is-flex is-align-items-center" ]
@@ -666,14 +659,7 @@ viewHeader : Model -> Html Msg
 viewHeader model =
     header [ class "header-custom is-flex is-justify-content-space-between is-align-items-center py-4 px-6", style "background" "var(--bulma-scheme-main, #ffffff)", style "pointer-events" "auto" ]
         [ div [ class "is-flex is-align-items-center cursor-pointer", onClick (LinkClicked (Browser.Internal { protocol = model.url.protocol, host = model.url.host, port_ = model.url.port_, path = model.url.path, query = model.url.query, fragment = Nothing })) ]
-            [ Svg.svg
-                [ SvgAttr.class "mr-2"
-                , SvgAttr.fill "currentColor"
-                , SvgAttr.height "24"
-                , SvgAttr.viewBox "0 0 24 24"
-                , SvgAttr.width "24"
-                ]
-                [ Svg.path [ SvgAttr.d "M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" ] [] ]
+            [ img [ src "Code/frontend/assets/logo.png", class "mr-2", style "height" "28px", style "width" "28px", style "object-fit" "contain" ] []
             , span [ class "has-text-weight-medium is-size-5-desktop is-size-6-mobile" ] [ text "KrokenKompass" ]
             ]
         , div [ class "is-flex is-align-items-center" ]
@@ -746,14 +732,7 @@ viewFooter : Model -> Html Msg
 viewFooter model =
     footer [ class "footer-custom py-4 px-6 is-flex is-justify-content-space-between is-align-items-center", style "border-top" "1px solid var(--bulma-border-weak)", style "pointer-events" "auto", style "background" "var(--bulma-scheme-main, #ffffff)" ]
         [ div [ class "is-flex is-align-items-center footer-links-custom" ]
-            [ Svg.svg
-                [ SvgAttr.class "mr-2"
-                , SvgAttr.fill "currentColor"
-                , SvgAttr.height "24"
-                , SvgAttr.viewBox "0 0 24 24"
-                , SvgAttr.width "24"
-                ]
-                [ Svg.path [ SvgAttr.d "M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" ] [] ]
+            [ img [ src "Code/frontend/assets/logo.png", class "mr-2", style "height" "28px", style "width" "28px", style "object-fit" "contain" ] []
             , span [ class "has-text-weight-medium is-size-5" ] [ text "KrokenKompass" ]
             ]
         , div [ class "is-flex is-align-items-center" ]
