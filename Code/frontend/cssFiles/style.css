@@ -36,27 +36,8 @@ html[data-theme="dark"] {
     --button-light-bg: #2C2C2E;
 }
 
-/* Logo switching based on theme */
-html[data-theme="dark"] .logo-light-mode {
-    display: none !important;
-}
-html[data-theme="dark"] .logo-dark-mode {
-    display: inline-block !important;
-}
-html:not([data-theme="dark"]) .logo-light-mode {
-    display: inline-block !important;
-}
-html:not([data-theme="dark"]) .logo-dark-mode {
-    display: none !important;
-}
-
-@media (prefers-color-scheme: dark) {
-    html:not([data-theme="light"]) .logo-light-mode {
-        display: none !important;
-    }
-    html:not([data-theme="light"]) .logo-dark-mode {
-        display: inline-block !important;
-    }
+html[data-theme="dark"] .button-secondary:hover {
+    background-color: #3a3a3c !important;
 }
 
 /* --- Typografie & Basis --- */
