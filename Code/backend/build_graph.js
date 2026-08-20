@@ -197,7 +197,7 @@ for (let i = 0; i < valideFeatures.length; i++) {
 
             if ((typ1 === "tuer" || typ2 === "tuer") && gebaeude1 !== gebaeude2) continue;
 
-            let puffer = 0.1;
+            let puffer = 1.0;
             const isOutdoorType = (t) => t === "flur" || t === "durchgang" || t === "eingang" || t === "vertikal";
 
             if (isOutdoorType(typ1) && isOutdoorType(typ2)) {
@@ -225,7 +225,7 @@ for (let i = 0; i < valideFeatures.length; i++) {
             let stockwerk1 = parseInt(etage1, 10);
             let stockwerk2 = parseInt(etage2, 10);
 
-            if (Math.abs(stockwerk1 - stockwerk2) === 1 && istVertikalTyp(f1) && istVertikalTyp(f2) && habenKontakt(f1, f2)) {
+            if (Math.abs(stockwerk1 - stockwerk2) === 1 && istVertikalTyp(f1) && istVertikalTyp(f2) && habenKontakt(f1, f2, 3.0)) {
                 addEdge(graph, n1, n2, 5);
             }
         }
