@@ -50,4 +50,4 @@ flowchart LR
 * **Knotenpunkte:** ~1.500+ Knoten über mehrere Gebäude und Etagen (UG bis 5. OG)
 
 ---
-*Navigation:* [🏗️ Weiter zu Architektur & Technologien →](Architektur-&-Technologien.md)
+*Navigation:* [⚙️ Weiter zu Backend & Graphenerstellung →](⚙️-Backend-&-Graphenerstellung)

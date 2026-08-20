@@ -81,4 +81,4 @@ Lade anschließend die Webseite mit `Cmd + Shift + R` (Mac) bzw. `Strg + F5` (Wi
 * **Lösung:** Prüfe in `Code/backend/build_graph.js` die Pufferzonen (`puffer = 1.0;`) und führe `node Code/backend/build_graph.js` erneut aus.
 
 ---
-*Navigation:* [← Zurück zu Deployment & CI/CD](Deployment-&-CI-CD.md) | [🏠 Zurück zur Home-Seite](Home.md)
+*Navigation:* [← Zurück zu Deployment & CI/CD Pipelines](🚀-Deployment-&-CI-CD-Pipelines) | [🏠 Zurück zur Home-Seite](Home)

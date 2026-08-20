@@ -68,4 +68,4 @@ Ein vertikales Menü am rechten Bildschirmrand ermöglicht den schnellen Wechsel
 * **Mobile (< 768px):** Angepasste Schriftgrößen (`hero-title-custom`), vertikal gestapelte Buttons und kompakte Header-Abstände für Einhand-Bedienung.
 
 ---
-*Navigation:* [← Zurück zur Frontend-Architektur](Frontend-&-Elm-Architektur.md) | [🚀 Weiter zu Deployment & CI/CD →](Deployment-&-CI-CD.md)
+*Navigation:* [← Zurück zu Backend & Graphenerstellung](⚙️-Backend-&-Graphenerstellung) | [🏗️ Weiter zu Architektur & Technologien →](🏗️-Architektur-&-Technologien)

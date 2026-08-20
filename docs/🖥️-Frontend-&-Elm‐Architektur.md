@@ -88,4 +88,4 @@ sequenceDiagram
   * Zielpunkt: Rot
 
 ---
-*Navigation:* [← Zurück zum Backend](Backend-&-Graphenerstellung.md) | [🎨 Weiter zu UI, Theming & Design →](UI-Theming-&-Design-System.md)
+*Navigation:* [← Zurück zu Architektur & Technologien](🏗️-Architektur-&-Technologien) | [🚀 Weiter zu Deployment & CI/CD Pipelines →](🚀-Deployment-&-CI-CD-Pipelines)

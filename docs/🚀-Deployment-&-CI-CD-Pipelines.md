@@ -60,4 +60,4 @@ Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` 
 * **Konsistente Builds:** Durch das Einbinden von `elm make` in die CI/CD-Pipelines (GitHub Actions & Vercel) wird sichergestellt, dass jeder Build deterministisch und frisch aus dem Quellcode erzeugt wird.
 
 ---
-*Navigation:* [← Zurück zum UI & Theming](UI-Theming-&-Design-System.md) | [🛠️ Weiter zum Installation & Developer Guide →](Installation-&-Developer-Guide.md)
+*Navigation:* [← Zurück zu Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur) | [🛠️ Weiter zum Installation & Developer Guide →](🛠️-Installation-&-Developer-Guide)

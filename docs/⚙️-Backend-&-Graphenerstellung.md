@@ -109,4 +109,4 @@ Die generierte Datei ist extrem kompakt und wird von Elm direkt konsumiert:
 ```
 
 ---
-*Navigation:* [← Zurück zur Architektur](Architektur-&-Technologien.md) | [🖥️ Weiter zu Frontend & Elm-Architektur →](Frontend-&-Elm-Architektur.md)
+*Navigation:* [← Zurück zur Home-Seite](Home) | [🎨 Weiter zu UI, Theming & Design-System →](🎨-UI,-Theming-&-Design‐System)
