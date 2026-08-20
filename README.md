@@ -35,8 +35,9 @@ KrokenKompass setzt auf eine strikte Trennung von Datenaufbereitung und Laufzeit
 ### Frontend
 Das Frontend ist eine Single-Page-Applikation (SPA).
 * **Elm (0.19.1)**: Behandelt die sichere und funktionale UI-Logik sowie das lokale Routing.
-* **Styling**: Vanilla CSS.
-* **Markup**: HTML5.
+* **Vanilla JS**
+* **Styling**: Bulma CSS.
+* **HTML5**
 
 ### Datenaufbereitung (Backend)
 Skripte, die zur Laufzeit der Entwicklung oder beim Build-Prozess ausgeführt werden, um Geodaten zu verarbeiten.
