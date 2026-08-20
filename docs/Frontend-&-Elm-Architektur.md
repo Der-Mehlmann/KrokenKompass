@@ -56,17 +56,17 @@ sequenceDiagram
     participant Ports as JS Ports
     participant Leaflet as Leaflet (map-view.js)
 
-    User->>Elm: Wählt Start & Ziel aus
+    User->>Elm: Waehlt Start und Ziel aus
     Elm->>Elm: Dijkstra berechnet Pfad
-    Elm->>Ports: sendRoute({ path: [coords, etage, typ] })
-    Ports->>Leaflet: window.zeichneRoute(payload)
-    Leaflet->>Leaflet: Filtert nach aktiver Etage & zeichnet L.polyline
+    Elm->>Ports: sendRoute mit Koordinatenliste
+    Ports->>Leaflet: window.zeichneRoute
+    Leaflet->>Leaflet: Filtert nach aktiver Etage und zeichnet Polyline
     Leaflet->>User: Visuelle Routenanzeige
 
-    User->>Leaflet: Klickt "Etage 1. OG" Button
-    Leaflet->>Ports: app.ports.switchFloor.send("01")
+    User->>Leaflet: Klickt Etagenwechsel-Button
+    Leaflet->>Ports: app.ports.switchFloor.send
     Ports->>Elm: Elm Model aktualisiert currentFloor
-    Elm->>Ports: sendRoute (Rerender für neue Etage)
+    Elm->>Ports: sendRoute Rerender fuer neue Etage
 ```
 
 ### Definierte Ports:

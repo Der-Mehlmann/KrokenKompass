@@ -27,15 +27,15 @@ Herkömmliche Indoor-Navigationssysteme scheitern oft an zwei Hürden:
 
 ```mermaid
 flowchart LR
-    subgraph BuildTime ["1. Offline Build-Time (Node.js & Turf.js)"]
-        GeoJSON["GeoJSON Grundrisse<br/>(Räume, Flure, Türen)"] --> BuildGraph["build_graph.js<br/>(Puffer, Centroids, Kontaktprüfung)"]
-        BuildGraph --> GraphJSON["Data/graph.json<br/>(Mathematischer Wegegraph)"]
+    subgraph BuildTime ["1. Offline Build-Time: Node.js und Turf.js"]
+        GeoJSON["GeoJSON Grundrisse: Raeume, Flure, Tueren"] --> BuildGraph["build_graph.js: Puffer, Centroids, Kontakt"]
+        BuildGraph --> GraphJSON["Data/graph.json: Wegegraph"]
     end
 
-    subgraph RunTime ["2. Client-Side Run-Time (Browser)"]
-        GraphJSON --> ElmApp["Elm SPA<br/>(Dijkstra Routing Engine)"]
-        User["Nutzer wählt Ziel"] --> ElmApp
-        ElmApp -->|Ports| Leaflet["Leaflet.js & Canvas<br/>(Interaktive Routenanzeige)"]
+    subgraph RunTime ["2. Client-Side Run-Time: Browser"]
+        GraphJSON --> ElmApp["Elm SPA: Dijkstra Routing Engine"]
+        User["Nutzer waehlt Ziel"] --> ElmApp
+        ElmApp -->|Ports| Leaflet["Leaflet.js und Canvas: Routenanzeige"]
     end
 ```
 

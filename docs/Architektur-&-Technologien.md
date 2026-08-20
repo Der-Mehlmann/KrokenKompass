@@ -7,21 +7,21 @@ KrokenKompass setzt auf eine **strikte Trennung von Datenaufbereitung (Build-Tim
 ## 🏛️ Systemübersicht
 
 ```mermaid
-graph TD
-    subgraph Offline ["Build-Time (Offline / Pre-Processing)"]
-        SQL["PostGIS Datenbank<br/>(vsp_units.sql)"] -->|Export| GeoJSON["GeoJSON Floorplans<br/>(Data/vsp_etage_XX.json)"]
-        GeoJSON --> Script["Node.js: Code/backend/build_graph.js<br/>+ Turf.js (Puffer, Distanzen, Centroids)"]
-        Script --> GraphData["Data/graph.json<br/>{ graph, centroids, nodeMeta }"]
+flowchart TD
+    subgraph Offline ["Build-Time: Offline Pre-Processing"]
+        SQL["PostGIS Datenbank: vsp_units.sql"] -->|Export| GeoJSON["GeoJSON Floorplans: Data/vsp_etage_XX.json"]
+        GeoJSON --> Script["Node.js: Code/backend/build_graph.js<br/>Turf.js Puffer, Distanzen, Centroids"]
+        Script --> GraphData["Data/graph.json<br/>graph, centroids, nodeMeta"]
     end
 
-    subgraph Client ["Run-Time (Client-Browser)"]
-        GraphData -->|HTTP GET / Fetch| ElmModel["Elm State (Main.elm / GraphData.elm)"]
-        UserInput["Suchanfrage Start / Ziel"] --> ElmModel
-        ElmModel --> DijkstraEngine["Dijkstra Engine (Dijkstra.elm)"]
-        DijkstraEngine -->|Kürzester Pfad (IDs)| PortBridge["Elm Outgoing Ports<br/>(sendRoute, switchFloor)"]
-        PortBridge --> JSMap["Leaflet Map-View (map-view.js)"]
+    subgraph Client ["Run-Time: Client-Browser"]
+        GraphData -->|HTTP GET Fetch| ElmModel["Elm State: Main.elm & GraphData.elm"]
+        UserInput["Suchanfrage Start und Ziel"] --> ElmModel
+        ElmModel --> DijkstraEngine["Dijkstra Engine: Dijkstra.elm"]
+        DijkstraEngine -->|Kuerzester Pfad| PortBridge["Elm Outgoing Ports: sendRoute, switchFloor"]
+        PortBridge --> JSMap["Leaflet Map-View: map-view.js"]
         GeoJSON -->|Layer-Rendering| JSMap
-        JSMap --> Display["Canvas / SVG Route & Marker"]
+        JSMap --> Display["Canvas / SVG Route und Marker"]
     end
 ```
 
