@@ -9,7 +9,7 @@ Bei jedem Push in den Branch `main` führt GitHub Actions die Build-Pipeline aus
 ```mermaid
 flowchart LR
     Push[Push auf main] --> Checkout[1. Code Checkout]
-    Checkout --> Setup[2. Setup Node.js 20]
+    Checkout --> Setup[2. Setup Node.js 24]
     Setup --> Install[3. npm install]
     Install --> Compile[4. Elm kompilieren: npx elm@0.19.1 make --optimize]
     Compile --> Version[5. Git-SHA in index.html injizieren]
