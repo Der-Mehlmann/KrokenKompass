@@ -1,5 +1,3 @@
-# 🖥️ Frontend & Elm-Architektur
-
 Das Frontend von **KrokenKompass** ist eine Single-Page-Application (SPA), die auf der **Elm-Architektur (TEA)** basiert und über **Ports** mit der interaktiven Kartenbibliothek **Leaflet.js** kommuniziert.
 
 ---
@@ -90,4 +88,4 @@ sequenceDiagram
   * Zielpunkt: Rot
 
 ---
-*Navigation:* [← Zurück zum Backend](Backend-&-Graphenerstellung.md) | [🎨 Weiter zu UI, Theming & Design →](UI-Theming-&-Design-System.md)
+*Navigation:* [← Zurück zu Architektur & Technologien](🏗️-Architektur-&-Technologien) | [🚀 Weiter zu Deployment & CI/CD Pipelines →](🚀-Deployment-&-CI-CD-Pipelines)

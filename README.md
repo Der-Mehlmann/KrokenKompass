@@ -8,7 +8,7 @@
 
 <p align="center">
   <img alt="Elm" src="https://img.shields.io/badge/Elm-0.19.1-60B5CC?style=flat-square&logo=elm&logoColor=white">
-  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-20_LTS-339933?style=flat-square&logo=node.js&logoColor=white">
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-24-339933?style=flat-square&logo=node.js&logoColor=white">
   <img alt="Leaflet" src="https://img.shields.io/badge/Leaflet.js-1.9.4-199900?style=flat-square&logo=leaflet&logoColor=white">
   <img alt="Turf.js" src="https://img.shields.io/badge/Turf.js-7.3.5-34495E?style=flat-square">
   <img alt="Bulma" src="https://img.shields.io/badge/Bulma-1.0.4-00D1B2?style=flat-square&logo=bulma&logoColor=white">

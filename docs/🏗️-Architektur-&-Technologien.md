@@ -1,5 +1,3 @@
-# 🏗️ Architektur & Technologien
-
 KrokenKompass setzt auf eine **strikte Trennung von Datenaufbereitung (Build-Time) und Laufzeitumgebung (Run-Time)**, um maximale Performance, Fehlertoleranz und Skalierbarkeit zu gewährleisten.
 
 ---
@@ -66,4 +64,4 @@ flowchart TD
 | **6. Zeichnen** | Darstellung | `map-view.js` zeichnet die Route mit `L.polyline`, hebt Start-/Zielräume hervor und fokussiert die Karte. |
 
 ---
-*Navigation:* [← Zurück zur Home-Seite](Home.md) | [⚙️ Weiter zu Backend & Graphenerstellung →](Backend-&-Graphenerstellung.md)
+*Navigation:* [← Zurück zu UI, Theming & Design-System](🎨-UI,-Theming-&-Design‐System) | [🖥️ Weiter zu Frontend & Elm-Architektur →](🖥️-Frontend-&-Elm‐Architektur)
