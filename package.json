@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "build": "cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
+    "build": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
   },
   "devDependencies": {
-    "elm": "0.19.1"
+    "elm": "0.19.1-5"
   },
   "dependencies": {
     "@turf/turf": "^7.3.5"
