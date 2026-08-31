@@ -37,8 +37,10 @@ npm run build
 ### 3. Lokalen Entwicklungsserver starten
 Da moderne Browser das Nachladen von JSON-Dateien (`graph.json`, GeoJSON) über das `file://`-Protokoll aus Sicherheitsgründen (CORS) blockieren, starte einen lokalen HTTP-Server:
 ```bash
-npx serve .
+npm run dev
 ```
+*(Alternativ: `npm start` oder `npx serve .`)*
+
 Öffne anschließend [http://localhost:3000](http://localhost:3000) im Browser.
 
 ---
@@ -49,9 +51,9 @@ npx serve .
 Wenn neue Räume hinzugefügt oder bestehende GeoJSON-Dateien in `Data/` geändert wurden:
 ```bash
 # Berechnet alle Kanten, Centroids und Pufferzonen neu:
-node Code/backend/build_graph.js
+npm run build:graph
 ```
-Das Skript analysiert alle Etagen und aktualisiert direkt `Data/graph.json`.
+*(Führt im Hintergrund `node Code/backend/build_graph.js` aus und aktualisiert direkt `Data/graph.json`)*
 
 ### B. Änderungen an der Benutzeroberfläche (Elm)
 Wenn du Dateien wie `Code/frontend/src/Main.elm` oder `Dijkstra.elm` bearbeitest:

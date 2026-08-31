@@ -28,9 +28,18 @@ jobs:
         uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 24
+          cache: 'npm'
+
+      - name: Cache Elm dependencies
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: ~/.elm
+          key: ${{ runner.os }}-elm-${{ hashFiles('Code/frontend/elm.json') }}
+          restore-keys: |
+            ${{ runner.os }}-elm-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Project & Inject Version Tag
         run: npm run build

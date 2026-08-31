@@ -8,16 +8,16 @@ Bei jedem Push in den Branch `main` führt GitHub Actions die Build-Pipeline aus
 
 ```mermaid
 flowchart LR
-    Push[Push auf main] --> Checkout[1. Code Checkout]
-    Checkout --> Setup[2. Setup Node.js 24]
-    Setup --> Install[3. npm install]
-    Install --> Compile[4. Elm kompilieren: npx elm@0.19.1 make --optimize]
-    Compile --> Version[5. Git-SHA in index.html injizieren]
+    Push[Push auf main / PR] --> Checkout[1. Code Checkout]
+    Checkout --> Setup[2. Setup Node.js 24 + Caches]
+    Setup --> Install[3. npm ci]
+    Install --> Compile[4. Elm kompilieren: npm run build]
+    Compile --> Version[5. Git-SHA & Version injizieren]
     Version --> Deploy[6. Upload zu GitHub Pages]
 ```
 
 ### Die Workflow-Schritte im Detail:
-1. **Elm-Kompilierung:** Kompiliert `Code/frontend/src/Main.elm` direkt zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
+1. **Elm-Kompilierung:** Führt `npm run build` aus und kompiliert `Code/frontend/src/Main.elm` zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
 2. **Version-Tagging:** Ersetzt den Platzhalter `dev-local` in `index.html` mit den ersten 7 Zeichen des Git-Commit-Hashes (`$SHORT_SHA`), sodass in der Footer-Leiste stets die exakt gebaute Version angezeigt wird.
 
 ---
@@ -33,10 +33,10 @@ Definiert den Build-Befehl, den Vercel beim Klonen ausführt:
 ```json
 {
   "scripts": {
-    "build": "cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
+    "build": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
   },
   "devDependencies": {
-    "elm": "0.19.1-5"
+    "elm": "^0.19.1-6"
   },
   "dependencies": {
     "@turf/turf": "^7.3.5"
@@ -45,11 +45,72 @@ Definiert den Build-Befehl, den Vercel beim Klonen ausführt:
 ```
 
 #### `vercel.json`
-Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` direkt im Hauptverzeichnis liegt, definiert `vercel.json` den Root-Ordner als Output:
+Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` direkt im Hauptverzeichnis liegt, definiert `vercel.json` den Root-Ordner als Output und setzt standardmäßige HTTP-Sicherheitsheader (Clickjacking-Schutz, X-Content-Type-Options etc.):
 ```json
 {
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(index\\.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/Data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/Code/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ]
 }
+```
+
+---
+
+## 3. GitHub Wiki Sync Pipeline (`.github/workflows/wiki-sync.yml`)
+
+Änderungen an der Dokumentation werden wie normaler Programmcode im Verzeichnis `docs/` über Commits und Pull Requests gepflegt.
+
+Bei jedem Push/Merge auf `main`, der Dateien in `docs/**` berührt, spiegelt die GitHub Action (`wiki-sync.yml`) alle Markdown-Dateien vollautomatisiert in das GitHub Wiki (`.wiki.git`):
+
+```mermaid
+flowchart LR
+    Push[Push/Merge auf main mit docs/**] --> Checkout[1. Code Checkout]
+    Checkout --> Sync[2. github-wiki-action]
+    Sync --> Wiki[3. Live-Update im GitHub Wiki Tab]
 ```
 
 ---

@@ -30,9 +30,13 @@ const indexPath = path.join(__dirname, '../../index.html');
 if (fs.existsSync(indexPath)) {
     let indexHtml = fs.readFileSync(indexPath, 'utf8');
     // Replace flags: "..." or flags: '...'
-    const updatedHtml = indexHtml.replace(/flags:\s*["'][^"']*["']/, `flags: "${commitHash}"`);
+    let updatedHtml = indexHtml.replace(/flags:\s*["'][^"']*["']/, `flags: "${commitHash}"`);
+    // Replace cache busting query params
+    updatedHtml = updatedHtml.replace(/elm\.js(\?v=[^"']*)?/g, `elm.js?v=${commitHash}`);
+    updatedHtml = updatedHtml.replace(/map-view\.js(\?v=[^"']*)?/g, `map-view.js?v=${commitHash}`);
+    updatedHtml = updatedHtml.replace(/style\.css(\?v=[^"']*)?/g, `style.css?v=${commitHash}`);
     fs.writeFileSync(indexPath, updatedHtml, 'utf8');
-    console.log(`[Version Injector] Set version flag in index.html to: "${commitHash}"`);
+    console.log(`[Version Injector] Set version flag and asset cache-busters in index.html to: "${commitHash}"`);
 } else {
     console.warn(`[Version Injector] index.html not found at: ${indexPath}`);
 }
