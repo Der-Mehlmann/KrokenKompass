@@ -8,16 +8,16 @@ Bei jedem Push in den Branch `main` führt GitHub Actions die Build-Pipeline aus
 
 ```mermaid
 flowchart LR
-    Push[Push auf main] --> Checkout[1. Code Checkout]
-    Checkout --> Setup[2. Setup Node.js 24]
-    Setup --> Install[3. npm install]
-    Install --> Compile[4. Elm kompilieren: npx elm@0.19.1 make --optimize]
-    Compile --> Version[5. Git-SHA in index.html injizieren]
+    Push[Push auf main / PR] --> Checkout[1. Code Checkout]
+    Checkout --> Setup[2. Setup Node.js 24 + Caches]
+    Setup --> Install[3. npm ci]
+    Install --> Compile[4. Elm kompilieren: npm run build]
+    Compile --> Version[5. Git-SHA & Version injizieren]
     Version --> Deploy[6. Upload zu GitHub Pages]
 ```
 
 ### Die Workflow-Schritte im Detail:
-1. **Elm-Kompilierung:** Kompiliert `Code/frontend/src/Main.elm` direkt zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
+1. **Elm-Kompilierung:** Führt `npm run build` aus und kompiliert `Code/frontend/src/Main.elm` zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
 2. **Version-Tagging:** Ersetzt den Platzhalter `dev-local` in `index.html` mit den ersten 7 Zeichen des Git-Commit-Hashes (`$SHORT_SHA`), sodass in der Footer-Leiste stets die exakt gebaute Version angezeigt wird.
 
 ---
@@ -33,10 +33,10 @@ Definiert den Build-Befehl, den Vercel beim Klonen ausführt:
 ```json
 {
   "scripts": {
-    "build": "cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
+    "build": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
   },
   "devDependencies": {
-    "elm": "0.19.1-5"
+    "elm": "^0.19.1-6"
   },
   "dependencies": {
     "@turf/turf": "^7.3.5"

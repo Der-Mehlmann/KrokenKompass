@@ -1,24 +1,19 @@
-name: Deploy to GitHub Pages
-
+name: CI
 on:
-  push:
+  pull_request:
     branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  validate:
+    name: Build & Validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -41,17 +36,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Project & Inject Version Tag
+      - name: Compile Elm Application
         run: npm run build
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
-        with:
-          path: '.'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+      - name: Test Graph Generation
+        run: node Code/backend/build_graph.js
