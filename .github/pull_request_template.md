@@ -27,9 +27,9 @@ Closes #
 
 <!-- Bitte prüfe, ob du Folgendes beachtet hast (Zutreffendes ankreuzen): -->
 
-- [ ] Ich habe die App lokal getestet (`npx serve .`) und es gibt keine Konsolen-Fehler.
-- [ ] Mein Elm-Code kompiliert fehlerfrei (`npx elm make src/Main.elm`).
-- [ ] Falls ich Raum-Daten geändert habe, habe ich `node Code/backend/build_graph.js` ausgeführt.
+- [ ] Ich habe die App lokal getestet (`npm run dev` / `npm start`) und es gibt keine Konsolen-Fehler.
+- [ ] Mein Elm-Code kompiliert fehlerfrei (`npm run build`).
+- [ ] Falls ich Raum-Daten geändert habe, habe ich `npm run build:graph` ausgeführt.
 - [ ] Mein Code hält sich an die existierenden Code-Styles des Projekts.
 - [ ] Ich habe die Dokumentation aktualisiert, falls nötig.
 
