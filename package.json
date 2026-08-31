@@ -1,6 +1,15 @@
 {
+  "name": "krokenkompass",
+  "version": "1.0.0",
+  "description": "Indoor- & Campus-Navigationssystem für die Martin-Luther-Universität Halle-Wittenberg",
+  "private": true,
   "scripts": {
-    "build": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "build": "npm run build:all",
+    "build:elm": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize",
+    "build:graph": "node Code/backend/build_graph.js",
+    "build:all": "npm run build:elm"
   },
   "devDependencies": {
     "elm": "^0.19.1-6"
@@ -9,3 +18,4 @@
     "@turf/turf": "^7.3.5"
   }
 }
+

@@ -77,7 +77,7 @@ npm install
 npm run build
 
 # 4. Lokalen Entwicklungsserver starten
-npx serve .
+npm run dev
 ```
 
 Öffne anschließend [http://localhost:3000](http://localhost:3000) im Browser.
@@ -86,19 +86,12 @@ npx serve .
 
 ## 📦 Entwickler-Skripte
 
-### 🔄 Geo-Daten & Routing-Graph neu berechnen
-Wenn sich Grundrisse oder Raum-Dateien in `Data/` ändern:
-```bash
-node Code/backend/build_graph.js
-```
-Generiert die optimierte `Data/graph.json` neu.
-
-### 🔨 Elm Frontend kompilieren
-Bei Änderungen im Elm-Quellcode (`Code/frontend/src/`):
-```bash
-npm run build
-```
-*(Kompiliert `Code/frontend/src/Main.elm` mit Optimierungen zu `Code/frontend/elm.js`)*
+| Befehl | Beschreibung |
+| :--- | :--- |
+| **`npm run dev`** / **`npm start`** | Startet den lokalen HTTP-Server (`http://localhost:3000`). |
+| **`npm run build`** | Kompiliert das Elm-Frontend mit Optimierungen (`--optimize`) nach `Code/frontend/elm.js`. |
+| **`npm run build:graph`** | Führt `build_graph.js` aus und berechnet den Wegegraphen (`Data/graph.json`) neu. |
+| **`npm run build:all`** | Führt Graphen-Berechnung und Elm-Build nacheinander aus. |
 
 ---
 
