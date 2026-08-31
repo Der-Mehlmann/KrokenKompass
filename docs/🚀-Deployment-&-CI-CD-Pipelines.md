@@ -17,8 +17,12 @@ flowchart LR
 ```
 
 ### Die Workflow-Schritte im Detail:
-1. **Elm-Kompilierung:** Führt `npm run build` aus und kompiliert `Code/frontend/src/Main.elm` zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
-2. **Version-Tagging:** Ersetzt den Platzhalter `dev-local` in `index.html` mit den ersten 7 Zeichen des Git-Commit-Hashes (`$SHORT_SHA`), sodass in der Footer-Leiste stets die exakt gebaute Version angezeigt wird.
+1. **Elm-Kompilierung:** Führt `npm run build` aus. Dabei führt `Code/backend/inject_version.js` eine automatische Versionsinjektion durch und kompiliert `Code/frontend/src/Main.elm` zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
+2. **Dynamische Versions- & Release-Injektion (`inject_version.js`):**
+   - **Release-Version:** Ermittelt automatisch das aktuellste GitHub-Release bzw. Git-Tag (`git describe --tags --abbrev=0` oder `GITHUB_REF_NAME`, Fallback `package.json`).
+   - **Commit-Hash:** Ermittelt den 7-stelligen Commit-Hash (`GITHUB_SHA`, `VERCEL_GIT_COMMIT_SHA` oder `git rev-parse --short HEAD`).
+   - **Strukturierte Flags:** Übergibt `{ release: "vX.X.X", commit: "XXXXXXX" }` direkt an Elm, wodurch im Footer die kombinierte Anzeige `vX.X.X - XXXXXXX` mit Direktlinks zu den Releases und zum Git-Commit gerendert wird.
+   - **Cache-Busting:** Aktualisiert automatisch die Query-Parameter für `elm.js?v=`, `map-view.js?v=` und `style.css?v=`.
 
 ---
 

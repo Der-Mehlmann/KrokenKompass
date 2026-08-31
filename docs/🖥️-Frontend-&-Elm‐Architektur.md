@@ -16,12 +16,14 @@ Code/frontend/src/
 ## 🧩 Modul-Details
 
 ### 1. `Main.elm` – Der Orchestrator
+* **Flags & Initialisierung:** Beim Start empfängt Elm ein strukturiertes `Flags`-Objekt `{ release: String, commit: String }` von `inject_version.js`. Damit rendert die App im Footer stets das aktuelle Release (`v1.0.0`) und den dazugehörigen Git-Commit (`fba17ba`) mit interaktiven Links zu GitHub.
 * **Model:** Verwaltet den gesamten Zustand:
   * `graphData: Maybe GraphData` (der geladene Wegegraph)
   * `startInput: String`, `endInput: String` (Text in den Suchfeldern)
   * `startNode: Maybe NodeId`, `targetNode: Maybe NodeId` (ausgewählte Knoten)
   * `currentFloor: String` (aktiv angezeigte Etage, z.B. `"00"`)
   * `route: Maybe (List NodeId)` (aktuell berechneter Weg)
+  * `version: Flags` (Release- und Commit-Informationen)
 * **Autocomplete & Filtering:** Sobald der Nutzer tippt, filtert Elm `nodeMeta` und rendert Dropdown-Vorschläge.
 * **Routing-Aufruf:** Wenn Start und Ziel gesetzt sind, übergibt Elm die Knoten an `Dijkstra.findPath`.
 
