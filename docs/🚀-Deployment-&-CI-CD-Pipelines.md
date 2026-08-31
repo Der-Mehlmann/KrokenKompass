@@ -100,6 +100,21 @@ Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` 
 
 ---
 
+## 3. GitHub Wiki Sync Pipeline (`.github/workflows/wiki-sync.yml`)
+
+Änderungen an der Dokumentation werden wie normaler Programmcode im Verzeichnis `docs/` über Commits und Pull Requests gepflegt.
+
+Bei jedem Push/Merge auf `main`, der Dateien in `docs/**` berührt, spiegelt die GitHub Action (`wiki-sync.yml`) alle Markdown-Dateien vollautomatisiert in das GitHub Wiki (`.wiki.git`):
+
+```mermaid
+flowchart LR
+    Push[Push/Merge auf main mit docs/**] --> Checkout[1. Code Checkout]
+    Checkout --> Sync[2. github-wiki-action]
+    Sync --> Wiki[3. Live-Update im GitHub Wiki Tab]
+```
+
+---
+
 ## 🛡️ Warum `elm.js` in `.gitignore` steht
 
 * **Kein Binär-/Build-Müll im Git-Verlauf:** `elm.js` ist ein kompiliertes Artefakt (~9.000+ Zeilen generiertes JS).
