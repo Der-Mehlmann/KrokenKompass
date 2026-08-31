@@ -755,12 +755,17 @@ viewFooter model =
 
 viewVersion : String -> Html Msg
 viewVersion version =
-    if version == "dev-local" then
-        span [ class "has-text-grey is-size-7" ] [ text "vdev-local" ]
+    div [ class "has-text-grey is-size-7 is-flex is-align-items-center" ]
+        [ a [ href "https://github.com/Der-Mehlmann/KrokenKompass/releases/latest", target "_blank", class "has-text-grey", style "text-decoration" "none" ]
+            [ text "v1.0.0" ]
+        , span [ class "mx-1" ] [ text "-" ]
+        , if version == "dev-local" then
+            span [] [ text "dev-local" ]
 
-    else
-        a [ href ("https://github.com/Der-Mehlmann/KrokenKompass/commit/" ++ version), target "_blank", class "has-text-grey is-size-7", style "text-decoration" "underline" ]
-            [ text ("v" ++ version) ]
+          else
+            a [ href ("https://github.com/Der-Mehlmann/KrokenKompass/commit/" ++ version), target "_blank", class "has-text-grey", style "text-decoration" "underline" ]
+                [ text version ]
+        ]
 
 viewRoutePlanner : Model -> Html Msg
 viewRoutePlanner model =
