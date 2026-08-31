@@ -45,7 +45,7 @@ flowchart LR
 ## 📊 Kernmetriken
 
 * **Frontend:** Elm 0.19.1 + Leaflet.js 1.9.4 + Bulma 1.0.4
-* **Backend / Pre-Processing:** Node.js + Turf.js 7.3.5
+* **Backend / Pre-Processing:** Node.js + Turf.js 7.4.0
 * **Routing-Algorithmus:** Dijkstra (clientseitig ausgeführt)
 * **Knotenpunkte:** ~1.500+ Knoten über mehrere Gebäude und Etagen (UG bis 5. OG)
 

@@ -29,7 +29,7 @@ flowchart TD
 
 ### 1. Datenvorbereitung & Pre-Processing (Backend)
 * **Node.js**: Führt das Vorverarbeitungsskript aus (`node Code/backend/build_graph.js`).
-* **Turf.js (`@turf/turf` 7.3.5)**: Eine JavaScript-Bibliothek für räumliche Geometrie-Operationen. Sie übernimmt:
+* **Turf.js (`@turf/turf` 7.4.0)**: Eine JavaScript-Bibliothek für räumliche Geometrie-Operationen. Sie übernimmt:
   * Berechnung von Mittelpunkten (`turf.centroid` / `turf.pointOnFeature`)
   * Pufferung von Polygonen (`turf.buffer`), um minimale CAD-Zeichenungenauigkeiten zu überbrücken
   * Schnittpunktprüfungen (`turf.booleanIntersects`)
