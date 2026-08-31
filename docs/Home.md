@@ -6,12 +6,12 @@ Willkommen in der offiziellen Dokumentation von **KrokenKompass**!
 
 ## 🗺️ Inhaltsverzeichnis
 
-* [⚙️ **Backend & Graphenerstellung**](⚙️-Backend-&-Graphenerstellung) – Geometrieverarbeitung mit Turf.js, Pufferzonen, Kantenberechnung & Strafmetriken.
-* [🎨 **UI, Theming & Design-System**](🎨-UI,-Theming-&-Design‐System) – Dual-Logo-System, Dark/Light Mode, Bulma 1.0 & Responsive Design.
-* [🏗️ **Architektur & Technologien**](🏗️-Architektur-&-Technologien) – High-Level-Systemübersicht, Build- vs. Run-Time, Komponenten & Design-Entscheidungen.
-* [🖥️ **Frontend & Elm-Architektur**](🖥️-Frontend-&-Elm‐Architektur) – Die Elm SPA, Dijkstra-Routing im Browser, Port-Kommunikation & Leaflet-Kartenanzeige.
-* [🚀 **Deployment & CI/CD Pipelines**](🚀-Deployment-&-CI-CD-Pipelines) – GitHub Pages Workflow, Vercel-Konfiguration & automatisierte Build-Pipelines.
-* [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide) – Lokale Einrichtung, Entwicklungsworkflow & Troubleshooting.
+* [⚙️ **Backend & Graphenerstellung**](⚙️-Backend-&-Graphenerstellung.md) – Geometrieverarbeitung mit Turf.js, Pufferzonen, Kantenberechnung & Strafmetriken.
+* [🎨 **UI, Theming & Design-System**](🎨-UI,-Theming-&-Design‐System.md) – Dual-Logo-System, Dark/Light Mode, Bulma 1.0 & Responsive Design.
+* [🏗️ **Architektur & Technologien**](🏗️-Architektur-&-Technologien.md) – High-Level-Systemübersicht, Build- vs. Run-Time, Komponenten & Design-Entscheidungen.
+* [🖥️ **Frontend & Elm-Architektur**](🖥️-Frontend-&-Elm‐Architektur.md) – Die Elm SPA, Dijkstra-Routing im Browser, Port-Kommunikation & Leaflet-Kartenanzeige.
+* [🚀 **Deployment & CI/CD Pipelines**](🚀-Deployment-&-CI-CD-Pipelines.md) – GitHub Pages Workflow, Vercel-Konfiguration & automatisierte Build-Pipelines.
+* [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide.md) – Lokale Einrichtung, Entwicklungsworkflow & Troubleshooting.
 
 ---
 
@@ -50,4 +50,4 @@ flowchart LR
 * **Knotenpunkte:** ~1.500+ Knoten über mehrere Gebäude und Etagen (UG bis 5. OG)
 
 ---
-*Navigation:* [⚙️ Weiter zu Backend & Graphenerstellung →](⚙️-Backend-&-Graphenerstellung)
+*Navigation:* [⚙️ Weiter zu Backend & Graphenerstellung →](⚙️-Backend-&-Graphenerstellung.md)
