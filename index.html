@@ -300,7 +300,10 @@
 <script>
     const app = Elm.Main.init({
         node: document.getElementById("elm-app"),
-        flags: "7891537"
+        flags: {
+            release: "v1.0.0",
+            commit: "9d729e1"
+        }
     });
 
     if (app.ports && app.ports.toggleThemeCmd) {
