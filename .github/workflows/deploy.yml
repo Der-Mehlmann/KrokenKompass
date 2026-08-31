@@ -22,27 +22,50 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 24
+          cache: 'npm'
+
+      - name: Cache Elm dependencies
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: ~/.elm
+          key: ${{ runner.os }}-elm-${{ hashFiles('Code/frontend/elm.json') }}
+          restore-keys: |
+            ${{ runner.os }}-elm-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Project & Inject Version Tag
         run: npm run build
 
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Archive Pages artifact
+        shell: sh
+        run: |
+          tar \
+            --dereference --hard-dereference \
+            --directory "." \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            .
+
+      - name: Upload Pages artifact
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
-          path: '.'
+          name: 'github-pages'
+          path: ${{ runner.temp }}/artifact.tar
+          retention-days: 1
+          if-no-files-found: error
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
