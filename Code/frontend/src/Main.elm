@@ -63,7 +63,7 @@ port toggleThemeCmd : () -> Cmd msg
 
 -- MAIN
 
-main : Program String Model Msg
+main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -81,6 +81,11 @@ type DropdownState
     | StartOpen
     | EndOpen
 
+type alias Flags =
+    { release : String
+    , commit : String
+    }
+
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
@@ -94,11 +99,11 @@ type alias Model =
     , shake : Bool
     , aktuelleEtage : String
     , currentFloor : String
-    , version : String
+    , version : Flags
     }
 
-init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init versionFlag url key =
+init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
     ( { key = key
       , url = url
       , route = parseUrl url
@@ -111,7 +116,7 @@ init versionFlag url key =
       , shake = False
       , aktuelleEtage = "00"
       , currentFloor = "EG / 0"
-      , version = versionFlag
+      , version = flags
       }
     , Cmd.batch [ fetchGraph, fetchVspUnits ]
     )
@@ -753,18 +758,18 @@ viewFooter model =
         ]
 
 
-viewVersion : String -> Html Msg
+viewVersion : Flags -> Html Msg
 viewVersion version =
     div [ class "has-text-grey is-size-7 is-flex is-align-items-center" ]
         [ a [ href "https://github.com/Der-Mehlmann/KrokenKompass/releases/latest", target "_blank", class "has-text-grey", style "text-decoration" "none" ]
-            [ text "v1.0.0" ]
+            [ text version.release ]
         , span [ class "mx-1" ] [ text "-" ]
-        , if version == "dev-local" then
+        , if version.commit == "dev-local" then
             span [] [ text "dev-local" ]
 
           else
-            a [ href ("https://github.com/Der-Mehlmann/KrokenKompass/commit/" ++ version), target "_blank", class "has-text-grey", style "text-decoration" "underline" ]
-                [ text version ]
+            a [ href ("https://github.com/Der-Mehlmann/KrokenKompass/commit/" ++ version.commit), target "_blank", class "has-text-grey", style "text-decoration" "underline" ]
+                [ text version.commit ]
         ]
 
 viewRoutePlanner : Model -> Html Msg
