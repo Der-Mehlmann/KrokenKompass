@@ -63,7 +63,12 @@ Die Sucheingabefelder für Start und Ziel sind als schwebende "Pill"-Komponenten
 ### 2. Etagen-Auswahlmenü
 Ein vertikales Menü am rechten Bildschirmrand ermöglicht den schnellen Wechsel zwischen den Geschossen (UG bis 5. OG) mit optischer Hervorhebung des aktiven Stockwerks.
 
-### 3. Responsive Breakpoints
+### 3. Footer & Versionsanzeige
+Die Fußleiste am unteren Bildschirmrand zeigt neben dem Logo und dem GitHub-Link die **Release- und Build-Informationen** an:
+* Format: `vX.X.X - XXXXXXX`
+* Die Release-Version verlinkt direkt auf das neueste GitHub-Release (`/releases/latest`), während der 7-stellige Git-Commit-Hash auf den jeweiligen Commit (`/commit/XXXXXXX`) verlinkt.
+
+### 4. Responsive Breakpoints
 * **Desktop (≥ 769px):** Vollständige Header- und Footer-Leiste, symmetrische Aktions-Buttons.
 * **Mobile (< 768px):** Angepasste Schriftgrößen (`hero-title-custom`), vertikal gestapelte Buttons und kompakte Header-Abstände für Einhand-Bedienung.
 
