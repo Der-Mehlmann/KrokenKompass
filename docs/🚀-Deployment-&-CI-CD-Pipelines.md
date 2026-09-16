@@ -43,7 +43,7 @@ Definiert den Build-Befehl, den Vercel beim Klonen ausführt:
     "elm": "^0.19.1-6"
   },
   "dependencies": {
-    "@turf/turf": "^7.3.5"
+    "@turf/turf": "^7.4.0"
   }
 }
 ```
