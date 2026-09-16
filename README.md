@@ -10,7 +10,7 @@
   <img alt="Elm" src="https://img.shields.io/badge/Elm-0.19.1-60B5CC?style=flat-square&logo=elm&logoColor=white">
   <img alt="Node.js" src="https://img.shields.io/badge/Node.js-24-339933?style=flat-square&logo=node.js&logoColor=white">
   <img alt="Leaflet" src="https://img.shields.io/badge/Leaflet.js-1.9.4-199900?style=flat-square&logo=leaflet&logoColor=white">
-  <img alt="Turf.js" src="https://img.shields.io/badge/Turf.js-7.3.5-34495E?style=flat-square">
+  <img alt="Turf.js" src="https://img.shields.io/badge/Turf.js-7.4.0-34495E?style=flat-square">
   <img alt="Bulma" src="https://img.shields.io/badge/Bulma-1.0.4-00D1B2?style=flat-square&logo=bulma&logoColor=white">
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"></a>
 </p>
@@ -58,7 +58,7 @@ Ausführliche technische Details, Datenfluss-Diagramme und Hintergründe findest
 ## 🛠️ Technologien
 
 * **Frontend:** [Elm 0.19.1](https://elm-lang.org/), [Leaflet.js 1.9.4](https://leafletjs.com/), [Bulma 1.0.4](https://bulma.io/)
-* **Datenvorbereitung (Backend):** [Node.js](https://nodejs.org/), [@turf/turf 7.3.5](https://turfjs.org/)
+* **Datenvorbereitung (Backend):** [Node.js](https://nodejs.org/), [@turf/turf 7.4.0](https://turfjs.org/)
 * **Deployment & Hosting:** GitHub Actions (Pages) & Vercel
 
 ---
