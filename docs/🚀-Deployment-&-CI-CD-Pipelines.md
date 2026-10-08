@@ -53,6 +53,8 @@ Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` 
 ```json
 {
   "outputDirectory": ".",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
@@ -101,6 +103,24 @@ Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` 
   ]
 }
 ```
+
+#### Vercel Web Analytics & Speed Insights
+KrokenKompass bindet Vercel Web Analytics sowie Vercel Speed Insights über die offiziellen Tracking-Snippets direkt im `<head>` der `index.html` ein:
+```html
+<!-- Vercel Web Analytics & Speed Insights -->
+<script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+```
+* **Aktivierung im Dashboard:** Im Vercel-Projekt unter den Reitern **Analytics** bzw. **Speed Insights** jeweils auf **Enable** klicken.
+* **Core Web Vitals:** Speed Insights analysiert automatisch Leistungskennzahlen (LCP, FID/INP, CLS) von realen Besuchern.
+* **Custom Events:** Elm-Port-Ereignisse übertragen wichtige Benutzeraktionen automatisch als anonymisierte Events:
+  - `route_calculated`: Erfolgreiche Berechnung und Darstellung einer Route
+  - `route_failed`: Fehler beim Routen
+  - `switch_floor`: Wechsel der angezeigten Etage (`{ floor: ... }`)
 
 ---
 
