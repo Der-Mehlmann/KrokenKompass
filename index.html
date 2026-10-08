@@ -5,10 +5,32 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>KrokenKompass</title>
+    <meta name="description" content="Indoor- & Campus-Navigationssystem für die Martin-Luther-Universität Halle-Wittenberg">
+
+    <!-- Open Graph / Facebook / Discord / Slack -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="KrokenKompass">
+    <meta property="og:description" content="Indoor- & Campus-Navigationssystem für die Martin-Luther-Universität Halle-Wittenberg">
+    <meta property="og:image" content="Code/frontend/svgs/KK-Logo-dark.png">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="KrokenKompass">
+    <meta name="twitter:description" content="Indoor- & Campus-Navigationssystem für die Martin-Luther-Universität Halle-Wittenberg">
+    <meta name="twitter:image" content="Code/frontend/svgs/KK-Logo-dark.png">
+
     <link href="Code/frontend/svgs/KK-Logo-dark.png" rel="icon" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" integrity="sha384-DCY3M8xLkMu6c9IKcKbe+jHKMjelnwC0p+SBaxfHxoBYZWdJF2X400UdBCgATtAB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-    <link href="Code/frontend/cssFiles/style.css?v=dev-local" rel="stylesheet">
+    <link href="Code/frontend/cssFiles/style.css?v=695488f" rel="stylesheet">
+
+    <!-- Vercel Web Analytics & Speed Insights -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
 
     <script>
         const savedTheme = localStorage.getItem('theme');
@@ -295,14 +317,14 @@
 
 <div id="elm-app"></div>
 
-<script src="Code/frontend/elm.js?v=dev-local"></script>
-<script src="Code/frontend/map-view.js?v=dev-local"></script>
+<script src="Code/frontend/elm.js?v=695488f"></script>
+<script src="Code/frontend/map-view.js?v=695488f"></script>
 <script>
     const app = Elm.Main.init({
         node: document.getElementById("elm-app"),
         flags: {
             release: "v1.0.0",
-            commit: "9d729e1"
+            commit: "695488f"
         }
     });
 
@@ -315,17 +337,26 @@
     }
 
     app.ports.sendRoute.subscribe(function (payload) {
+        if (window.va) {
+            window.va('event', { name: 'route_calculated' });
+        }
         if (window.zeichneRoute) {
             window.zeichneRoute(payload);
         }
     });
 
     app.ports.routingFailed.subscribe(function (msg) {
+        if (window.va) {
+            window.va('event', { name: 'route_failed' });
+        }
         alert("Routing fehlgeschlagen: " + msg);
     });
 
     app.ports.switchFloor.subscribe(function (etage) {
         console.log("Wechsle zu Etage: " + etage);
+        if (window.va) {
+            window.va('event', { name: 'switch_floor', data: { floor: String(etage) } });
+        }
         if (window.wechsleEtage) {
             window.wechsleEtage(etage);
         }
