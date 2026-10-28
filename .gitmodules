@@ -1,0 +1,3 @@
+[submodule ".ai"]
+	path = .ai
+	url = git@github.com:Der-Mehlmann/krokenkompass_ai_internal.git
