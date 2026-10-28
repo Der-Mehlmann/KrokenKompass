@@ -1,3 +1,6 @@
 [submodule ".ai"]
 	path = .ai
 	url = git@github.com:Der-Mehlmann/krokenkompass_ai_internal.git
+	branch = main
+	update = merge
+	ignore = all
