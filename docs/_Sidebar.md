@@ -1,22 +1,22 @@
-### 🧭 [KrokenKompass](Home.md)
+### 🧭 [KrokenKompass](Home)
 *Indoor-Navigation MLU*
 
 ---
 
 #### 📖 Dokumentation
-* 🏠 **[Home](Home.md)**
-* ⚙️ **[Backend & Graphenerstellung](⚙️-Backend-&-Graphenerstellung.md)**
-* 🎨 **[UI, Theming & Design](🎨-UI,-Theming-&-Design‐System.md)**
-* 🏗️ **[Architektur & Technologien](🏗️-Architektur-&-Technologien.md)**
-* 🖥️ **[Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur.md)**
-* 🚀 **[Deployment & Pipelines](🚀-Deployment-&-CI-CD-Pipelines.md)**
-* 🛠️ **[Installation & Dev Guide](🛠️-Installation-&-Developer-Guide.md)**
+* 🏠 **[Home & Projektübersicht](Home)**
+* ⚙️ **[Backend & Graphenerstellung](⚙️-Backend-&-Graphenerstellung)**
+* 🎨 **[UI, Theming & Design-System](🎨-UI,-Theming-&-Design‐System)**
+* 🏗️ **[Architektur & Technologien](🏗️-Architektur-&-Technologien)**
+* 🖥️ **[Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur)**
+* 🚀 **[Deployment & CI/CD-Pipelines](🚀-Deployment-&-CI-CD-Pipelines)**
+* 🛠️ **[Installation & Developer Guide](🛠️-Installation-&-Developer-Guide)**
 
 ---
 
 #### 🔗 Quick Links
 * 📂 [GitHub Repository](https://github.com/Der-Mehlmann/KrokenKompass)
-* 🌿 [Branch `docs/wiki`](https://github.com/Der-Mehlmann/KrokenKompass/tree/docs/wiki)
+* 📁 [Docs im Repository (`main`)](https://github.com/Der-Mehlmann/KrokenKompass/tree/main/docs)
 * 🐛 [Issues & Feedback](https://github.com/Der-Mehlmann/KrokenKompass/issues)
 
 ---

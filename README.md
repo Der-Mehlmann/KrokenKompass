@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <b>Moderne, hardwarelose Indoor- & Campus-Navigation für die Martin-Luther-Universität Halle-Wittenberg</b>
+  <b>Clientseitiges Indoor- & Campus-Navigationssystem ohne Zusatzhardware für die Martin-Luther-Universität Halle-Wittenberg</b>
 </p>
 
 <p align="center">
@@ -17,49 +17,49 @@
 
 ---
 
-> **KrokenKompass** ist ein interaktives Orientierungs- und Wegfindungssystem für den **Heide-Campus der MLU Halle-Wittenberg** (u. a. Von-Seckendorff-Platz 1–4). Entwickelt als hochperformante Single-Page-Application (SPA) mit **Elm**, **JavaScript** und **Leaflet.js**. 🎓📍
+> **KrokenKompass** ist ein interaktives Orientierungs- und Wegfindungssystem für den **Heide-Campus der MLU Halle-Wittenberg** (Von-Seckendorff-Platz 1–4, Gebäudecodes `7721`–`7724`). Entwickelt als Single-Page-Application (SPA) mit **Elm**, **JavaScript** und **Leaflet.js**. 🎓📍
 
 ---
 
 ## 📖 Über das Projekt
 
-Klassische Indoor-Navigation erfordert oft teure Hardware wie Bluetooth-Beacons oder leidet unter hohen Latenzen durch serverseitige Polygon-Berechnungen. **KrokenKompass** setzt auf einen performanten, **zweistufigen Architektur-Ansatz**:
+Klassische Indoor-Navigation erfordert oft zusätzliche Infrastruktur wie Bluetooth-Beacons oder verursacht hohe Latenzen durch serverseitige Polygon-Berechnungen. **KrokenKompass** nutzt einen **zweistufigen Architektur-Ansatz**:
 
-1. **Offline-Vorverarbeitung (Build-Time):** Raumgeometrien (Räume, Flure, Treppen, Türen) werden serverseitig via Node.js und Turf.js analysiert, mit Toleranzpuffern verknüpft und in einen mathematischen Wegegraphen (`Data/graph.json`) übersetzt.
-2. **Client-Side-Routing (Run-Time):** Der Browser lädt den Graphen einmalig herunter. Die Wegfindung via **Dijkstra-Algorithmus** läuft rein funktional und in Millisekunden lokal im Browser in **Elm** – garantiert ohne Laufzeitfehler.
+1. **Offline-Vorverarbeitung (Build-Time):** Raumgeometrien (Räume, Flure, Treppen, Türen) aus `Data/vsp_etage_*.json` werden vorab via Node.js und Turf.js analysiert, mit Toleranzpuffern verknüpft und in einen gewichteten Wegegraphen (`Data/graph.json`) übersetzt.
+2. **Client-Side-Routing (Run-Time):** Der Browser lädt den Graphen einmalig herunter. Die Wegfindung via **Dijkstra-Algorithmus** läuft rein funktional lokal im Browser in **Elm** – ohne Serveranfragen zur Laufzeit.
 
 ---
 
 ## ✨ Features
 
 * ⚡ **Client-Side-Routing:** Dijkstra-Kürzeste-Wege-Suche direkt im Browser ohne Server-Latenzen.
-* 🗺️ **Interaktive Multi-Floor-Karten:** Nahtlose Gebäudepläne, Etagenwechsel (UG bis 5. OG) und dynamische Treppen-/Aufzugs-Navigation mit Leaflet.js.
-* 🛡️ **Sichere Elm-Architektur:** Robuste Zustandsverwaltung ohne Laufzeitfehler dank [Elm](https://elm-lang.org/).
-* 📐 **Intelligente Geodaten-Pipeline:** Automatisierte Graphengenerierung aus GeoJSON mit Turf.js inklusive Raum-Strafdistanzen (+5000 m).
-* 🌓 **Vollständiges Theming & Dual-Logo:** Automatischer & manueller Dark-/Light-Mode mit kontrastoptimierten Logos und dynamischem Favicon.
-* 📱 **Mobile-First & Responsive:** Touch-optimiert für Smartphones vor Ort auf dem Campus.
+* 🗺️ **Interaktive Multi-Floor-Karten:** Etagenübergreifende Gebäudepläne (UG `-1` bis 5. OG `05`) und Treppen-/Aufzugs-Hinweise mit Leaflet.js (`<leaflet-map-container>`).
+* 🛡️ **Typsichere Elm-Architektur:** Zustandsverwaltung ohne Laufzeitausnahmen dank [Elm](https://elm-lang.org/).
+* 📐 **Regelbasierte Geodaten-Pipeline:** Automatisierte Graphengenerierung aus GeoJSON mit Turf.js inklusive Raum-Transitstrafen (`+5000 m`).
+* 🌓 **Theming & Dual-Logo:** Automatischer und manueller Dark-/Light-Mode mit kontrastoptimierten Logos (`KK-Logo-dark.png` / `KK-Logo-Light.png`).
+* 📱 **Responsive Oberfläche:** Bedienbar auf Desktop-Bildschirmen und Smartphones auf dem Campus.
 
 ---
 
 ## 📚 Vollständige Dokumentation & Wiki
 
-Ausführliche technische Details, Datenfluss-Diagramme und Hintergründe findest du in unserem **[GitHub Wiki](https://github.com/Der-Mehlmann/KrokenKompass/wiki)**:
+Technische Details, Datenfluss-Diagramme und Architekturentscheidungen sind im **[GitHub Wiki](https://github.com/Der-Mehlmann/KrokenKompass/wiki)** sowie im Ordner [`docs/`](docs/README.md) dokumentiert:
 
 * 🏠 [**Home & Übersicht**](https://github.com/Der-Mehlmann/KrokenKompass/wiki)
-* ⚙️ [**Backend & Graphenerstellung**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%E2%9A%99%EF%B8%8F-Backend-&-Graphenerstellung) – Turf.js Puffer-Toleranzen, Centroids & Kanten
+* ⚙️ [**Backend & Graphenerstellung**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%E2%9A%99%EF%B8%8F-Backend-&-Graphenerstellung) – Turf.js Puffer-Toleranzen, Repräsentationspunkte & Kantengewichte
 * 🎨 [**UI, Theming & Design-System**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%8E%A8-UI,-Theming-&-Design%E2%80%90System) – Dual-Logo-Architektur, CSS-Variablen & Bulma 1.0
-* 🏗️ [**Architektur & Technologien**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%8F%97%EF%B8%8F-Architektur-&-Technologien) – Datenfluss von PostGIS bis zum Leaflet-Canvas
+* 🏗️ [**Architektur & Technologien**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%8F%97%EF%B8%8F-Architektur-&-Technologien) – Datenfluss von GeoJSON bis zum Leaflet-Web-Component
 * 🖥️ [**Frontend & Elm-Architektur**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%96%A5%EF%B8%8F-Frontend-&-Elm%E2%80%90Architektur) – TEA, Dijkstra-Engine & Port-Schnittstellen
-* 🚀 [**Deployment & CI/CD Pipelines**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9A%80-Deployment-&-CI-CD-Pipelines) – GitHub Pages Workflow & Vercel Deployment
+* 🚀 [**Deployment & CI/CD-Pipelines**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9A%80-Deployment-&-CI-CD-Pipelines) – GitHub Pages Workflow & Vercel Deployment
 * 🛠️ [**Installation & Developer Guide**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9B%A0%EF%B8%8F-Installation-&-Developer-Guide) – Lokale Einrichtung & Troubleshooting
 
 ---
 
 ## 🛠️ Technologien
 
-* **Frontend:** [Elm 0.19.1](https://elm-lang.org/), [Leaflet.js 1.9.4](https://leafletjs.com/), [Bulma 1.0.4](https://bulma.io/)
-* **Datenvorbereitung (Backend):** [Node.js](https://nodejs.org/), [@turf/turf 7.4.0](https://turfjs.org/)
-* **Deployment & Hosting:** GitHub Actions (Pages) & Vercel
+* **Frontend:** [Elm 0.19.1](https://elm-lang.org/), [Leaflet.js 1.9.4](https://leafletjs.com/), [Turf.js 6.5.0 (CDN)](https://turfjs.org/), [Bulma 1.0.4](https://bulma.io/)
+* **Datenvorbereitung (Backend / Build-Time):** [Node.js](https://nodejs.org/) (v18+, CI: v24), [@turf/turf 7.4.0](https://turfjs.org/)
+* **Deployment & Hosting:** GitHub Actions (Pages & Wiki-Sync) & Vercel
 
 ---
 
@@ -70,31 +70,31 @@ Ausführliche technische Details, Datenfluss-Diagramme und Hintergründe findest
 git clone https://github.com/Der-Mehlmann/KrokenKompass.git
 cd KrokenKompass
 
-# 2. Abhängigkeiten installieren
+# 2. Abhängigkeiten installieren (inkl. lokalem Elm-Compiler & @turf/turf)
 npm install
 
-# 3. Frontend kompilieren
+# 3. Frontend kompilieren (Versionsinjektion + Elm-Build)
 npm run build
 
 # 4. Lokalen Entwicklungsserver starten
 npm run dev
 ```
 
-Öffne anschließend [http://localhost:3000](http://localhost:3000) im Browser.
+Anschließend [http://localhost:3000](http://localhost:3000) im Browser aufrufen.
 
 ---
 
-## 📦 Entwickler-Skripte
+## 📦 Entwickler-Skripte (`package.json`)
 
 | Befehl | Beschreibung |
 | :--- | :--- |
-| **`npm run dev`** / **`npm start`** | Startet den lokalen HTTP-Server (`http://localhost:3000`). |
-| **`npm run build`** | Kompiliert das Elm-Frontend mit Optimierungen (`--optimize`) nach `Code/frontend/elm.js`. |
-| **`npm run build:graph`** | Führt `build_graph.js` aus und berechnet den Wegegraphen (`Data/graph.json`) neu. |
-| **`npm run build:all`** | Führt Graphen-Berechnung und Elm-Build nacheinander aus. |
+| **`npm run dev`** / **`npm start`** | Startet den lokalen HTTP-Server (`npx serve .` auf `http://localhost:3000`). |
+| **`npm run build:elm`** | Führt `inject_version.js` aus und kompiliert `Code/frontend/src/Main.elm` (`--optimize`) nach `Code/frontend/elm.js`. |
+| **`npm run build`** / **`npm run build:all`** | Alias für `npm run build:elm` (nutzt den vorab generierten Graphen `Data/graph.json`). |
+| **`npm run build:graph`** | Führt `node Code/backend/build_graph.js` aus und berechnet `Data/graph.json` aus `Data/vsp_etage_*.json` neu. |
 
 ---
 
 ## 📄 Lizenz
 
-Dieses Projekt ist unter der **MIT-Lizenz** lizenziert – siehe die [LICENSE](LICENSE) Datei für Details.
+Dieses Projekt ist unter der **MIT-Lizenz** lizenziert – siehe die [LICENSE](LICENSE)-Datei für Details.

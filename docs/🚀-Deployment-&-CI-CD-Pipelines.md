@@ -1,43 +1,49 @@
-KrokenKompass ist so konfiguriert, dass es vollautomatisiert sowohl auf **GitHub Pages** als auch auf **Vercel** bereitgestellt werden kann.
+KrokenKompass wird automatisiert sowohl auf **GitHub Pages** als auch auf **Vercel** bereitgestellt. Zusätzlich prüft eine CI-Pipeline (`.github/workflows/ci.yml`) jeden Pull Request auf `main`.
 
 ---
 
-## 1. GitHub Pages Pipeline (`.github/workflows/deploy.yml`)
+## ⚙️ 1. GitHub Pages & CI-Pipelines (`.github/workflows/`)
 
-Bei jedem Push in den Branch `main` führt GitHub Actions die Build-Pipeline aus:
+Bei jedem Push auf `main` führt `.github/workflows/deploy.yml` das Deployment auf GitHub Pages aus (während `.github/workflows/ci.yml` bei Pull Requests sowohl `npm run build` als auch `node Code/backend/build_graph.js` validiert):
 
 ```mermaid
 flowchart LR
-    Push[Push auf main / PR] --> Checkout[1. Code Checkout]
-    Checkout --> Setup[2. Setup Node.js 24 + Caches]
-    Setup --> Install[3. npm ci]
-    Install --> Compile[4. Elm kompilieren: npm run build]
-    Compile --> Version[5. Git-SHA & Version injizieren]
-    Version --> Deploy[6. Upload zu GitHub Pages]
+    Push["Push auf main"] --> Checkout["1. Code Checkout"]
+    Checkout --> Setup["2. Setup Node.js 24 + Elm-Cache"]
+    Setup --> Install["3. npm ci"]
+    Install --> Version["4. npm run build: inject_version.js"]
+    Version --> Compile["5. npm run build: elm make --optimize"]
+    Compile --> Deploy["6. Upload & Deploy zu GitHub Pages"]
 ```
 
-### Die Workflow-Schritte im Detail:
-1. **Elm-Kompilierung:** Führt `npm run build` aus. Dabei führt `Code/backend/inject_version.js` eine automatische Versionsinjektion durch und kompiliert `Code/frontend/src/Main.elm` zu `Code/frontend/elm.js` unter Einsatz des `--optimize`-Flags (Code-Minification & Dead-Code-Elimination).
-2. **Dynamische Versions- & Release-Injektion (`inject_version.js`):**
-   - **Release-Version:** Ermittelt automatisch das aktuellste GitHub-Release bzw. Git-Tag (`git describe --tags --abbrev=0` oder `GITHUB_REF_NAME`, Fallback `package.json`).
-   - **Commit-Hash:** Ermittelt den 7-stelligen Commit-Hash (`GITHUB_SHA`, `VERCEL_GIT_COMMIT_SHA` oder `git rev-parse --short HEAD`).
-   - **Strukturierte Flags:** Übergibt `{ release: "vX.X.X", commit: "XXXXXXX" }` direkt an Elm, wodurch im Footer die kombinierte Anzeige `vX.X.X - XXXXXXX` mit Direktlinks zu den Releases und zum Git-Commit gerendert wird.
-   - **Cache-Busting:** Aktualisiert automatisch die Query-Parameter für `elm.js?v=`, `map-view.js?v=` und `style.css?v=`.
+### Die Workflow-Schritte im Detail
+1. **Versions- & Release-Injektion (`inject_version.js`):**
+   - **Release-Version:** Ermittelt das aktuelle GitHub-Release bzw. Git-Tag (`GITHUB_REF_NAME` oder `git describe --tags --abbrev=0`, Fallback `version` aus `package.json`).
+   - **Commit-Hash:** Ermittelt den 7-stelligen Commit-Hash (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA` oder `git rev-parse --short HEAD`).
+   - **Strukturierte Flags:** Schreibt `flags: { release: "vX.X.X", commit: "XXXXXXX" }` in `index.html`, sodass im Footer `vX.X.X - XXXXXXX` mit Links zu Release und Commit angezeigt wird.
+   - **Cache-Busting:** Aktualisiert automatisch die Query-Parameter `elm.js?v=`, `map-view.js?v=` und `style.css?v=` in `index.html`.
+2. **Elm-Kompilierung (`elm make`):**
+   - Kompiliert `Code/frontend/src/Main.elm` mit dem `--optimize`-Flag nach `Code/frontend/elm.js`.
 
 ---
 
-## 2. Vercel Deployment
+## ▲ 2. Vercel Deployment
 
-Vercel ermöglicht einfache Preview-Deployments für jeden Pull Request sowie kontinuierliche Production-Releases.
+Vercel erstellt Preview-Deployments für Pull Requests sowie Production-Deployments für `main`.
 
-### Konfigurationsdateien:
+### Konfigurationsdateien
 
 #### `package.json`
-Definiert den Build-Befehl, den Vercel beim Klonen ausführt:
+Definiert die Build- und Entwicklungs-Skripte:
 ```json
 {
   "scripts": {
-    "build": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize"
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "build": "npm run build:all",
+    "build:elm": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize",
+    "build:graph": "node Code/backend/build_graph.js",
+    "build:all": "npm run build:elm"
   },
   "devDependencies": {
     "elm": "^0.19.1-6"
@@ -49,7 +55,7 @@ Definiert den Build-Befehl, den Vercel beim Klonen ausführt:
 ```
 
 #### `vercel.json`
-Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` direkt im Hauptverzeichnis liegt, definiert `vercel.json` den Root-Ordner als Output und setzt standardmäßige HTTP-Sicherheitsheader (Clickjacking-Schutz, X-Content-Type-Options etc.):
+Da KrokenKompass eine statische Single-Page-Application mit `index.html` im Hauptverzeichnis ist, definiert `vercel.json` das Root-Verzeichnis als Output sowie HTTP-Sicherheits- und Cache-Header:
 ```json
 {
   "outputDirectory": ".",
@@ -105,7 +111,7 @@ Da KrokenKompass eine statische Single-Page-Application ist, deren `index.html` 
 ```
 
 #### Vercel Web Analytics & Speed Insights
-KrokenKompass bindet Vercel Web Analytics sowie Vercel Speed Insights über die offiziellen Tracking-Snippets direkt im `<head>` der `index.html` ein:
+KrokenKompass bindet Vercel Web Analytics sowie Vercel Speed Insights im `<head>` der `index.html` ein:
 ```html
 <!-- Vercel Web Analytics & Speed Insights -->
 <script>
@@ -115,34 +121,31 @@ KrokenKompass bindet Vercel Web Analytics sowie Vercel Speed Insights über die 
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 ```
-* **Aktivierung im Dashboard:** Im Vercel-Projekt unter den Reitern **Analytics** bzw. **Speed Insights** jeweils auf **Enable** klicken.
-* **Core Web Vitals:** Speed Insights analysiert automatisch Leistungskennzahlen (LCP, FID/INP, CLS) von realen Besuchern.
-* **Custom Events:** Elm-Port-Ereignisse übertragen wichtige Benutzeraktionen automatisch als anonymisierte Events:
+* **Core Web Vitals:** Speed Insights erfasst Leistungskennzahlen (LCP, INP, CLS).
+* **Custom Events:** Die Port-Handler in `index.html` senden anonymisierte Nutzungsereignisse:
   - `route_calculated`: Erfolgreiche Berechnung und Darstellung einer Route
-  - `route_failed`: Fehler beim Routen
+  - `route_failed`: Fehlgeschlagene Routensuche
   - `switch_floor`: Wechsel der angezeigten Etage (`{ floor: ... }`)
 
 ---
 
-## 3. GitHub Wiki Sync Pipeline (`.github/workflows/wiki-sync.yml`)
+## 🔄 3. GitHub Wiki Sync Pipeline (`.github/workflows/wiki-sync.yml`)
 
-Änderungen an der Dokumentation werden wie normaler Programmcode im Verzeichnis `docs/` über Commits und Pull Requests gepflegt.
-
-Bei jedem Push/Merge auf `main`, der Dateien in `docs/**` berührt, spiegelt die GitHub Action (`wiki-sync.yml`) alle Markdown-Dateien vollautomatisiert in das GitHub Wiki (`.wiki.git`):
+Änderungen an der Dokumentation werden im Verzeichnis `docs/` über Commits und Pull Requests gepflegt. Bei jedem Push auf `main`, der Dateien unter `docs/**` ändert, spiegelt `.github/workflows/wiki-sync.yml` die Markdown-Dateien in das GitHub Wiki (`.wiki.git`):
 
 ```mermaid
 flowchart LR
-    Push[Push/Merge auf main mit docs/**] --> Checkout[1. Code Checkout]
-    Checkout --> Sync[2. github-wiki-action]
-    Sync --> Wiki[3. Live-Update im GitHub Wiki Tab]
+    Push["Push auf main mit docs/**"] --> Checkout["1. Code Checkout"]
+    Checkout --> Sync["2. github-wiki-action"]
+    Sync --> Wiki["3. Live-Update im GitHub Wiki"]
 ```
 
 ---
 
-## 🛡️ Warum `elm.js` in `.gitignore` steht
+## 🛡️ 4. Warum `elm.js` in `.gitignore` steht
 
-* **Kein Binär-/Build-Müll im Git-Verlauf:** `elm.js` ist ein kompiliertes Artefakt (~9.000+ Zeilen generiertes JS).
-* **Konsistente Builds:** Durch das Einbinden von `elm make` in die CI/CD-Pipelines (GitHub Actions & Vercel) wird sichergestellt, dass jeder Build deterministisch und frisch aus dem Quellcode erzeugt wird.
+* **Keine generierten Build-Artefakte in der Versionsverwaltung:** `Code/frontend/elm.js` wird beim Build vollständig aus `Code/frontend/src/*.elm` generiert.
+* **Deterministische Builds:** Durch die Ausführung von `npm run build` in GitHub Actions und Vercel wird `elm.js` bei jedem Deployment frisch aus dem aktuellen Quellcode kompiliert.
 
 ---
-*Navigation:* [← Zurück zu Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur) | [🛠️ Weiter zum Installation & Developer Guide →](🛠️-Installation-&-Developer-Guide)
+*Navigation:* [← 🖥️ Zurück zu Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur) | [🛠️ Weiter zu Installation & Developer Guide →](🛠️-Installation-&-Developer-Guide)
