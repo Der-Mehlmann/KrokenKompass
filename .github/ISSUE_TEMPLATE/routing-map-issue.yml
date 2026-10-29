@@ -1,0 +1,127 @@
+name: Routing or Map Data Issue
+description: Report a broken route, unreachable room, suboptimal detour, wrong floor transition, missing room/landmark, or map rendering error.
+title: "Routing/Map: "
+labels: ["Status: Backlog", "Type: Bug"]
+assignees: []
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-Submission Checks
+      options:
+        - label: I have searched existing issues to ensure this routing or map data defect has not already been reported.
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Routing or Map Issue Category
+      description: Select the symptom that best describes the navigation or map problem.
+      options:
+        - No route found ("Keine Route gefunden (Graph ist nicht zusammenhängend)." / "Start- oder Zielknoten nicht gefunden.")
+        - Detour or route passes through an unintended room instead of the corridor
+        - Incorrect floor transition (wrong staircase, elevator, or multi-floor step)
+        - Cross-building or campus entrance transition error (VSP 1-4 outdoor connection)
+        - Missing, misnamed, or duplicate room / landmark in search results
+        - Floor plan geometry error (missing door, gap between room and corridor, or wrong room shape)
+        - Map display or route line rendering bug (dashed pink route line or room highlight missing/misaligned)
+        - Developer: Graph node ID (${name}__${gid}) or GeoJSON property (use_type) mismatch
+    validations:
+      required: true
+
+  - type: input
+    id: start_location
+    attributes:
+      label: Start Location (Room or Landmark)
+      description: Enter the start room name as shown in the search box (e.g., "0.39 VSP 3" or "Campus Eingang Ost"), or its URL code (e.g., "7723_00_039"). Enter "N/A" if reporting a general map geometry issue.
+      placeholder: e.g., 0.39 VSP 3, Campus Eingang Ost, or 7723_00_039
+    validations:
+      required: true
+
+  - type: input
+    id: destination_location
+    attributes:
+      label: Destination Location (Room or Landmark)
+      description: Enter the destination room name as shown in the search box (e.g., "2.14 VSP 1" or "Café Einstein"), or its URL code (e.g., "7721_02_014"). Enter "N/A" if reporting a single-room or general map issue.
+      placeholder: e.g., 2.14 VSP 1, Café Einstein, or 7721_02_014
+    validations:
+      required: true
+
+  - type: dropdown
+    id: buildings
+    attributes:
+      label: Affected Building(s)
+      description: Select all campus buildings or outdoor areas involved in this issue.
+      multiple: true
+      options:
+        - VSP 1 (Building 7721 - Von-Seckendorff-Platz 1)
+        - VSP 2 (Building 7722 - Von-Seckendorff-Platz 2)
+        - VSP 3 (Building 7723 - Von-Seckendorff-Platz 3 / Geological Garden)
+        - VSP 4 (Building 7724 - Von-Seckendorff-Platz 4)
+        - Outdoor / Cross-Building Campus Path
+        - Unknown / Not Sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: floors
+    attributes:
+      label: Affected Floor(s)
+      description: Select all floors where the routing or map error occurs.
+      multiple: true
+      options:
+        - "-1 (Basement - Data/vsp_etage_-1.json)"
+        - "00 (Ground Floor - Data/vsp_etage_00.json)"
+        - "01 (1st Floor - Data/vsp_etage_01.json)"
+        - "02 (2nd Floor - Data/vsp_etage_02.json)"
+        - "03 (3rd Floor - Data/vsp_etage_03.json)"
+        - "04 (4th Floor - Data/vsp_etage_04.json)"
+        - "05 (5th Floor - Data/vsp_etage_05.json)"
+        - Unknown / Multiple Floors
+    validations:
+      required: true
+
+  - type: input
+    id: route_url
+    attributes:
+      label: Route URL or Hash Parameters
+      description: Paste the full URL or hash fragment from the browser address bar if available.
+      placeholder: e.g., #map?start=7723_00_039&ziel=7721_02_014
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed Routing / Map Behavior
+      description: Describe what currently happens when calculating the route or inspecting the floor plan.
+      placeholder: e.g., Selecting 0.39 VSP 3 to 2.14 VSP 1 displays "Keine Route gefunden (Graph ist nicht zusammenhängend).", or the dashed pink route polyline (#ec4899) cuts through an adjacent office instead of using the corridor.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Routing / Map Behavior
+      description: Describe the expected physical path, door connection, staircase, or room label.
+      placeholder: e.g., The route should exit room 0.39 via the north door into corridor 0.72, take the main staircase to floor 02, and enter 2.14.
+    validations:
+      required: true
+
+  - type: textarea
+    id: root_cause
+    attributes:
+      label: Technical Root Cause Details
+      description: "For developers (optional): Note any findings in the GeoJSON or graph data. In Code/backend/build_graph.js, polygons connect via spatial buffers (0.1m default, 1.0m indoor corridor/door, 3.0m vertical/outdoor) based on properties.use_type ('Flur', 'Treppe', 'Treppenhaus', 'Aufzug', 'Tuer', 'Eingang', 'Durchgang', 'Raum'), with penalties for room transit (+5000m) and direct door-to-door edges (+500m). In Code/frontend/map-view.js, berechneUebergang uses [0.2, 1.0, 3.0]m buffers for polyline transitions."
+      placeholder: e.g., Polygon 7723_00_039 in Data/vsp_etage_00.json has a >1.0m gap to the adjacent 'Tuer' feature, or is missing from Data/vsp_units.json.
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version
+      description: "If accessible, copy the version string displayed in the bottom-right footer of the page (format: v<release> - <commit>)."
+      placeholder: e.g., v1.0.0 - 41b3a28
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Map Screenshots
+      description: Attach a screenshot of the map view highlighting the broken segment, missing room, or geometry gap.

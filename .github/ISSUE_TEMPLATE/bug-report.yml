@@ -1,0 +1,108 @@
+name: Bug Report
+description: Report a functional defect or runtime error in KrokenKompass.
+title: "Bug: "
+labels: ["Status: Backlog", "Type: Bug"]
+assignees: []
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-Submission Checks
+      options:
+        - label: I have searched existing issues to ensure this bug has not already been reported.
+          required: true
+        - label: I can reproduce this issue on the latest deployed version or current main branch.
+          required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Summarize the defect and its observable impact.
+      placeholder: Describe what is failing or behaving unexpectedly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: List the exact steps required to trigger the bug.
+      placeholder: |
+        1. Navigate to '...' (e.g., #plan or #map?start=7723_00_039&ziel=7721_02_014)
+        2. Enter or click on '...'
+        3. Switch floor or theme to '...'
+        4. Observe the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: Describe what should have happened instead.
+      placeholder: Describe the expected application behavior.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - High (Application unusable, crash, or core navigation blocked)
+        - Medium (Feature impaired without a straightforward workaround)
+        - Low (Minor functional issue or non-blocking defect)
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, OS & Device
+      placeholder: e.g., Chrome 135 on Windows 11, Safari on iOS 18.3, Firefox on macOS
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version
+      description: "If accessible, copy the version string displayed in the bottom-right footer of the page (format: v<release> - <commit>)."
+      placeholder: e.g., v1.0.0 - 41b3a28
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Component(s)
+      description: If known, select the project area(s) where the issue occurs.
+      multiple: true
+      options:
+        - Frontend UI & Styling (index.html, Code/frontend/cssFiles/style.css)
+        - Elm State, URL Routing & Autocomplete (Code/frontend/src/Main.elm, GraphData.elm)
+        - Client-Side Dijkstra Routing Engine (Code/frontend/src/Dijkstra.elm)
+        - Map Web Component & Leaflet Rendering (Code/frontend/map-view.js)
+        - Graph Pre-Processing & Version Injection (Code/backend/build_graph.js, inject_version.js)
+        - Spatial GeoJSON & Room Data (Data/vsp_etage_*.json, Data/vsp_units.json, Data/graph.json)
+        - CI/CD, Deployment & Analytics (.github/workflows/, vercel.json)
+        - Documentation & Wiki (README.md, docs/)
+        - Unknown / Not Sure
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Browser Console or Build Logs
+      description: Paste any relevant error messages from the browser developer console (F12) or terminal output.
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Screen Recordings
+      description: Drag and drop screenshots or recordings illustrating the bug if applicable.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: List related issue numbers, affected URLs, or additional technical context.

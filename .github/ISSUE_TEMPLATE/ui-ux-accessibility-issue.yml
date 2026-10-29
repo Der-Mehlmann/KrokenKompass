@@ -1,0 +1,84 @@
+name: UI, Theming, or Accessibility Issue
+description: Report a layout defect, Light/Dark mode contrast issue, mobile responsiveness problem, or keyboard/screen-reader accessibility barrier.
+title: "UI/UX: "
+labels: ["Status: Backlog", "Type: Bug"]
+assignees: []
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-Submission Checks
+      options:
+        - label: I have searched existing issues to ensure this UI/UX issue has not already been reported.
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: UI / UX Issue Category
+      options:
+        - Layout, Alignment, or Element Overlap (e.g., floor selector #etagen-menue, status banner #info-box, .route-pill, .abstract-card)
+        - Light / Dark Mode Colors, Contrast, or Logo Switching ([data-theme="light"] / [data-theme="dark"])
+        - Mobile Responsiveness or Small Touch Targets (smartphone/tablet layout, buttons too small to tap)
+        - Keyboard Navigation or Focus States (Tab order, .route-pill:focus-within, autocomplete keyboard support)
+        - Screen Reader, ARIA Labels, or Semantic HTML Accessibility
+        - Typography, Iconography, or Spacing / Visual Styling
+    validations:
+      required: true
+
+  - type: dropdown
+    id: view
+    attributes:
+      label: Affected Application View(s)
+      multiple: true
+      options:
+        - Home View (#)
+        - Route Planner & Autocomplete View (#plan)
+        - Interactive Map View & Controls (#map)
+        - Global Navigation Header / Theme Switcher / Footer
+    validations:
+      required: true
+
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Active Theme Mode
+      options:
+        - Light Mode ([data-theme="light"])
+        - Dark Mode ([data-theme="dark"])
+        - Both Light and Dark Modes
+    validations:
+      required: true
+
+  - type: input
+    id: viewport
+    attributes:
+      label: Device & Browser (and Screen Size if Known)
+      description: Specify the device and browser where the issue occurs (include window dimensions if known; mobile layout activates at <= 768px).
+      placeholder: e.g., iPhone 15 (Safari iOS 18) or Desktop Chrome 135 (1440x900)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Visual or Interaction Defect Description
+      description: Describe what looks broken, overlaps, lacks contrast, or fails during keyboard/touch interaction.
+      placeholder: e.g., The floor selector (#etagen-menue) overlaps the status banner (#info-box) on mobile screens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected UI / UX Behavior
+      description: Describe how the layout, colors, or interaction should behave.
+      placeholder: e.g., Map controls should stack without overlapping the status banner or room tooltips.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Screen Recordings
+      description: Attach a screenshot or screen recording showing the visual or interaction issue if applicable.

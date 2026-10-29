@@ -1,0 +1,55 @@
+name: Maintenance, Refactoring, or CI/Docs Task
+description: Propose a code refactoring, build/CI pipeline update, dependency upgrade, or documentation improvement.
+title: "Chore: "
+labels: ["Status: To Do"]
+assignees: []
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-Submission Checks
+      options:
+        - label: I have searched existing issues to ensure this task is not already tracked.
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Task Category
+      options:
+        - Code Refactoring (Elm, JavaScript Web Component, or Node.js Backend Scripts)
+        - Build Pipeline, CI/CD Workflows, or Deployment (.github/workflows/, package.json, vercel.json)
+        - Dependency Update or Security Maintenance (npm, Elm packages, CDN/SRI hashes, GitHub Actions)
+        - Documentation or Wiki Update (README.md, docs/, .github/ templates)
+        - Performance Optimization or Bundle Size Reduction
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation & Current State
+      description: Explain why this refactoring, maintenance task, or documentation update is needed.
+      placeholder: Describe the current technical limitation, maintenance overhead, or documentation gap.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed Changes & Affected Files
+      description: List the specific files, scripts, or workflows to be modified and the target outcome.
+      placeholder: |
+        - Modify Code/backend/...
+        - Update .github/workflows/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Plan
+      description: Describe how to verify that this change does not introduce regressions.
+      placeholder: e.g., Run `npm run build` and `npm run build:graph`, and verify zero console errors or expected output in `Data/graph.json`.
+    validations:
+      required: true

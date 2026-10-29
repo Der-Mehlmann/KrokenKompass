@@ -1,1 +1,8 @@
 blank_issues_enabled: true
+contact_links:
+  - name: Project Documentation & GitHub Wiki
+    url: https://github.com/Der-Mehlmann/KrokenKompass/wiki
+    about: Browse architecture guides, graph generation rules, Elm state documentation, and deployment workflows.
+  - name: Installation & Developer Guide
+    url: https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9B%A0%EF%B8%8F-Installation-&-Developer-Guide
+    about: Check local setup instructions, npm scripts, and common troubleshooting steps before opening a setup issue.

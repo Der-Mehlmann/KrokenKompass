@@ -1,60 +1,72 @@
-name: Feature-Vorschlag
-description: Schlage eine neue Funktion oder Verbesserung vor.
-title: "✨ Feature: kurze Beschreibung"
+name: Feature Request
+description: Propose a new capability, user interface enhancement, or navigation improvement for KrokenKompass.
+title: "Feature: "
 labels: ["Status: To Do", "Type: Feature"]
 assignees: []
 body:
   - type: checkboxes
     id: checks
     attributes:
-      label: Vorab-Check
+      label: Pre-Submission Checks
       options:
-        - label: Ich habe geprüft, ob es diese Idee bereits als Issue gibt.
+        - label: I have searched existing issues to ensure this feature has not already been requested.
           required: true
 
   - type: textarea
     id: problem
     attributes:
-      label: Welches Problem löst das Feature?
-      description: Beschreibe kurz, in welcher Situation dir diese Funktion helfen würde.
-      placeholder: Mir ist aufgefallen, dass...
+      label: Problem Statement / Use Case
+      description: Describe the user need or navigation scenario that is currently unsupported or difficult to accomplish.
+      placeholder: As a student / visitor / maintainer, I want to ... so that ...
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Lösungsvorschlag
-      description: Wie stellst du dir die neue Funktion vor?
-      placeholder: Ich fände es super, wenn KrokenKompass...
+      label: Proposed Solution
+      description: Describe how the new feature should work from a user or technical perspective.
+      placeholder: Explain the desired interaction flow, UI elements, or routing behavior.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Suggested Priority
+      options:
+        - High (Core navigation or accessibility capability)
+        - Medium (Workflow, search, or usability improvement)
+        - Low (Minor convenience or cosmetic enhancement)
     validations:
       required: true
 
   - type: dropdown
     id: area
     attributes:
-      label: Welchen Projektbereich betrifft das?
+      label: Affected Project Area(s)
+      description: If known, select the project area(s) involved in this feature.
       multiple: true
       options:
-        - Frontend / UI Design
-        - Elm Logik / Neue Routing-Features
-        - Interaktion mit der Karte
-        - Zusätzliche Gebäude / Räume (Geodaten)
-        - Sonstiges
+        - Frontend UI & Design System (index.html, Code/frontend/cssFiles/style.css)
+        - Elm Application State, Search & URL Routing (Code/frontend/src/Main.elm, GraphData.elm)
+        - Routing Algorithm & Edge Weighting (Code/frontend/src/Dijkstra.elm, Code/backend/build_graph.js)
+        - Interactive Map & Leaflet Overlays (Code/frontend/map-view.js)
+        - Additional Campus Buildings, Rooms, or Landmarks (Data/vsp_etage_*.json, Data/vsp_units.json)
+        - Build Pipeline, CI/CD, or Documentation
+        - Other / Not Sure
 
-  - type: dropdown
-    id: priority
+  - type: textarea
+    id: acceptance_criteria
     attributes:
-      label: Priorität (deiner Einschätzung nach)
-      options:
-        - Wäre cool (Low)
-        - Sehr nützlich (Medium)
-        - Dringend benötigt (High)
-    validations:
-      required: true
+      label: Acceptance Criteria
+      description: List concrete conditions that should be satisfied for this feature to be considered complete.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
 
   - type: textarea
     id: context
     attributes:
-      label: Zusätzlicher Kontext / Mockups
-      description: Falls du Skizzen, Links oder weitere Ideen hast, immer her damit!
+      label: Additional Context, Mockups, or References
+      description: Attach wireframes, screenshots, architectural notes, or links to related examples.
