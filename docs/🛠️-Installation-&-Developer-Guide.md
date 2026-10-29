@@ -1,18 +1,12 @@
-# 🛠️ Installation & Developer Guide
-
-Diese Anleitung beschreibt, wie KrokenKompass lokal eingerichtet, entwickelt, getestet und gewartet wird.
+Diese Anleitung beschreibt, wie KrokenKompass lokal eingerichtet, kompiliert und weiterentwickelt wird.
 
 ---
 
 ## 💻 Systemvoraussetzungen
 
-* **Node.js** (Version 18 oder neuer) & **npm**
-* **Elm-Compiler** (Version 0.19.1)
-  * Empfohlen: Global via npm installieren:
-    ```bash
-    npm install -g elm
-    ```
-    *Oder alternativ lokal mit `npx elm` ausführen.*
+* **Node.js** (Version 18+, empfohlen: **Node.js 24 LTS** analog zur CI-Pipeline) & **npm**
+* **Elm-Compiler** (Version `0.19.1`):
+  * Wird bei `npm install` automatisch lokal als `devDependency` (`"elm": "^0.19.1-6"`) mitinstalliert und über `npx elm` bzw. `npm run build` ausgeführt (keine separate globale Installation erforderlich).
 
 ---
 
@@ -23,64 +17,64 @@ Diese Anleitung beschreibt, wie KrokenKompass lokal eingerichtet, entwickelt, ge
 git clone https://github.com/Der-Mehlmann/KrokenKompass.git
 cd KrokenKompass
 
-# Installiert Abhängigkeiten für Backend (Turf.js) und Build-Tools
+# Installiert @turf/turf sowie den lokalen Elm-Compiler
 npm install
 ```
 
 ### 2. Frontend kompilieren
-Kompiliere den Elm-Code aus `Code/frontend/src/` zu JavaScript:
+Injiziert die aktuellen Git-Versionsmetadaten (`inject_version.js`) und kompiliert den Elm-Quellcode aus `Code/frontend/src/` nach `Code/frontend/elm.js`:
 ```bash
 npm run build
 ```
-*(Alternativ direkt im Unterordner: `cd Code/frontend && elm make src/Main.elm --output=elm.js`)*
+*(Alternativ für einen reinen Elm-Kompilierlauf ohne Versionsinjektion: `cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize`)*
 
 ### 3. Lokalen Entwicklungsserver starten
-Da moderne Browser das Nachladen von JSON-Dateien (`graph.json`, GeoJSON) über das `file://`-Protokoll aus Sicherheitsgründen (CORS) blockieren, starte einen lokalen HTTP-Server:
+Da Browser das Laden lokaler JSON-Dateien (`Data/graph.json`, `Data/vsp_units.json`, `Data/vsp_etage_*.json`) über das `file://`-Protokoll aus Sicherheitsgründen (CORS) blockieren, wird ein lokaler HTTP-Server benötigt:
 ```bash
 npm run dev
 ```
 *(Alternativ: `npm start` oder `npx serve .`)*
 
-Öffne anschließend [http://localhost:3000](http://localhost:3000) im Browser.
+Anschließend [http://localhost:3000](http://localhost:3000) im Browser aufrufen.
 
 ---
 
 ## 🔄 Typische Entwickler-Workflows
 
 ### A. Raumpläne oder Geodaten aktualisieren
-Wenn neue Räume hinzugefügt oder bestehende GeoJSON-Dateien in `Data/` geändert wurden:
+Wenn GeoJSON-Dateien in `Data/vsp_etage_*.json` geändert wurden, muss der Routing-Graph explizit neu berechnet werden (`npm run build` führt aus Performance-Gründen nur den Frontend-Build aus):
 ```bash
-# Berechnet alle Kanten, Centroids und Pufferzonen neu:
+# Berechnet alle Kanten, Repräsentationspunkte und Pufferzonen neu:
 npm run build:graph
 ```
-*(Führt im Hintergrund `node Code/backend/build_graph.js` aus und aktualisiert direkt `Data/graph.json`)*
+*(Führt `node Code/backend/build_graph.js` aus und überschreibt `Data/graph.json`)*
 
 ### B. Änderungen an der Benutzeroberfläche (Elm)
-Wenn du Dateien wie `Code/frontend/src/Main.elm` oder `Dijkstra.elm` bearbeitest:
+Nach Änderungen an `Code/frontend/src/Main.elm`, `Dijkstra.elm` oder `GraphData.elm`:
 ```bash
 npm run build
 ```
-Lade anschließend die Webseite mit `Cmd + Shift + R` (Mac) bzw. `Strg + F5` (Windows/Linux) im Browser neu, um den Browser-Cache zu umgehen.
+Anschließend die Webseite im Browser mit `Cmd + Shift + R` (macOS) bzw. `Strg + F5` (Windows/Linux) neu laden.
 
 ---
 
 ## 🔍 Troubleshooting & Häufige Fehler
 
 ### 1. `ReferenceError: Can't find variable: Elm` / `404 elm.js`
-* **Ursache:** Die Datei `Code/frontend/elm.js` wurde noch nicht kompiliert oder fehlt.
-* **Lösung:** Führe `npm run build` aus.
+* **Ursache:** Die Datei `Code/frontend/elm.js` steht in `.gitignore` und wurde lokal noch nicht kompiliert.
+* **Lösung:** `npm run build` ausführen.
 
 ### 2. `CORS Error / Failed to fetch graph.json`
-* **Ursache:** Du hast `index.html` per Doppelklick direkt im Browser (`file:///...`) geöffnet.
-* **Lösung:** Starte immer einen lokalen Server via `npx serve .`.
+* **Ursache:** `index.html` wurde direkt über das Dateisystem (`file:///...`) statt über HTTP geöffnet.
+* **Lösung:** Lokalen Server über `npm run dev` starten und `http://localhost:3000` öffnen.
 
 ### 3. `ELM VERSION MISMATCH`
-* **Ursache:** In `Code/frontend/elm.json` ist eine andere Elm-Version eingetragen als der installierte Compiler.
-* **Lösung:** Stelle sicher, dass in `elm.json` `"elm-version": "0.19.1"` eingetragen ist.
+* **Ursache:** In `Code/frontend/elm.json` ist eine andere Elm-Version eingetragen als der verwendete Compiler.
+* **Lösung:** Sicherstellen, dass `"elm-version": "0.19.1"` in `Code/frontend/elm.json` steht und `npm run build` (nutzt das lokale `npx elm` `0.19.1-6`) verwendet wird.
 
-### 4. Ein Raum in einem Gebäude wird beim Routing nicht gefunden
-* **Ursache:** Der Raum hat im CAD-Plan keinen Kontakt zum Flurnetzwerk (Lücke größer als die Puffertoleranz).
-* **Lösung:** Prüfe in `Code/backend/build_graph.js` die Pufferzonen (`puffer = 1.0;`) und führe `node Code/backend/build_graph.js` erneut aus.
+### 4. Ein Raum wird beim Routing nicht erreicht
+* **Ursache:** Das Raum- oder Tür-Polygon hat im GeoJSON-Grundriss keinen Kontakt zum Flurnetzwerk (Lücke größer als die Puffertoleranz oder fehlende `name`-/`gid`-Eigenschaft).
+* **Lösung:** In `Code/backend/build_graph.js` die Kontakt- und Pufferregeln (`habenKontakt`, `1.0 m` / `3.0 m`) prüfen und anschließend `npm run build:graph` ausführen.
 
 ---
-*Navigation:* [← Zurück zu Deployment & CI/CD Pipelines](🚀-Deployment-&-CI-CD-Pipelines) | [🏠 Zurück zur Home-Seite](Home)
+*Navigation:* [← 🚀 Zurück zu Deployment & CI/CD-Pipelines](🚀-Deployment-&-CI-CD-Pipelines) | [🏠 Zurück zur Home-Seite →](Home)

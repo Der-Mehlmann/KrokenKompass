@@ -1,6 +1,6 @@
 # 🧭 KrokenKompass Dokumentation
 
-Dieses Verzeichnis enthält die vollständige, strukturierte Dokumentation und das Wiki des Projekts **KrokenKompass**.
+Dieses Verzeichnis enthält die vollständige Dokumentation des Projekts **KrokenKompass** und wird bei Änderungen auf `main` automatisch mit dem GitHub Wiki synchronisiert.
 
 ---
 
@@ -11,5 +11,5 @@ Dieses Verzeichnis enthält die vollständige, strukturierte Dokumentation und d
 3. [🎨 **UI, Theming & Design-System**](🎨-UI,-Theming-&-Design‐System.md)
 4. [🏗️ **Architektur & Technologien**](🏗️-Architektur-&-Technologien.md)
 5. [🖥️ **Frontend & Elm-Architektur**](🖥️-Frontend-&-Elm‐Architektur.md)
-6. [🚀 **Deployment & CI/CD**](🚀-Deployment-&-CI-CD-Pipelines.md)
+6. [🚀 **Deployment & CI/CD-Pipelines**](🚀-Deployment-&-CI-CD-Pipelines.md)
 7. [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide.md)
