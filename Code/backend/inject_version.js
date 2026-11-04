@@ -65,6 +65,7 @@ if (fs.existsSync(indexPath)) {
 
     // Replace cache busting query params
     updatedHtml = updatedHtml.replace(/elm\.js(\?v=[^"']*)?/g, `elm.js?v=${commitHash}`);
+    updatedHtml = updatedHtml.replace(/popup-content\.js(\?v=[^"']*)?/g, `popup-content.js?v=${commitHash}`);
     updatedHtml = updatedHtml.replace(/map-view\.js(\?v=[^"']*)?/g, `map-view.js?v=${commitHash}`);
     updatedHtml = updatedHtml.replace(/style\.css(\?v=[^"']*)?/g, `style.css?v=${commitHash}`);
 
