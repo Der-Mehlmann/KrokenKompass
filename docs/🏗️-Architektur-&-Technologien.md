@@ -39,6 +39,7 @@ KrokenKompass/
 │   │   └── inject_version.js         # Injektion von Git-Release/Commit-Flags in index.html
 │   └── frontend/
 │       ├── elm.json                  # Elm 0.19.1 Abhängigkeiten
+│       ├── popup-content.js          # XSS-sicheres DOM-Popup-Rendering (erstelleSicherenPopupInhalt)
 │       ├── map-view.js               # Shadow DOM Web Component (<leaflet-map-container>)
 │       ├── cssFiles/style.css        # Globale Theme-Variablen, Buttons & Responsive-Regeln
 │       ├── svgs/                     # Logos (KK-Logo-dark.png, KK-Logo-Light.png)
@@ -50,6 +51,8 @@ KrokenKompass/
 │   ├── vsp_etage_-1.json .. 05.json  # Statische WGS84-GeoJSON-Grundrisse pro Etage
 │   ├── vsp_units.json                # Statischer Raumkatalog für die Autocomplete-Suche
 │   └── graph.json                    # Vorberechneter Routing-Graph
+├── tests/
+│   └── security-hardening.test.js    # Automatisierte Security-Tests (CSP, Header, sichere Popups)
 └── docs/                             # Projektdokumentation (automatischer Sync ins GitHub Wiki)
 ```
 

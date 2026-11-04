@@ -10,7 +10,8 @@ Willkommen in der Dokumentation von **KrokenKompass**!
 * [🎨 **UI, Theming & Design-System**](🎨-UI,-Theming-&-Design‐System) – Dual-Logo-System, Dark-/Light-Mode, Bulma 1.0 & Responsive Design.
 * [🏗️ **Architektur & Technologien**](🏗️-Architektur-&-Technologien) – Systemübersicht, Build- vs. Run-Time, Verzeichnisstruktur & Komponenten.
 * [🖥️ **Frontend & Elm-Architektur**](🖥️-Frontend-&-Elm‐Architektur) – Die Elm-SPA, Dijkstra-Routing im Browser, Port-Kommunikation & Leaflet-Kartenanzeige.
-* [🚀 **Deployment & CI/CD-Pipelines**](🚀-Deployment-&-CI-CD-Pipelines) – GitHub Pages Workflow, Vercel-Konfiguration & automatisierte Build-Pipelines.
+* [🚀 **Deployment & CI/CD-Pipelines**](🚀-Deployment-&-CI-CD-Pipelines) – Vercel-Konfiguration & automatisierte Build-Pipelines.
+* [🛡️ **Security Hardening**](security-hardening) – Content-Security-Policy (CSP), HTTP-Security-Header, XSS-sichere Popups & Security-Tests.
 * [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide) – Lokale Einrichtung, Entwicklungsworkflow & Troubleshooting.
 
 ---

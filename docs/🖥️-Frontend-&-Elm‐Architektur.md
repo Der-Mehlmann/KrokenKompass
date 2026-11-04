@@ -89,6 +89,7 @@ sequenceDiagram
 ## 🗺️ Karten-Rendering (`Code/frontend/map-view.js`)
 
 * **Shadow DOM Web Component (`<leaflet-map-container>`):** Kapselt die Leaflet-Instanz und bleibt im DOM persistent (`#map-background`), sodass die 7 GeoJSON-Etagenlayer nur einmalig geladen werden müssen. Ein `ResizeObserver` ruft beim Einblenden automatisch `map.invalidateSize()` auf.
+* **XSS-sichere Raum-Popups (`Code/frontend/popup-content.js`):** Beim Klick auf ein Polygon bindet `map-view.js` über `layer.bindPopup(window.erstelleSicherenPopupInhalt(properties))` ein per `document.createElement` und `.textContent` erzeugtes DOM-Element (`Name (Nutzungsart)`), sodass GeoJSON-Eigenschaften niemals als HTML interpretiert werden.
 * **Weiche Polygon-Übergänge (`berechneUebergang`):** Statt Luftlinien zwischen Polygon-Mittelpunkten zu ziehen, berechnet `map-view.js` mithilfe von **Turf.js 6.5.0** die Schnittmenge aufeinanderfolgender Polygone derselben Etage (exakter Schnitt bzw. `0.2 m`-, `1.0 m`- und `3.0 m`-Puffer) und führt die gestrichelte Routenlinie (`#EC4899`) direkt durch die Tür- und Flurübergänge.
 * **Etagenwechsel-Hinweise (`L.circleMarker`):** Wechselt der berechnete Pfad über einen `vertikal`-Knoten (Treppe/Aufzug) die Etage, platziert `map-view.js` einen pinken Kreismarker (`#EC4899`) mit permanentem Tooltip (`"Hier Etage wechseln (nach XX)"` bzw. `"Von Etage XX kommend"`).
 * **Farb-Codierung der Polygone (`gibFeatureStyle`):**

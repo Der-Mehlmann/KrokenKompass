@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve .",
+    "test:security": "node --test tests/security-hardening.test.js",
     "build": "npm run build:all",
     "build:elm": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize",
     "build:graph": "node Code/backend/build_graph.js",
@@ -18,4 +19,3 @@
     "@turf/turf": "^7.4.0"
   }
 }
-
