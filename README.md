@@ -17,7 +17,7 @@
 
 ---
 
-> **KrokenKompass** ist ein interaktives Orientierungs- und Wegfindungssystem für den **Heide-Campus der MLU Halle-Wittenberg** (Von-Seckendorff-Platz 1–4, Gebäudecodes `7721`–`7724`). Entwickelt als Single-Page-Application (SPA) mit **Elm**, **JavaScript** und **Leaflet.js**. 🎓📍
+> **KrokenKompass** ist ein interaktives Orientierungs- und Wegfindungssystem für den **Heide-Campus der MLU Halle-Wittenberg** (Von-Seckendorff-Platz 1–4). Entwickelt als Single-Page-Application (SPA) mit **Elm**, **JavaScript** und **Leaflet.js**. 🎓📍
 
 ---
 
