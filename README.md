@@ -51,6 +51,7 @@ Technische Details, Datenfluss-Diagramme und Architekturentscheidungen sind im *
 * 🏗️ [**Architektur & Technologien**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%8F%97%EF%B8%8F-Architektur-&-Technologien) – Datenfluss von GeoJSON bis zum Leaflet-Web-Component
 * 🖥️ [**Frontend & Elm-Architektur**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%96%A5%EF%B8%8F-Frontend-&-Elm%E2%80%90Architektur) – TEA, Dijkstra-Engine & Port-Schnittstellen
 * 🚀 [**Deployment & CI/CD-Pipelines**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9A%80-Deployment-&-CI-CD-Pipelines) – Vercel Deployment & CI-Pipeline
+* 🛡️ [**Security Hardening**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/security-hardening) – CSP, HTTP-Security-Header, XSS-sichere Popups & Security-Tests
 * 🛠️ [**Installation & Developer Guide**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9B%A0%EF%B8%8F-Installation-&-Developer-Guide) – Lokale Einrichtung & Troubleshooting
 
 ---
@@ -59,7 +60,7 @@ Technische Details, Datenfluss-Diagramme und Architekturentscheidungen sind im *
 
 * **Frontend:** [Elm 0.19.1](https://elm-lang.org/), [Leaflet.js 1.9.4](https://leafletjs.com/), [Turf.js 6.5.0 (CDN)](https://turfjs.org/), [Bulma 1.0.4](https://bulma.io/)
 * **Datenvorbereitung (Backend / Build-Time):** [Node.js](https://nodejs.org/) (v18+, CI: v24), [@turf/turf 7.4.0](https://turfjs.org/)
-* **Deployment & Hosting:** GitHub Actions (Pages & Wiki-Sync) & Vercel
+* **Deployment & Hosting:** Vercel & GitHub Actions (CI & Wiki-Sync)
 
 ---
 
@@ -92,6 +93,7 @@ Anschließend [http://localhost:3000](http://localhost:3000) im Browser aufrufen
 | **`npm run build:elm`** | Führt `inject_version.js` aus und kompiliert `Code/frontend/src/Main.elm` (`--optimize`) nach `Code/frontend/elm.js`. |
 | **`npm run build`** / **`npm run build:all`** | Alias für `npm run build:elm` (nutzt den vorab generierten Graphen `Data/graph.json`). |
 | **`npm run build:graph`** | Führt `node Code/backend/build_graph.js` aus und berechnet `Data/graph.json` aus `Data/vsp_etage_*.json` neu. |
+| **`npm run test:security`** | Führt `node --test tests/security-hardening.test.js` aus (prüft CSP/Security-Header, Cache-Busting und XSS-sichere Popups). |
 
 ---
 

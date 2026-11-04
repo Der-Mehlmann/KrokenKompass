@@ -10,6 +10,7 @@
 * 🏗️ **[Architektur & Technologien](🏗️-Architektur-&-Technologien)**
 * 🖥️ **[Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur)**
 * 🚀 **[Deployment & CI/CD-Pipelines](🚀-Deployment-&-CI-CD-Pipelines)**
+* 🛡️ **[Security Hardening](security-hardening)**
 * 🛠️ **[Installation & Developer Guide](🛠️-Installation-&-Developer-Guide)**
 
 ---

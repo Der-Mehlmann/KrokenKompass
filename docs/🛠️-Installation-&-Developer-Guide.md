@@ -77,4 +77,4 @@ Anschließend die Webseite im Browser mit `Cmd + Shift + R` (macOS) bzw. `Strg +
 * **Lösung:** In `Code/backend/build_graph.js` die Kontakt- und Pufferregeln (`habenKontakt`, `1.0 m` / `3.0 m`) prüfen und anschließend `npm run build:graph` ausführen.
 
 ---
-*Navigation:* [← 🚀 Zurück zu Deployment & CI/CD-Pipelines](🚀-Deployment-&-CI-CD-Pipelines) | [🏠 Zurück zur Home-Seite →](Home)
+*Navigation:* [← 🛡️ Zurück zu Security Hardening](security-hardening) | [🏠 Zurück zur Home-Seite →](Home)

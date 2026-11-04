@@ -11,6 +11,7 @@ Willkommen in der Dokumentation von **KrokenKompass**!
 * [🏗️ **Architektur & Technologien**](🏗️-Architektur-&-Technologien) – Systemübersicht, Build- vs. Run-Time, Verzeichnisstruktur & Komponenten.
 * [🖥️ **Frontend & Elm-Architektur**](🖥️-Frontend-&-Elm‐Architektur) – Die Elm-SPA, Dijkstra-Routing im Browser, Port-Kommunikation & Leaflet-Kartenanzeige.
 * [🚀 **Deployment & CI/CD-Pipelines**](🚀-Deployment-&-CI-CD-Pipelines) – Vercel-Konfiguration & automatisierte Build-Pipelines.
+* [🛡️ **Security Hardening**](security-hardening) – Content-Security-Policy (CSP), HTTP-Security-Header, XSS-sichere Popups & Security-Tests.
 * [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide) – Lokale Einrichtung, Entwicklungsworkflow & Troubleshooting.
 
 ---

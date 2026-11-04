@@ -12,4 +12,5 @@ Dieses Verzeichnis enthält die vollständige Dokumentation des Projekts **Kroke
 4. [🏗️ **Architektur & Technologien**](🏗️-Architektur-&-Technologien.md)
 5. [🖥️ **Frontend & Elm-Architektur**](🖥️-Frontend-&-Elm‐Architektur.md)
 6. [🚀 **Deployment & CI/CD-Pipelines**](🚀-Deployment-&-CI-CD-Pipelines.md)
-7. [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide.md)
+7. [🛡️ **Security Hardening**](security-hardening.md)
+8. [🛠️ **Installation & Developer Guide**](🛠️-Installation-&-Developer-Guide.md)

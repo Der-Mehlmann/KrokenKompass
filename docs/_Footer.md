@@ -1,2 +1,2 @@
 ---
-**KrokenKompass Wiki:** [🏠 Home](Home) | [⚙️ Backend](⚙️-Backend-&-Graphenerstellung) | [🎨 UI & Theming](🎨-UI,-Theming-&-Design‐System) | [🏗️ Architektur](🏗️-Architektur-&-Technologien) | [🖥️ Frontend](🖥️-Frontend-&-Elm‐Architektur) | [🚀 CI/CD](🚀-Deployment-&-CI-CD-Pipelines) | [🛠️ Setup](🛠️-Installation-&-Developer-Guide)
+**KrokenKompass Wiki:** [🏠 Home](Home) | [⚙️ Backend](⚙️-Backend-&-Graphenerstellung) | [🎨 UI & Theming](🎨-UI,-Theming-&-Design‐System) | [🏗️ Architektur](🏗️-Architektur-&-Technologien) | [🖥️ Frontend](🖥️-Frontend-&-Elm‐Architektur) | [🚀 CI/CD](🚀-Deployment-&-CI-CD-Pipelines) | [🛡️ Security](security-hardening) | [🛠️ Setup](🛠️-Installation-&-Developer-Guide)

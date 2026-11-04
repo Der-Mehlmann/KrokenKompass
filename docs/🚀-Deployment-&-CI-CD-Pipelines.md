@@ -2,18 +2,18 @@ KrokenKompass wird ausschließlich auf **Vercel** bereitgestellt. Zusätzlich pr
 
 ---
 
-## ⚙️ 1. CI-Pipeline (`.github/workflows/`)
+## ⚙️ 1. CI-Pipeline (`.github/workflows/ci.yml`)
 
-`.github/workflows/ci.yml` prüft Pull Requests und kann manuell gestartet werden. Das Deployment selbst wird von der mit GitHub verbundenen Vercel-Integration übernommen:
+`.github/workflows/ci.yml` prüft jeden Pull Request auf `main` und kann manuell (`workflow_dispatch`) gestartet werden. Das Deployment selbst wird von der mit GitHub verbundenen Vercel-Integration übernommen:
 
 ```mermaid
 flowchart LR
-    Push["Push auf main"] --> Checkout["1. Code Checkout"]
+    Trigger["PR auf main / workflow_dispatch"] --> Checkout["1. Code Checkout"]
     Checkout --> Setup["2. Setup Node.js 24 + Elm-Cache"]
     Setup --> Install["3. npm ci"]
-    Install --> Version["4. npm run build: inject_version.js"]
-    Version --> Compile["5. npm run build: elm make --optimize"]
-    Compile --> Validate["6. Build & Tests"]
+    Install --> Build["4. npm run build (inject_version.js + elm make)"]
+    Build --> SecTest["5. npm run test:security"]
+    SecTest --> GraphTest["6. node Code/backend/build_graph.js"]
 ```
 
 ### Die wichtigsten Schritte im Detail
@@ -21,9 +21,13 @@ flowchart LR
    - **Release-Version:** Ermittelt das aktuelle GitHub-Release bzw. Git-Tag (`GITHUB_REF_NAME` oder `git describe --tags --abbrev=0`, Fallback `version` aus `package.json`).
    - **Commit-Hash:** Ermittelt den 7-stelligen Commit-Hash (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA` oder `git rev-parse --short HEAD`).
    - **Strukturierte Flags:** Schreibt `flags: { release: "vX.X.X", commit: "XXXXXXX" }` in `index.html`, sodass im Footer `vX.X.X - XXXXXXX` mit Links zu Release und Commit angezeigt wird.
-   - **Cache-Busting:** Aktualisiert automatisch die Query-Parameter `elm.js?v=`, `map-view.js?v=` und `style.css?v=` in `index.html`.
+   - **Cache-Busting:** Aktualisiert automatisch die Query-Parameter `elm.js?v=`, `popup-content.js?v=`, `map-view.js?v=` und `style.css?v=` in `index.html`.
 2. **Elm-Kompilierung (`elm make`):**
    - Kompiliert `Code/frontend/src/Main.elm` mit dem `--optimize`-Flag nach `Code/frontend/elm.js`.
+3. **Security-Hardening-Tests (`npm run test:security`):**
+   - Führt `node --test tests/security-hardening.test.js` aus und validiert die CSP-/Security-Header in `vercel.json`, das Cache-Busting für `popup-content.js` sowie das XSS-sichere Popup-Rendering (`erstelleSicherenPopupInhalt`).
+4. **Graphengenerierungs-Check (`node Code/backend/build_graph.js`):**
+   - Verifiziert, dass sich `Data/graph.json` fehlerfrei aus den GeoJSON-Etagendaten (`Data/vsp_etage_*.json`) neu berechnen lässt.
 
 ---
 
@@ -31,17 +35,18 @@ flowchart LR
 
 Vercel erstellt Preview-Deployments für Pull Requests sowie Production-Deployments für `main`.
 
-Die Übernahme und Verifikation der Security-Header sowie die Voraussetzungen für eine spätere HSTS-Aktivierung sind in [Security hardening](security-hardening.md) dokumentiert.
+Details zum Sicherheitskonzept (CSP-Direktiven, XSS-sichere Karten-Popups, Subresource Integrity, HSTS-Verwaltung durch Vercel und Verifikationsschritte) sind unter [Security Hardening](security-hardening) dokumentiert.
 
 ### Konfigurationsdateien
 
 #### `package.json`
-Definiert die Build- und Entwicklungs-Skripte:
+Definiert die Build-, Test- und Entwicklungs-Skripte:
 ```json
 {
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve .",
+    "test:security": "node --test tests/security-hardening.test.js",
     "build": "npm run build:all",
     "build:elm": "node Code/backend/inject_version.js && cd Code/frontend && npx elm make src/Main.elm --output=elm.js --optimize",
     "build:graph": "node Code/backend/build_graph.js",
@@ -78,6 +83,18 @@ Da KrokenKompass eine statische Single-Page-Application mit `index.html` im Haup
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https://cdnjs.cloudflare.com https://tile.openstreetmap.org; font-src 'self' data:; connect-src 'self' https://vitals.vercel-insights.com; frame-src 'none';"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "accelerometer=(), autoplay=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), xr-spatial-tracking=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin-allow-popups"
         }
       ]
     },
@@ -164,4 +181,4 @@ flowchart LR
 * **Deterministische Builds:** Durch die Ausführung von `npm run build` in GitHub Actions und Vercel wird `elm.js` bei jedem Deployment frisch aus dem aktuellen Quellcode kompiliert.
 
 ---
-*Navigation:* [← 🖥️ Zurück zu Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur) | [🛠️ Weiter zu Installation & Developer Guide →](🛠️-Installation-&-Developer-Guide)
+*Navigation:* [← 🖥️ Zurück zu Frontend & Elm-Architektur](🖥️-Frontend-&-Elm‐Architektur) | [🛡️ Weiter zu Security Hardening →](security-hardening)
