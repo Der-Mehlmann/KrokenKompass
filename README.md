@@ -33,10 +33,10 @@ Klassische Indoor-Navigation erfordert oft zusätzliche Infrastruktur wie Blueto
 ## ✨ Features
 
 * ⚡ **Client-Side-Routing:** Dijkstra-Kürzeste-Wege-Suche direkt im Browser ohne Server-Latenzen.
-* 🗺️ **Interaktive Multi-Floor-Karten:** Etagenübergreifende Gebäudepläne (UG `-1` bis 5. OG `05`) und Treppen-/Aufzugs-Hinweise mit Leaflet.js (`<leaflet-map-container>`).
+* 🗺️ **Interaktive Multi-Floor-Karten:** Etagenübergreifende Gebäudepläne (UG `-1` bis 5. OG `05`) und Treppen-/Aufzugs-Hinweise mit Leaflet.js.
 * 🛡️ **Typsichere Elm-Architektur:** Zustandsverwaltung ohne Laufzeitausnahmen dank [Elm](https://elm-lang.org/).
-* 📐 **Regelbasierte Geodaten-Pipeline:** Automatisierte Graphengenerierung aus GeoJSON mit Turf.js inklusive Raum-Transitstrafen (`+5000 m`).
-* 🌓 **Theming & Dual-Logo:** Automatischer und manueller Dark-/Light-Mode mit kontrastoptimierten Logos (`KK-Logo-dark.png` / `KK-Logo-Light.png`).
+* 📐 **Regelbasierte Geodaten-Pipeline:** Automatisierte Graphengenerierung aus GeoJSON mit Turf.js inklusive Raum-Transitstrafen.
+* 🌓 **Theming & Dual-Logo:** Automatischer und manueller Dark-/Light-Mode mit kontrastoptimierten Logos.
 * 📱 **Responsive Oberfläche:** Bedienbar auf Desktop-Bildschirmen und Smartphones auf dem Campus.
 
 ---
