@@ -91,7 +91,7 @@ class LeafletMapContainer extends HTMLElement {
                 style: gibFeatureStyle,
                 onEachFeature: (f, layer) => {
                     const properties = f.properties || {};
-                    layer.bindPopup(`${properties.name || '-'} (${properties.use_type || '-'})`);
+                    layer.bindPopup(window.erstelleSicherenPopupInhalt(properties));
                 }
             });
         }

@@ -50,7 +50,7 @@ Technische Details, Datenfluss-Diagramme und Architekturentscheidungen sind im *
 * 🎨 [**UI, Theming & Design-System**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%8E%A8-UI,-Theming-&-Design%E2%80%90System) – Dual-Logo-Architektur, CSS-Variablen & Bulma 1.0
 * 🏗️ [**Architektur & Technologien**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%8F%97%EF%B8%8F-Architektur-&-Technologien) – Datenfluss von GeoJSON bis zum Leaflet-Web-Component
 * 🖥️ [**Frontend & Elm-Architektur**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%96%A5%EF%B8%8F-Frontend-&-Elm%E2%80%90Architektur) – TEA, Dijkstra-Engine & Port-Schnittstellen
-* 🚀 [**Deployment & CI/CD-Pipelines**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9A%80-Deployment-&-CI-CD-Pipelines) – GitHub Pages Workflow & Vercel Deployment
+* 🚀 [**Deployment & CI/CD-Pipelines**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9A%80-Deployment-&-CI-CD-Pipelines) – Vercel Deployment & CI-Pipeline
 * 🛠️ [**Installation & Developer Guide**](https://github.com/Der-Mehlmann/KrokenKompass/wiki/%F0%9F%9B%A0%EF%B8%8F-Installation-&-Developer-Guide) – Lokale Einrichtung & Troubleshooting
 
 ---

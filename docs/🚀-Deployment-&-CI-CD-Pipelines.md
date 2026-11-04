@@ -1,10 +1,10 @@
-KrokenKompass wird automatisiert sowohl auf **GitHub Pages** als auch auf **Vercel** bereitgestellt. Zusätzlich prüft eine CI-Pipeline (`.github/workflows/ci.yml`) jeden Pull Request auf `main`.
+KrokenKompass wird ausschließlich auf **Vercel** bereitgestellt. Zusätzlich prüft eine CI-Pipeline (`.github/workflows/ci.yml`) jeden Pull Request auf `main`.
 
 ---
 
-## ⚙️ 1. GitHub Pages & CI-Pipelines (`.github/workflows/`)
+## ⚙️ 1. CI-Pipeline (`.github/workflows/`)
 
-Bei jedem Push auf `main` führt `.github/workflows/deploy.yml` das Deployment auf GitHub Pages aus (während `.github/workflows/ci.yml` bei Pull Requests sowohl `npm run build` als auch `node Code/backend/build_graph.js` validiert):
+`.github/workflows/ci.yml` prüft Pull Requests und kann manuell gestartet werden. Das Deployment selbst wird von der mit GitHub verbundenen Vercel-Integration übernommen:
 
 ```mermaid
 flowchart LR
@@ -13,10 +13,10 @@ flowchart LR
     Setup --> Install["3. npm ci"]
     Install --> Version["4. npm run build: inject_version.js"]
     Version --> Compile["5. npm run build: elm make --optimize"]
-    Compile --> Deploy["6. Upload & Deploy zu GitHub Pages"]
+    Compile --> Validate["6. Build & Tests"]
 ```
 
-### Die Workflow-Schritte im Detail
+### Die wichtigsten Schritte im Detail
 1. **Versions- & Release-Injektion (`inject_version.js`):**
    - **Release-Version:** Ermittelt das aktuelle GitHub-Release bzw. Git-Tag (`GITHUB_REF_NAME` oder `git describe --tags --abbrev=0`, Fallback `version` aus `package.json`).
    - **Commit-Hash:** Ermittelt den 7-stelligen Commit-Hash (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA` oder `git rev-parse --short HEAD`).
@@ -30,6 +30,8 @@ flowchart LR
 ## ▲ 2. Vercel Deployment
 
 Vercel erstellt Preview-Deployments für Pull Requests sowie Production-Deployments für `main`.
+
+Die Übernahme und Verifikation der Security-Header sowie die Voraussetzungen für eine spätere HSTS-Aktivierung sind in [Security hardening](security-hardening.md) dokumentiert.
 
 ### Konfigurationsdateien
 
@@ -109,6 +111,20 @@ Da KrokenKompass eine statische Single-Page-Application mit `index.html` im Haup
   ]
 }
 ```
+
+Vercel ist mit dem Repository verbunden und verwendet `main` als Production-Branch. Für `https://kroken-kompass.vercel.app/` stellt Vercel automatisch TLS bereit, leitet HTTP auf HTTPS um und liefert bereits HSTS:
+
+```text
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+```
+
+HSTS wird deshalb nicht zusätzlich in `vercel.json` dupliziert. Die tatsächliche Production-Response kann mit diesem Befehl geprüft werden:
+
+```powershell
+curl.exe -I https://kroken-kompass.vercel.app/
+```
+
+GitHub Pages ist für die Auslieferung nicht mehr vorgesehen. Der frühere Workflow `.github/workflows/deploy.yml` wurde entfernt; `ci.yml` bleibt als Prüfworkflow aktiv.
 
 #### Vercel Web Analytics & Speed Insights
 KrokenKompass bindet Vercel Web Analytics sowie Vercel Speed Insights im `<head>` der `index.html` ein:

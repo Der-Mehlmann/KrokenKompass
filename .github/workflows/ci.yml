@@ -39,5 +39,8 @@ jobs:
       - name: Compile Elm Application
         run: npm run build
 
+      - name: Test Security Hardening
+        run: npm run test:security
+
       - name: Test Graph Generation
         run: node Code/backend/build_graph.js
